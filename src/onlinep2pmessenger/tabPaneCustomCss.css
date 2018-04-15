@@ -48,12 +48,3 @@ and open the template in the editor.
     -fx-alignment: CENTER;
     -fx-text-fill: #96b946;
 }
-
-@font-face {
-    font-family: 'OpenSansEmoji';
-    src: url('/Fonts/OpenSansEmoji.ttf');
-}
-
-.text-field {
-    -fx-font-family: OpenSansEmoji;
-}

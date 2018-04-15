@@ -5,10 +5,13 @@
  */
 package onlinep2pmessenger;
 
+import java.io.File;
+import java.io.FileInputStream;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 /**
@@ -20,9 +23,11 @@ public class OnlineP2PMessenger extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
-        
+        final Font f = Font.loadFont(new FileInputStream(new File("OpenSansEmoji.ttf")), 10);
+
         Scene scene = new Scene(root);
         scene.getStylesheets().add("/onlinep2pmessenger/tabPaneCustomCss.css");
+        
         stage.setScene(scene);
         stage.show();
     }
