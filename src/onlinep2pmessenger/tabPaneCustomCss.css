@@ -20,7 +20,7 @@ and open the template in the editor.
 
 .tab-pane
 {
-    -fx-tab-min-width:90px;
+    -fx-tab-min-width:80px;
 }
 
 .tab{

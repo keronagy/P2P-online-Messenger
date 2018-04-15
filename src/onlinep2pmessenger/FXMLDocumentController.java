@@ -74,7 +74,6 @@ public class FXMLDocumentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-            // TODO
             final Font f = Font.loadFont(new FileInputStream(new File("OpenSansEmoji.ttf")), 18);
             ChatTxt.setFont(f);
             
