@@ -1,0 +1,59 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Apr 15, 2018, 6:11:59 PM
+    Author     : koko_
+*/
+/*.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: yellow;
+}*/
+/*.tab-pane .tab-header-area .tab-header-background {
+    -fx-opacity: 0;
+}*/
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-opacity: 0;
+}
+
+.tab-pane
+{
+    -fx-tab-min-width:90px;
+}
+
+.tab{
+    -fx-background-insets: 0 1 0 1,0,0;
+}
+.tab-pane .tab
+{
+    -fx-background-color: #555;
+
+}
+
+.tab-pane .tab:selected
+{
+    -fx-background-color: #3c3c3c;
+}
+
+.tab .tab-label { 
+    -fx-alignment: CENTER;
+    -fx-text-fill: #828282;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.tab:selected .tab-label { 
+    -fx-alignment: CENTER;
+    -fx-text-fill: #96b946;
+}
+
+@font-face {
+    font-family: 'OpenSansEmoji';
+    src: url('/Fonts/OpenSansEmoji.ttf');
+}
+
+.text-field {
+    -fx-font-family: OpenSansEmoji;
+}

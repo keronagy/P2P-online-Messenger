@@ -22,7 +22,7 @@ public class OnlineP2PMessenger extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
         
         Scene scene = new Scene(root);
-        
+        scene.getStylesheets().add("/onlinep2pmessenger/tabPaneCustomCss.css");
         stage.setScene(scene);
         stage.show();
     }

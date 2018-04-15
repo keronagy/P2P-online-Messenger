@@ -6,6 +6,7 @@
 package onlinep2pmessenger;
 
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -23,7 +24,8 @@ public class FXMLDocumentController implements Initializable {
     private Label label;
     @FXML
     private TextField searchTxt;
-    
+    @FXML
+    private TextField ChatTxt;
     
     @FXML
     private void handleButtonAction(ActionEvent event) {
@@ -36,5 +38,12 @@ public class FXMLDocumentController implements Initializable {
         // TODO
        // searchTxt.setStyle("-fx-text-fill: white;");
     }    
+    
+    public void appendEmoji()
+    {
+        byte[] emojiBytes = new byte[]{(byte)0xF0, (byte)0x9F, (byte)0x98, (byte)0x83};
+        String emojiAsString = new String(emojiBytes, Charset.forName("UTF-8"));
+        ChatTxt.appendText(emojiAsString);
+    }
     
 }
