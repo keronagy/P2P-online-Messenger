@@ -10,20 +10,31 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.shape.Rectangle;
+import javafx.util.Pair;
 
 /**
  *
@@ -76,7 +87,8 @@ public class FXMLDocumentController implements Initializable {
     private Button AddTab;
     @FXML
     private TabPane tabs;
-    
+    ArrayList <Pair<String,VBox> > vboxes = new ArrayList<>();
+    int id=1;
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
@@ -214,8 +226,108 @@ public class FXMLDocumentController implements Initializable {
     
     public void AddTabBtn()
     {
-        Tab t = new Tab("kero");
+        
+        Tab t = new Tab("kero"+ id);
+        
         tabs.getTabs().add(t);
+        t.setId("kero"+ id);
+        t.setOnCloseRequest((e -> onTabClose(t.getId())));
+        id++;
         tabs.getSelectionModel().select(t);
+        ScrollPane scrollPane = new ScrollPane();
+        t.setContent(scrollPane);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setFitToWidth(true);
+        final Rectangle rect = new Rectangle(200, 200, 800, 600);
+        rect.setFill(Color.BLACK);
+        VBox root = new VBox();
+        
+       // root.getChildren().addAll(new Button("button1"), new Button("button2"), new Button("button3"));
+        root.setSpacing(10);
+        root.setPadding(new Insets(10));
+        scrollPane.setContent(root);
+        vboxes.add(new Pair(t.getId(),root));
+        for (int i = 0; i < vboxes.size(); i++) {
+            if(vboxes.get(i).getKey() == tabs.getSelectionModel().getSelectedItem().getId()){
+            //    vboxes.get(i).getValue().getChildren().add(rect);
+            }
+        }
+        for (int i = 0; i < vboxes.size(); i++) {
+                System.out.println(vboxes.get(i).getKey().toString());
+            }
+        
+        System.out.println();
+    }
+    public void onTabClose(String id)
+    {
+        for (int i = 0; i < vboxes.size(); i++) {
+            if(vboxes.get(i).getKey() == id)
+            {
+                vboxes.remove(i);
+                break;
+            }  
+        }
+        for (int i = 0; i < vboxes.size(); i++) {
+                System.out.println(vboxes.get(i).getKey().toString());
+            }
+        System.out.println();
+
+    }
+    
+    
+    public void sendBtn()
+    {   
+        if(!ChatTxt.getText().equals(""))
+        {
+            for (int i = 0; i < vboxes.size(); i++) {
+                if(vboxes.get(i).getKey() == tabs.getSelectionModel().getSelectedItem().getId())
+                {
+                    String msg = ChatTxt.getText();
+                    
+                    StackPane p = new StackPane();
+                    p.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+                    p.setStyle("-fx-background-color: #00FFFF; -fx-background-radius: 30; -fx-border-radius: 30; -fx-border-width:5;");
+                    Label lbl = new Label(msg);
+                    lbl.setPadding(new Insets(10));
+                    lbl.setText(msg);
+                    lbl.setTextFill(Color.BLACK);
+                    p.getChildren().add(lbl);
+                    vboxes.get(i).getValue().getChildren().add(p);
+
+                    Label lbl1 = new Label(msg);
+                    
+                    StackPane p1 = new StackPane();
+
+                    p1.setStyle("-fx-background-color: #fff; -fx-background-radius: 30; -fx-border-radius: 30; -fx-border-width:5;");
+                    p1.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+                    lbl1.setPadding(new Insets(10));
+                    lbl1.setText("wooooooow");
+                    lbl1.setTextFill(Color.BLACK);
+                    HBox hob = new HBox();
+                    hob.setPrefWidth(470);
+                    hob.setAlignment(Pos.CENTER_RIGHT);
+                    p1.getChildren().add(lbl1);
+                    hob.getChildren().add(p1);
+                    vboxes.get(i).getValue().getChildren().add(hob);
+                    
+                    StackPane p2 = new StackPane();
+                    p2.setMaxSize(Region.USE_COMPUTED_SIZE,Region.BASELINE_OFFSET_SAME_AS_HEIGHT);
+                    p2.setStyle("-fx-background-color: #00FFFF; -fx-background-radius: 30; -fx-border-radius: 30; -fx-border-width:5;");
+                    Label lbl3 = new Label(msg);
+                    lbl3.setMaxWidth(470);
+                    lbl3.setWrapText(true);
+                    lbl3.setPadding(new Insets(10));
+                    lbl3.setText("test test test test testtest test test test testtest test  test test testtest test  test test testtest test  test test testtest test test test testtest test test test testtest test test test test ");
+                    lbl3.setTextFill(Color.BLACK);
+                    p2.getChildren().add(lbl3);
+                    vboxes.get(i).getValue().getChildren().add(p2);
+                    ChatTxt.setText("");
+                    emojiPane.setVisible(false);
+                    break;
+                }  
+            }
+        
+        }
     }
 }
+
