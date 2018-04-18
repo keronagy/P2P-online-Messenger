@@ -16,7 +16,10 @@ import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -69,7 +72,10 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Pane emojiPane;
     private boolean emojispanevis = false;
-    
+    @FXML
+    private Button AddTab;
+    @FXML
+    private TabPane tabs;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -107,7 +113,6 @@ public class FXMLDocumentController implements Initializable {
         switch(index)
         {
             case 1:
-                //\xF0\x9F\x98\x82
                 emojiBytes = new byte[]{(byte)0xF0, (byte)0x9F, (byte)0x98, (byte)0x82};
                 emojiAsString = new String(emojiBytes, Charset.forName("UTF-8"));
                 ChatTxt.insertText(ChatTxt.caretPositionProperty().get(), emojiAsString);
@@ -205,5 +210,12 @@ public class FXMLDocumentController implements Initializable {
             emojispanevis = false;
         }
         
+    }
+    
+    public void AddTabBtn()
+    {
+        Tab t = new Tab("kero");
+        tabs.getTabs().add(t);
+        tabs.getSelectionModel().select(t);
     }
 }
