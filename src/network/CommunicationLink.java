@@ -32,8 +32,8 @@ public class CommunicationLink extends Thread {
         this.callBackHandler = callBackHandler;
         this.id = id;
         try {
-            this.ois = new ObjectInputStream(s.getInputStream());
             this.oos = new ObjectOutputStream(s.getOutputStream());
+            this.ois = new ObjectInputStream(s.getInputStream());
         } catch (IOException ex) {
             Logger.getLogger(CommunicationLink.class.getName()).log(Level.SEVERE, null, ex);
         }
