@@ -15,16 +15,25 @@ and open the template in the editor.
 }*/
 
 .tab-pane .tab-header-area .tab-header-background {
-    -fx-opacity: 0;
+    /*-fx-opacity: 1;*/
+    -fx-background-color: #3c3c3c;;
 }
 
 .tab-pane
 {
     -fx-tab-min-width:80px;
+    -fx-border-color: #555;
+    -fx-border-width: 1;
 }
 
 .tab{
     -fx-background-insets: 0 1 0 1,0,0;
+
+}
+.tab-header-area
+{
+    -fx-border-color: #555;
+    -fx-border-width: 2;
 }
 .tab-pane .tab
 {
@@ -34,7 +43,7 @@ and open the template in the editor.
 
 .tab-pane .tab:selected
 {
-    -fx-background-color: #3c3c3c;
+        -fx-background-color:  #2e2f30;
 }
 
 .tab .tab-label { 
@@ -88,4 +97,8 @@ and open the template in the editor.
 }
 .scroll-pane > .corner {
     -fx-background-color: transparent;
+}
+
+.group-pane {
+    -fx-background-color: #555;
 }
