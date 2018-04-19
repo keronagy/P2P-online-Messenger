@@ -15,6 +15,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -26,6 +27,8 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -89,10 +92,26 @@ public class FXMLDocumentController implements Initializable {
     private TabPane tabs;
     ArrayList <Pair<String,VBox> > vboxes = new ArrayList<>();
     int id=1;
+    @FXML
+    private VBox groupVbox;
+    ArrayList <Pair<String,StackPane> > groupVboxes = new ArrayList<>();
+    @FXML
+    private Button TestGroup;
+    @FXML
+    private ScrollPane chatScroll;
+    @FXML
+    private VBox UsersVbox;
+    ArrayList <Pair<String,VBox> > usersVboxes = new ArrayList<>();
+    @FXML
+    private VBox UserTabVbox;
+    @FXML
+    private VBox GroupTabVbox;
+    
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-            final Font f = Font.loadFont(new FileInputStream(new File("OpenSansEmoji.ttf")), 18);
+            final Font f = Font.loadFont(new FileInputStream(new File("OpenSansEmoji.ttf")), 12);
             ChatTxt.setFont(f);
             
         } catch (FileNotFoundException ex) {
@@ -115,6 +134,7 @@ public class FXMLDocumentController implements Initializable {
         i14.setOnMouseClicked(e -> appendEmoji(14));
         i15.setOnMouseClicked(e -> appendEmoji(15));
         i16.setOnMouseClicked(e -> appendEmoji(16));
+        TestGroup.setOnMouseClicked(e -> createUserPane("u1","staus","kero"));
         
     }    
     
@@ -224,17 +244,27 @@ public class FXMLDocumentController implements Initializable {
         
     }
     
-    public void AddTabBtn()
+    public void AddNewUser()
     {
         
-        Tab t = new Tab("kero"+ id);
+    }
+    public void AddNewGroup()
+    {
+        
+    }
+    
+    public void AddTab(String ID, String UserName)
+    {
+        
+        Tab t = new Tab(UserName);
         
         tabs.getTabs().add(t);
-        t.setId("kero"+ id);
+        t.setId(ID);
         t.setOnCloseRequest((e -> onTabClose(t.getId())));
         id++;
         tabs.getSelectionModel().select(t);
         ScrollPane scrollPane = new ScrollPane();
+        
         t.setContent(scrollPane);
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
@@ -246,6 +276,7 @@ public class FXMLDocumentController implements Initializable {
         root.setSpacing(10);
         root.setPadding(new Insets(10));
         scrollPane.setContent(root);
+        scrollPane.vvalueProperty().bind(root.heightProperty());
         vboxes.add(new Pair(t.getId(),root));
         for (int i = 0; i < vboxes.size(); i++) {
             if(vboxes.get(i).getKey() == tabs.getSelectionModel().getSelectedItem().getId()){
@@ -274,7 +305,55 @@ public class FXMLDocumentController implements Initializable {
 
     }
     
-    
+    public void receive(String Msg, String ID , String UserName)
+    {
+        boolean found = false;
+        for (int i = 0; i < vboxes.size(); i++) {
+                if(vboxes.get(i).getKey() == ID)
+                {
+                    found = true;
+                    StackPane p1 = new StackPane();
+
+                    p1.setStyle("-fx-background-color: #fff; -fx-background-radius: 30; -fx-border-radius: 30; -fx-border-width:5;");
+                    p1.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+                    p1.setMinHeight(Region.USE_PREF_SIZE);
+                    Label lbl1 = new Label(Msg);
+                    lbl1.setPadding(new Insets(10));
+                    lbl1.setText(Msg);
+                    lbl1.setTextFill(Color.BLACK);
+                    HBox hob = new HBox();
+                    hob.setPrefWidth(470);
+                    hob.setAlignment(Pos.CENTER_RIGHT);
+                    p1.getChildren().add(lbl1);
+                    hob.getChildren().add(p1);
+                    vboxes.get(i).getValue().getChildren().add(hob);
+                    break;
+                }
+                
+        }
+        if(found == false)
+        {
+            AddTab(ID, UserName);
+            createGroupPane(ID, UserName);
+            StackPane p1 = new StackPane();
+
+            p1.setStyle("-fx-background-color: #fff; -fx-background-radius: 30; -fx-border-radius: 30; -fx-border-width:5;");
+            p1.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+            p1.setMinHeight(Region.USE_PREF_SIZE);
+            Label lbl1 = new Label(Msg);
+            lbl1.setPadding(new Insets(10));
+            lbl1.setText(Msg);
+            lbl1.setTextFill(Color.BLACK);
+            HBox hob = new HBox();
+            hob.setPrefWidth(470);
+            hob.setAlignment(Pos.CENTER_RIGHT);
+            p1.getChildren().add(lbl1);
+            hob.getChildren().add(p1);
+            vboxes.get(vboxes.size()-1).getValue().getChildren().add(hob);
+        }
+        
+        
+    }
     public void sendBtn()
     {   
         if(!ChatTxt.getText().equals(""))
@@ -285,6 +364,7 @@ public class FXMLDocumentController implements Initializable {
                     String msg = ChatTxt.getText();
                     
                     StackPane p = new StackPane();
+                    p.setMinHeight(Region.USE_PREF_SIZE);
                     p.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
                     p.setStyle("-fx-background-color: #00FFFF; -fx-background-radius: 30; -fx-border-radius: 30; -fx-border-width:5;");
                     Label lbl = new Label(msg);
@@ -293,34 +373,6 @@ public class FXMLDocumentController implements Initializable {
                     lbl.setTextFill(Color.BLACK);
                     p.getChildren().add(lbl);
                     vboxes.get(i).getValue().getChildren().add(p);
-
-                    Label lbl1 = new Label(msg);
-                    
-                    StackPane p1 = new StackPane();
-
-                    p1.setStyle("-fx-background-color: #fff; -fx-background-radius: 30; -fx-border-radius: 30; -fx-border-width:5;");
-                    p1.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-                    lbl1.setPadding(new Insets(10));
-                    lbl1.setText("wooooooow");
-                    lbl1.setTextFill(Color.BLACK);
-                    HBox hob = new HBox();
-                    hob.setPrefWidth(470);
-                    hob.setAlignment(Pos.CENTER_RIGHT);
-                    p1.getChildren().add(lbl1);
-                    hob.getChildren().add(p1);
-                    vboxes.get(i).getValue().getChildren().add(hob);
-                    
-                    StackPane p2 = new StackPane();
-                    p2.setMaxSize(Region.USE_COMPUTED_SIZE,Region.BASELINE_OFFSET_SAME_AS_HEIGHT);
-                    p2.setStyle("-fx-background-color: #00FFFF; -fx-background-radius: 30; -fx-border-radius: 30; -fx-border-width:5;");
-                    Label lbl3 = new Label(msg);
-                    lbl3.setMaxWidth(470);
-                    lbl3.setWrapText(true);
-                    lbl3.setPadding(new Insets(10));
-                    lbl3.setText("test test test test testtest test test test testtest test  test test testtest test  test test testtest test  test test testtest test test test testtest test test test testtest test test test test ");
-                    lbl3.setTextFill(Color.BLACK);
-                    p2.getChildren().add(lbl3);
-                    vboxes.get(i).getValue().getChildren().add(p2);
                     ChatTxt.setText("");
                     emojiPane.setVisible(false);
                     break;
@@ -328,6 +380,67 @@ public class FXMLDocumentController implements Initializable {
             }
         
         }
+    }
+    
+    public void createUserPane(String UserID , String Status, String UserName)
+    {
+        StackPane user = new StackPane();
+        user.getStyleClass().add("group-pane");
+        VBox lblsvbox= new VBox();
+        Label lbl = new Label();
+        lbl.setPadding(new Insets(5));
+        lbl.setText("user1");
+        lbl.setTextFill(Color.CYAN);
+        
+        Label lbl2 = new Label();
+        lbl2.setPadding(new Insets(5));
+        lbl2.setText("Status");
+        lbl2.setTextFill(Color.BLACK);
+        lblsvbox.getChildren().add(lbl);
+        lblsvbox.getChildren().add(lbl2);
+        user.getChildren().add(lblsvbox);
+        user.setOnMouseClicked(new EventHandler<MouseEvent>()
+        {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
+                    if(mouseEvent.getClickCount() == 2){
+                        AddTab(UserID,UserName);
+                    }
+                }
+            }
+        });
+        usersVboxes.add(new Pair<>(UserID,lblsvbox));
+        UsersVbox.setSpacing(5);
+        UsersVbox.getChildren().add(user);
+        
+        
+    }
+    public void createGroupPane(String gorupID,String GroupName)
+    {
+        StackPane group = new StackPane();
+        group.getStyleClass().add("group-pane");
+        Label lbl = new Label();
+        lbl.setPadding(new Insets(5));
+        lbl.setText("group1");
+        lbl.setTextFill(Color.BLACK);
+        group.getChildren().add(lbl);
+        group.setOnMouseClicked(new EventHandler<MouseEvent>()
+        {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
+                    if(mouseEvent.getClickCount() == 2){
+                        AddTab(gorupID, GroupName);
+                    }
+                }
+            }
+        });
+        groupVboxes.add(new Pair<>(gorupID,group));
+        groupVbox.setSpacing(5);
+        groupVbox.getChildren().add(group);
+        
+        
     }
 }
 
