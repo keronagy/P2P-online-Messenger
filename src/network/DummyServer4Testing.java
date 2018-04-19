@@ -36,8 +36,8 @@ public class DummyServer4Testing {
             ObjectInputStream ois = new ObjectInputStream(s.getInputStream());
 
             for (int i = 0; i < 5; i++) {
-                dos.writeUTF(dis.readUTF());
-                dos.flush();
+//                dos.writeUTF(dis.readUTF());
+//                dos.flush();
                 oos.writeObject(ois.readObject());
                 oos.flush();
             }

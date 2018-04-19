@@ -33,16 +33,14 @@ public class DummyClient4Testing {
             ObjectOutputStream oos = new ObjectOutputStream(s.getOutputStream());
             ObjectInputStream ois = new ObjectInputStream(s.getInputStream());
             HashMap<String, String> myarr =  new HashMap<>();
-            myarr.put(1+"", 1+"");
-            myarr.put(2+"", 2+"");
-            myarr.put(3+"", 3+"");
-            myarr.put(4+"", 4+"");
+            
             for(int i = 0; i < 5; i++){
-                dos.writeUTF(i+"");
-                dos.flush();
-                System.out.println(dis.readUTF());
-                
+//                dos.writeUTF(i+"");
+//                dos.flush();
+//                System.out.println(dis.readUTF());
+                myarr.put(i+"", i+"");
                 oos.writeObject(myarr);
+                System.out.println(myarr);
                 oos.flush();
                 System.out.println(ois.readObject());
             }

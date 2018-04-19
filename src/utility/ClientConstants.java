@@ -11,7 +11,8 @@ package utility;
  */
 public class ClientConstants {
     public static final String INITSTATUS = "1";
-    public static final String ClientRequestMainConnection = "serverConn";
-    public static final String ClientRequestRoomConnection = "roomConn";
+    public static final String MAINCONNECTION = "serverConn";
+    public static final String ROOMJOINCONNECTION = "RJC";
+    public static final String ROOMCREATECONNECTION = "RCC";
     
 }

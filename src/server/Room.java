@@ -6,6 +6,7 @@
 package server;
 import java.net.Socket;
 import java.util.HashMap;
+import network.CommunicationLink;
 import utility.CallbackOnReceiveHandler;
 /**
  *
@@ -14,7 +15,7 @@ import utility.CallbackOnReceiveHandler;
 public class Room implements CallbackOnReceiveHandler{
     private String id;
     private String name;
-    private HashMap<String, Socket> participants;
+    private HashMap<String, CommunicationLink> participants;
 
     /**
      * @return the id
