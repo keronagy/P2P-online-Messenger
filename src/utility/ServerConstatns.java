@@ -4,12 +4,13 @@
  * and open the template in the editor.
  */
 package utility;
-import java.util.HashMap;
+
 /**
  *
  * @author fadia
  */
-import java.util.ArrayList;
-public interface CallbackOnReceiveHandler {
-    public void handleReceivedData(HashMap<String, String> msg);
+public class ServerConstatns {
+    public static final int serverPort = 2500;
+    public static final String ADDNEWCLIENTORDER = "anco";
+    public static final String ADDNEWROOMORDER = "anro";
 }

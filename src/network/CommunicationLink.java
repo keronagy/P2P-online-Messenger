@@ -7,10 +7,11 @@ package network;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utility.CallbackOnReceiveHandler;
+import utility.GeneralConstants;
 
 /**
  *
@@ -50,10 +51,9 @@ public class CommunicationLink extends Thread {
     @Override
     public void run() {
         while (true) {
-            ArrayList<String> received;
+            HashMap<String, String> received;
             try {
-                received = (ArrayList<String>) ois.readObject();
-                received.add(0, this.id);
+                received = (HashMap<String, String>) ois.readObject();
                 callBackHandler.handleReceivedData(received);
             } catch (IOException ex) {
                 Logger.getLogger(CommunicationLink.class.getName()).log(Level.SEVERE, null, ex);
@@ -63,7 +63,7 @@ public class CommunicationLink extends Thread {
         }
     }
 
-    public void send(ArrayList<String> msg) {
+    public void send(HashMap<String, String> msg) {
         try {
             oos.writeObject(msg);
             oos.flush();
