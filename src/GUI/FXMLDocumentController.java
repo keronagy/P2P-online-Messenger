@@ -486,11 +486,13 @@ public class FXMLDocumentController implements Initializable {
 
             @Override
             public void run() {
-                privateChat pc = new privateChat(null, null);
-                pc.Join("41.47.189.54", 1234);
+                privateChat pc = new privateChat();
+                System.out.println("before join");
+                pc.Join("41.47.189.54", 12345);
             }
         }
 
         Thread t = new Thread(new tmp());
+        t.start();
     }
 }

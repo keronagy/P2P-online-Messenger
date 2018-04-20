@@ -25,8 +25,9 @@ public class listener implements Runnable {
     @Override
     public void run() {
         try {
-            ss = new ServerSocket(1234);
+            ss = new ServerSocket(12345);
             sc = ss.accept();
+            System.out.println("server started");
             privateChat pc = new privateChat(ss, sc);
         } catch (IOException ex) {
         }

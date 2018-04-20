@@ -31,11 +31,16 @@ public class privateChat {
         this.sc = sc;
     }
 
+    public privateChat() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     public void Join(String IP, int port) {
         try {
             this.sc = new Socket(IP, port);
             startChat();
-        } catch (IOException ex) {
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 
