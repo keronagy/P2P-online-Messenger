@@ -17,11 +17,7 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import network.CommunicationLink;
-import utility.GeneralConstants;
-import utility.ServerConstatns;
-import utility.ClientConstants;
-import utility.IDGenerator;
-import utility.CallbackOnReceiveHandler;
+import utility.*;
 
 
 /**
@@ -40,7 +36,8 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
     
     @Override
     public void handleReceivedData(HashMap<String, String> msg){
-        
+    
+                
     }
     
     public static void initiateServer(){
@@ -51,7 +48,7 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
     public void run(){
         try {
             while(true){
-                ServerSocket ss = new ServerSocket(ServerConstatns.serverPort);
+                ServerSocket ss = new ServerSocket(ServerConstants.SERVERPORT);
                 handleClientRequest(ss.accept());
             }
         } catch (IOException ex) {
@@ -78,6 +75,7 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
 
         try {
             ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream());
+            ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream());
             //1) read message
             HashMap<String, String> connctionRequest = (HashMap<String, String>)ois.readObject();
             //2) check client Request type (control connection or room creation/joining connection)
@@ -85,6 +83,7 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
             if(connectionType.equals(ClientConstants.MAINCONNECTION)){
                 //create new client on server
                 Client newClient = createClient(clientSocket, connctionRequest.get(GeneralConstants.CLIENTNAMEATTR));
+                oos.writeUTF(newClient.getId());
                 //send the new client current server state
                 sendClients(newClient.getCommunicationLink());
                 sendRooms(newClient.getCommunicationLink());
@@ -106,7 +105,7 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
     
     public void sendClient(Client c, CommunicationLink cl) {
         HashMap<String, String> message = new HashMap<>();
-        message.put(GeneralConstants.UPDATETYPEATTR, ServerConstatns.ADDNEWCLIENTORDER);
+        message.put(GeneralConstants.UPDATETYPEATTR, ServerConstants.ADDNEWCLIENTORDER);
         message.put(GeneralConstants.CLIENTIDATTR, c.getId());
         message.put(GeneralConstants.CLIENTNAMEATTR, c.getName());
         message.put(GeneralConstants.CLIENTSTATUSATTR, c.getStatus());
@@ -120,7 +119,7 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
     }
     public void sendRoom(Room r, CommunicationLink cl) {
         HashMap<String, String> message = new HashMap<>();
-        message.put(GeneralConstants.UPDATETYPEATTR, ServerConstatns.ADDNEWROOMORDER);
+        message.put(GeneralConstants.UPDATETYPEATTR, ServerConstants.ADDNEWROOMORDER);
         message.put(GeneralConstants.ROOMIDATTR, r.getId());
         message.put(GeneralConstants.ROOMNAMEATTR, r.getName());
         cl.send(message);
@@ -130,4 +129,14 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
             sendRoom(r, cl);
         });
     }
+    
+    public void hanldeRoomMessage(HashMap<String,String> message)
+    {
+        String roomID,senderID,msg;
+        roomID = message.get(GeneralConstants.ROOMIDATTR);
+        senderID = message.get(GeneralConstants.CLIENTIDATTR);
+        msg = message.get(MessageConstants.MESSAGE);
+        rooms.get(roomID).sendMessageToParticipants(senderID, msg);
+    }
+    
 }

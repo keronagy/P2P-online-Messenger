@@ -14,5 +14,6 @@ public class ClientConstants {
     public static final String MAINCONNECTION = "serverConn";
     public static final String ROOMJOINCONNECTION = "RJC";
     public static final String ROOMCREATECONNECTION = "RCC";
+    public static final String ROOMSENDMESSAGE = "RSM";
     
 }

@@ -13,10 +13,10 @@ import network.CommunicationLink;
  * @author fadia
  */
 public class Client {
-    private String id;
-    private String status;
-    private String name;
-    private CommunicationLink cl;
+    protected String id;
+    protected String status;
+    protected String name;
+    protected CommunicationLink cl;
 
     public Client(String id, String status, String name, CommunicationLink cl) {
         this.id = id;
@@ -29,9 +29,9 @@ public class Client {
         this.status = status;
         this.name = name;
     }    
+
+   
     
-   
-   
     /**
      * @return the id
      */
