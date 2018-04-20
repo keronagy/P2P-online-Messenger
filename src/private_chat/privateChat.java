@@ -32,7 +32,6 @@ public class privateChat {
     }
 
     public privateChat() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     public void Join(String IP, int port) {
