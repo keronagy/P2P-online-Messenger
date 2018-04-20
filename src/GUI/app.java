@@ -5,7 +5,6 @@
  */
 package GUI;
 
-import OnlineP2PMessenger.Controller;
 import java.io.File;
 import java.io.FileInputStream;
 import javafx.application.Application;
@@ -20,15 +19,22 @@ import javafx.stage.Stage;
  * @author koko_
  */
 public class app extends Application {
-    Controller c = new Controller();
+
+
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
+        Parent root = null;
+        try{
+        root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
+        }catch(Exception e)
+        {
+         System.out.println(e.getMessage());   
+        }
         final Font f = Font.loadFont(new FileInputStream(new File("OpenSansEmoji.ttf")), 10);
 
         Scene scene = new Scene(root);
-        scene.getStylesheets().add("/onlinep2pmessenger/tabPaneCustomCss.css");
-        
+        scene.getStylesheets().add("/app/tabPaneCustomCss.css");
+
         stage.setScene(scene);
         stage.show();
     }
@@ -39,5 +45,5 @@ public class app extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-    
+
 }
