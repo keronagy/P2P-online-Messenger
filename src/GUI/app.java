@@ -35,7 +35,7 @@ public class app extends Application {
         final Font f = Font.loadFont(new FileInputStream(new File("OpenSansEmoji.ttf")), 10);
 
         Scene scene = new Scene(root);
-        scene.getStylesheets().add("/app/tabPaneCustomCss.css");
+        scene.getStylesheets().add("/GUI/tabPaneCustomCss.css");
 
         stage.setScene(scene);
         stage.show();

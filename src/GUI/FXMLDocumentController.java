@@ -475,8 +475,8 @@ public class FXMLDocumentController implements Initializable {
 
     public void TestBtn() throws IOException {
         Client c1 = new Client("1", "online", "kero");
-        Client c2 = new Client("1", "online", "kord");
-        Client c3 = new Client("1", "online", "fadi");
+        Client c2 = new Client("2", "online", "kord");
+        Client c3 = new Client("3", "online", "fadi");
 
         AddNewUser(c1);
         AddNewUser(c2);
