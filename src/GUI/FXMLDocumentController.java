@@ -504,9 +504,8 @@ public class FXMLDocumentController implements Initializable {
         AddNewUser(c2);
         AddNewUser(c3);
         //test with kyrollos
-        privateChat pc = new privateChat(null,new Socket("41.47.189.54",1234));
-       
-        //pc.JoinPrivateRoom("41.47.189.54",1234);
+        privateChat pc = new privateChat(null,null);
+        pc.Join("41.47.189.54",1234);
         
     }
 }
