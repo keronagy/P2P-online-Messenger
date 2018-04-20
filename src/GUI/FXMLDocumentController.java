@@ -8,6 +8,8 @@ package GUI;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.Socket;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -40,6 +42,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Pair;
 import server.Client;
 import server.Room;
+import private_chat.*;
 
 /**
  *
@@ -491,7 +494,7 @@ public class FXMLDocumentController implements Initializable {
         
         
     }
-    public void TestBtn()
+    public void TestBtn() throws IOException
     {
         Client c1 = new Client("1", "online", "kero");
         Client c2 = new Client("1", "online", "kord");
@@ -500,7 +503,11 @@ public class FXMLDocumentController implements Initializable {
         AddNewUser(c1);
         AddNewUser(c2);
         AddNewUser(c3);
-
+        //test with kyrollos
+        privateChat pc = new privateChat(null,new Socket("41.47.189.54",1234));
+       
+        //pc.JoinPrivateRoom("41.47.189.54",1234);
+        
     }
 }
 

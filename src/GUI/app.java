@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package onlinep2pmessenger;
+package GUI;
 
+import OnlineP2PMessenger.Controller;
 import java.io.File;
 import java.io.FileInputStream;
 import javafx.application.Application;
@@ -18,8 +19,8 @@ import javafx.stage.Stage;
  *
  * @author koko_
  */
-public class OnlineP2PMessenger extends Application {
-    
+public class app extends Application {
+    Controller c = new Controller();
     @Override
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
