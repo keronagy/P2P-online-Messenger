@@ -17,6 +17,7 @@ import java.util.logging.Logger;
  *
  * @author khaled
  */
+    
 public class listener implements Runnable {
 
     ServerSocket ss;
@@ -26,8 +27,9 @@ public class listener implements Runnable {
     public void run() {
         try {
             ss = new ServerSocket(12345);
-            sc = ss.accept();
             System.out.println("server started");
+            sc = ss.accept();
+            
             privateChat pc = new privateChat(ss, sc);
             
         } catch (IOException ex) {

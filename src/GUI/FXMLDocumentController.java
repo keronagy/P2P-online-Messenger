@@ -116,6 +116,9 @@ public class FXMLDocumentController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         try {
             final Font f = Font.loadFont(new FileInputStream(new File("OpenSansEmoji.ttf")), 12);
+             if(f == null) {
+            throw new IllegalArgumentException("Can't load font for url ");
+        }
             ChatTxt.setFont(f);
 
         } catch (FileNotFoundException ex) {
