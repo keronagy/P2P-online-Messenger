@@ -29,6 +29,7 @@ public class privateChat {
     public privateChat(ServerSocket ss, Socket sc) {
         this.ss = ss;
         this.sc = sc;
+        startChat();
     }
 
     public privateChat() {
@@ -36,6 +37,7 @@ public class privateChat {
 
     public void Join(String IP, int port) {
         try {
+
             this.sc = new Socket(IP, port);
             startChat();
         } catch (Exception e) {
@@ -49,7 +51,9 @@ public class privateChat {
             try {
                 dis = new DataInputStream(sc.getInputStream());
                 dos = new DataOutputStream(sc.getOutputStream());
-                System.out.println(dis.readUTF());
+                if (dis.available() != 0) {
+                    System.out.println(dis.readUTF());
+                }
                 Scanner s = new Scanner(System.in);
                 dos.writeUTF(s.nextLine());
 

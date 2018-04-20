@@ -326,10 +326,10 @@ public class FXMLDocumentController implements Initializable {
             }
         }
         for (int i = 0; i < vboxes.size(); i++) {
-            System.out.println(vboxes.get(i).getKey().toString());
+            //System.out.println(vboxes.get(i).getKey().toString());
         }
 
-        System.out.println();
+        //System.out.println();
     }
 
     public void onTabClose(String id) {

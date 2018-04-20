@@ -29,6 +29,7 @@ public class listener implements Runnable {
             sc = ss.accept();
             System.out.println("server started");
             privateChat pc = new privateChat(ss, sc);
+            
         } catch (IOException ex) {
         }
     }
