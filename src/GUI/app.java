@@ -13,17 +13,19 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-
+import private_chat.*;
 /**
  *
  * @author koko_
  */
 public class app extends Application {
 
-
+    listener plc = new listener();
+    Thread t1 = new Thread(plc);
     @Override
     public void start(Stage stage) throws Exception {
         Parent root = null;
+        t1.start();
         try{
         root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
         }catch(Exception e)
