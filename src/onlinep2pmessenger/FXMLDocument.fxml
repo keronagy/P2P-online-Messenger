@@ -76,7 +76,7 @@
                               <Insets left="10.0" top="7.0" />
                            </padding>
                            <children>
-                              <Button mnemonicParsing="false" text="Add Tab" />
+                              <Button mnemonicParsing="false" onMouseClicked="#TestBtn" text="Add Tab" />
                               <Button fx:id="TestGroup" mnemonicParsing="false" text="TestGrouppane" />
                            </children></VBox>
                      </content>

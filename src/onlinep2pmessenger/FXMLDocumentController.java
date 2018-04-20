@@ -38,6 +38,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Pair;
+import server.Client;
+import server.Room;
 
 /**
  *
@@ -244,13 +246,60 @@ public class FXMLDocumentController implements Initializable {
         
     }
     
-    public void AddNewUser()
+    public void AddNewUser(Client c1)
     {
+        StackPane user = new StackPane();
+        user.getStyleClass().add("group-pane");
+        VBox lblsvbox= new VBox();
+        Label lbl = new Label();
+        lbl.setPadding(new Insets(5));
+        lbl.setText(c1.getName());
+        lbl.setTextFill(Color.CYAN);
         
+        Label lbl2 = new Label();
+        lbl2.setPadding(new Insets(5));
+        lbl2.setText(c1.getStatus());
+        lbl2.setTextFill(Color.BLACK);
+        lblsvbox.getChildren().add(lbl);
+        lblsvbox.getChildren().add(lbl2);
+        user.getChildren().add(lblsvbox);
+        user.setOnMouseClicked(new EventHandler<MouseEvent>()
+        {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
+                    if(mouseEvent.getClickCount() == 2){
+                        AddTab(c1.getId(),c1.getName());
+                        createUserPane(c1.getId(), c1.getStatus(), c1.getName());
+                    }
+                }
+            }
+        });
+        UserTabVbox.setSpacing(5);
+        UserTabVbox.getChildren().add(user);
     }
-    public void AddNewGroup()
+    public void AddNewGroup(Room r1)
     {
-        
+        StackPane group = new StackPane();
+        group.getStyleClass().add("group-pane");
+        Label lbl = new Label();
+        lbl.setPadding(new Insets(5));
+        lbl.setText(r1.getName());
+        lbl.setTextFill(Color.BLACK);
+        group.getChildren().add(lbl);
+        group.setOnMouseClicked(new EventHandler<MouseEvent>()
+        {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
+                    if(mouseEvent.getClickCount() == 2){
+                        AddTab(r1.getId(), r1.getId());
+                    }
+                }
+            }
+        });
+        GroupTabVbox.setSpacing(5);
+        GroupTabVbox.getChildren().add(group);
     }
     
     public void AddTab(String ID, String UserName)
@@ -389,12 +438,12 @@ public class FXMLDocumentController implements Initializable {
         VBox lblsvbox= new VBox();
         Label lbl = new Label();
         lbl.setPadding(new Insets(5));
-        lbl.setText("user1");
+        lbl.setText(UserName);
         lbl.setTextFill(Color.CYAN);
         
         Label lbl2 = new Label();
         lbl2.setPadding(new Insets(5));
-        lbl2.setText("Status");
+        lbl2.setText(Status);
         lbl2.setTextFill(Color.BLACK);
         lblsvbox.getChildren().add(lbl);
         lblsvbox.getChildren().add(lbl2);
@@ -416,13 +465,13 @@ public class FXMLDocumentController implements Initializable {
         
         
     }
-    public void createGroupPane(String gorupID,String GroupName)
+    public void createGroupPane(String groupID,String GroupName)
     {
         StackPane group = new StackPane();
         group.getStyleClass().add("group-pane");
         Label lbl = new Label();
         lbl.setPadding(new Insets(5));
-        lbl.setText("group1");
+        lbl.setText(GroupName);
         lbl.setTextFill(Color.BLACK);
         group.getChildren().add(lbl);
         group.setOnMouseClicked(new EventHandler<MouseEvent>()
@@ -431,16 +480,27 @@ public class FXMLDocumentController implements Initializable {
             public void handle(MouseEvent mouseEvent) {
                 if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
                     if(mouseEvent.getClickCount() == 2){
-                        AddTab(gorupID, GroupName);
+                        AddTab(groupID, GroupName);
                     }
                 }
             }
         });
-        groupVboxes.add(new Pair<>(gorupID,group));
+        groupVboxes.add(new Pair<>(groupID,group));
         groupVbox.setSpacing(5);
         groupVbox.getChildren().add(group);
         
         
+    }
+    public void TestBtn()
+    {
+        Client c1 = new Client("1", "online", "kero");
+        Client c2 = new Client("1", "online", "kord");
+        Client c3 = new Client("1", "online", "fadi");
+
+        AddNewUser(c1);
+        AddNewUser(c2);
+        AddNewUser(c3);
+
     }
 }
 

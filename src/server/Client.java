@@ -24,6 +24,12 @@ public class Client {
         this.name = name;
         this.cl = cl;
     }
+    public Client(String id, String status, String name ) {
+        this.id = id;
+        this.status = status;
+        this.name = name;
+    }    
+    
    
    
     /**
