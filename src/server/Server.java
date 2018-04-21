@@ -36,8 +36,13 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
     
     @Override
     public void handleReceivedData(HashMap<String, String> msg){
-    
-                
+        try {
+            java.lang.reflect.Method handle;
+            handle = this.getClass().getMethod(msg.get(GeneralConstants.REQUESTTYPEATTR),HashMap.class);
+            handle.invoke(this, msg);
+        } catch (Exception ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public static void initiateServer(){
@@ -63,6 +68,12 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
         }
     }
     
+    private void sendNewRoomToOtherClients(Room newRoom){
+        
+        for(Client c : clients.values()){
+            sendRoom(newRoom, c.getCommunicationLink());
+        }
+    }
     
     private Client createClient(Socket s, String clientName){
         String id = IDGenerator.generateClientID();
@@ -105,7 +116,7 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
     
     public void sendClient(Client c, CommunicationLink cl) {
         HashMap<String, String> message = new HashMap<>();
-        message.put(GeneralConstants.UPDATETYPEATTR, ServerConstants.ADDNEWCLIENTORDER);
+        message.put(GeneralConstants.REPLYTYPEATTR, ServerConstants.ADDNEWCLIENTORDER);
         message.put(GeneralConstants.CLIENTIDATTR, c.getId());
         message.put(GeneralConstants.CLIENTNAMEATTR, c.getName());
         message.put(GeneralConstants.CLIENTSTATUSATTR, c.getStatus());
@@ -119,7 +130,7 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
     }
     public void sendRoom(Room r, CommunicationLink cl) {
         HashMap<String, String> message = new HashMap<>();
-        message.put(GeneralConstants.UPDATETYPEATTR, ServerConstants.ADDNEWROOMORDER);
+        message.put(GeneralConstants.REPLYTYPEATTR, ServerConstants.ADDNEWROOMORDER);
         message.put(GeneralConstants.ROOMIDATTR, r.getId());
         message.put(GeneralConstants.ROOMNAMEATTR, r.getName());
         cl.send(message);
@@ -130,7 +141,7 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
         });
     }
     
-    public void hanldeRoomMessage(HashMap<String,String> message)
+    public void handleRoomMessage(HashMap<String,String> message)
     {
         String roomID,senderID,msg;
         roomID = message.get(GeneralConstants.ROOMIDATTR);
@@ -138,5 +149,48 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
         msg = message.get(MessageConstants.MESSAGE);
         rooms.get(roomID).sendMessageToParticipants(senderID, msg);
     }
+    
+    public void handleRoomCreate(HashMap<String,String> message)
+    {
+        String roomID,senderID,roomName;
+        roomID = IDGenerator.generateRoomID();
+        senderID = message.get(GeneralConstants.CLIENTIDATTR);
+        roomName = message.get(GeneralConstants.ROOMNAMEATTR);
+        Client sender = clients.get(senderID);
+        Room r = new Room(roomID, sender, roomName);
+        rooms.put(roomID, r);
+        sendNewRoomToOtherClients(r);
+        HashMap<String,String> confirmation = new HashMap();
+        confirmation.put(GeneralConstants.REPLYTYPEATTR, ServerConstants.CONFIRMADDROOMORDER);
+        confirmation.put(GeneralConstants.ROOMIDATTR, roomID);
+        sender.cl.send(confirmation);
+    }
+    
+    public void handleRoomJoin(HashMap<String,String> message)
+    {
+        String roomID,senderID;
+        senderID = message.get(GeneralConstants.CLIENTIDATTR);
+        roomID = message.get(GeneralConstants.ROOMIDATTR);
+        Client sender = clients.get(senderID);
+        rooms.get(roomID).addClient(sender);
+        HashMap<String,String> confirmation = new HashMap();
+        confirmation.put(GeneralConstants.REPLYTYPEATTR, ServerConstants.CONFIRMADDROOMORDER);
+        confirmation.put(GeneralConstants.ROOMIDATTR, roomID);
+        sender.cl.send(confirmation);
+    }
+    
+    public void handleRoomLeave(HashMap<String,String> message)
+    {
+        String roomID,senderID;
+        senderID = message.get(GeneralConstants.CLIENTIDATTR);
+        roomID = message.get(GeneralConstants.ROOMIDATTR);
+        Client sender = clients.get(senderID);
+        rooms.get(roomID).removeClient(sender);
+        HashMap<String,String> confirmation = new HashMap();
+        confirmation.put(GeneralConstants.REPLYTYPEATTR, ServerConstants.CONFIRMLEAVEROOMORDER);
+        confirmation.put(GeneralConstants.ROOMIDATTR, roomID);
+        sender.cl.send(confirmation);
+    }
+    
     
 }

@@ -8,6 +8,8 @@ package server;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import network.CommunicationLink;
 import utility.*;
 
@@ -29,13 +31,29 @@ public class PeerClient extends Client implements CallbackOnReceiveHandler {
         }
 
     }
-    public String createRoom(String name)
+    public void createRoom(String name)
     {
-        return "";
+        HashMap<String,String> message = new HashMap();
+        message.put(GeneralConstants.REQUESTTYPEATTR, ClientConstants.ROOMCREATECONNECTION);
+        message.put(GeneralConstants.CLIENTIDATTR, this.id);
+        message.put(GeneralConstants.ROOMNAMEATTR, name);
+        this.cl.send(message);
     }
     public void joinRoom(String roomID)
     {
-        
+        HashMap<String,String> message = new HashMap();
+        message.put(GeneralConstants.REQUESTTYPEATTR, ClientConstants.ROOMJOINCONNECTION);
+        message.put(GeneralConstants.CLIENTIDATTR, this.id);
+        message.put(GeneralConstants.ROOMIDATTR, roomID);
+        this.cl.send(message);
+    }
+    public void LeaveRoom(String roomID)
+    {
+        HashMap<String,String> message = new HashMap();
+        message.put(GeneralConstants.REQUESTTYPEATTR, ClientConstants.ROOMLEAVECONNECTION);
+        message.put(GeneralConstants.CLIENTIDATTR, this.id);
+        message.put(GeneralConstants.ROOMIDATTR, roomID);
+        this.cl.send(message);
     }
     public void sendMessageToRoom(String roomID,String msg){
         HashMap<String,String> message = new HashMap();
@@ -48,7 +66,48 @@ public class PeerClient extends Client implements CallbackOnReceiveHandler {
     
     @Override
     public void handleReceivedData(HashMap<String, String> msg) {
-        
+        try {
+            java.lang.reflect.Method handle;
+            handle = this.getClass().getMethod(msg.get(GeneralConstants.REPLYTYPEATTR),HashMap.class);
+            handle.invoke(this, msg);
+        } catch (Exception ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
-
+    
+    public void handleRoomJoined(HashMap<String, String> msg)
+    {
+        //GUI open room
+    }
+    
+    public void handleRoomLeft(HashMap<String, String> msg)
+    {
+        //GUI close room
+    }
+    
+    public void handleClientAddedtoRoom(HashMap<String, String> msg)
+    {
+        //GUI add client to room
+    }
+    
+    public void handleClientRemovedFromRoom(HashMap<String, String> msg)
+    {
+        //GUI remove client from room
+    }
+    
+    public void handleMessageFromRoom(HashMap<String, String> msg)
+    {
+        //GUI add message to chat
+    }
+    
+    public void handleNewClient(HashMap<String, String> msg)
+    {
+        //GUI add new client
+    }
+    
+    public void handleNewRoom(HashMap<String, String> msg)
+    {
+        //GUI add new room
+    }
+    
 }

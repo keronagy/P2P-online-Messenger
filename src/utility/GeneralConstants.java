@@ -25,6 +25,7 @@ public class GeneralConstants {
     public static final String CLIENTSTATUSATTR= "CSTATUS";
     public static final String CLIENTNAMEATTR= "CNAME";
     public static final String REQUESTTYPEATTR= "reqtype";
+    public static final String REPLYTYPEATTR= "reptype";
     public static final String UPDATETYPEATTR = "ut";
     public static final String ROOMIDATTR = "RID";
     public static final String ROOMNAMEATTR = "RNA";

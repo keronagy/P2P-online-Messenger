@@ -12,8 +12,8 @@ package utility;
 public class MessageConstants {
     public static final String MESSAGEFROM = "mfrom";
     
-    public static final String FROMROOM = "fromr";
-    public static final String FROMCLIENT = "fromc";
+    public static final String MESSAGEFROMROOM = "handleMessageFromRoom";
+    public static final String MESSAGEFROMCLIENT = "fromc";
     
     public static final String MESSAGE = "msg";
 }

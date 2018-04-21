@@ -12,8 +12,9 @@ package utility;
 public class ClientConstants {
     public static final String INITSTATUS = "1";
     public static final String MAINCONNECTION = "serverConn";
-    public static final String ROOMJOINCONNECTION = "RJC";
-    public static final String ROOMCREATECONNECTION = "RCC";
-    public static final String ROOMSENDMESSAGE = "RSM";
+    public static final String ROOMJOINCONNECTION = "handleRoomJoin";
+    public static final String ROOMCREATECONNECTION = "handleRoomCreate";
+    public static final String ROOMSENDMESSAGE = "handleRoomMessage";
+    public static final String ROOMLEAVECONNECTION = "handleRoomLeave";
     
 }

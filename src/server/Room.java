@@ -44,13 +44,14 @@ public class Room{
     
     public void addClient(Client client)
     {
-        sendNewParticipantToOtherParticipants(client);
+        sendNewParticipantToOtherParticipants(client, ServerConstants.ADDNEWCLIENTTOROOMORDER);
         sendParticipants(client);
         participants.put(client.getId(), client);
     }
     public void removeClient(Client client)
     {
         participants.remove(client.getId());
+        sendNewParticipantToOtherParticipants(client, ServerConstants.REMOVECLIENTFROMROOMORDER);
         if(participants.isEmpty())
             deleteRoom();
         if(client.getId().equals(adminID))
@@ -59,27 +60,28 @@ public class Room{
     public void sendParticipants(Client newClient) {
         //need to put before adding in the new client so s/he doesnt get sent to her/im self
         participants.values().forEach((c) -> {
-            sendClient(c, newClient.getCommunicationLink());
+            sendClient(c, newClient.getCommunicationLink(), ServerConstants.ADDNEWCLIENTTOROOMORDER);
         });
     }
-    public void sendClient(Client c, CommunicationLink cl) {
+    public void sendClient(Client c, CommunicationLink cl,String order) {
         HashMap<String, String> message = new HashMap<>();
-        message.put(GeneralConstants.UPDATETYPEATTR, ServerConstants.ADDNEWCLIENTTOROOMORDER);
+        message.put(GeneralConstants.REPLYTYPEATTR, order);
         message.put(GeneralConstants.CLIENTIDATTR, c.getId());
         message.put(GeneralConstants.CLIENTNAMEATTR, c.getName());
         message.put(GeneralConstants.CLIENTSTATUSATTR, c.getStatus());
         cl.send(message);
     }
-    private void sendNewParticipantToOtherParticipants(Client newClient){
+    private void sendNewParticipantToOtherParticipants(Client newClient,String order){
         
         participants.values().forEach((c) -> {
-            sendClient(newClient, c.getCommunicationLink());
+            sendClient(newClient, c.getCommunicationLink(),order);
         });
     }
     public void sendMessageToParticipants(String senderID,String msg)
     {
         HashMap<String, String> message = new HashMap();
-        message.put(MessageConstants.MESSAGEFROM, MessageConstants.FROMROOM);
+        message.put(GeneralConstants.REPLYTYPEATTR, MessageConstants.MESSAGEFROMROOM);
+        //message.put(MessageConstants.MESSAGEFROM, MessageConstants.FROMROOM);
         message.put(GeneralConstants.ROOMIDATTR, this.getId());
         message.put(GeneralConstants.SENDERIDATTR, senderID);
         message.put(MessageConstants.MESSAGE, msg);
