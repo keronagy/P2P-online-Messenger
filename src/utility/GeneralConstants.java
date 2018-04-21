@@ -19,7 +19,7 @@ public class GeneralConstants {
     //used to indicate the entity is a server
     public static final String isAServer = "s";
     
-    public static final String SENDERIDATTR = "senderid";
+    //public static final String SENDERIDATTR = "senderid";
     
     public static final String CLIENTIDATTR = "CID";
     public static final String CLIENTSTATUSATTR= "CSTATUS";

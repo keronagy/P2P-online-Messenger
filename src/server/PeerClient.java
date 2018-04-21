@@ -77,36 +77,52 @@ public class PeerClient extends Client implements CallbackOnReceiveHandler {
     
     public void handleRoomJoined(HashMap<String, String> msg)
     {
+        String roomID = msg.get(GeneralConstants.ROOMIDATTR);
         //GUI open room
     }
     
     public void handleRoomLeft(HashMap<String, String> msg)
     {
+        String roomID = msg.get(GeneralConstants.ROOMIDATTR);
         //GUI close room
     }
     
     public void handleClientAddedtoRoom(HashMap<String, String> msg)
     {
+        String name = msg.get(GeneralConstants.CLIENTNAMEATTR);
+        String id = msg.get(GeneralConstants.CLIENTIDATTR);
+        String status = msg.get(GeneralConstants.CLIENTSTATUSATTR);
         //GUI add client to room
     }
     
     public void handleClientRemovedFromRoom(HashMap<String, String> msg)
     {
+        String name = msg.get(GeneralConstants.CLIENTNAMEATTR);//not needed?
+        String id = msg.get(GeneralConstants.CLIENTIDATTR);
+        String status = msg.get(GeneralConstants.CLIENTSTATUSATTR);//not needed?
         //GUI remove client from room
     }
     
     public void handleMessageFromRoom(HashMap<String, String> msg)
     {
+        String roomID = msg.get(GeneralConstants.ROOMIDATTR);
+        String senderID = msg.get(GeneralConstants.CLIENTIDATTR);
+        String message = msg.get(MessageConstants.MESSAGE);
         //GUI add message to chat
     }
     
     public void handleNewClient(HashMap<String, String> msg)
     {
+        String name = msg.get(GeneralConstants.CLIENTNAMEATTR);
+        String id = msg.get(GeneralConstants.CLIENTIDATTR);
+        String status = msg.get(GeneralConstants.CLIENTSTATUSATTR);
         //GUI add new client
     }
     
     public void handleNewRoom(HashMap<String, String> msg)
     {
+        String name = msg.get(GeneralConstants.ROOMNAMEATTR);
+        String id = msg.get(GeneralConstants.ROOMIDATTR);
         //GUI add new room
     }
     

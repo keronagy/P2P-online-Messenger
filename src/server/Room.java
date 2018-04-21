@@ -83,7 +83,7 @@ public class Room{
         message.put(GeneralConstants.REPLYTYPEATTR, MessageConstants.MESSAGEFROMROOM);
         //message.put(MessageConstants.MESSAGEFROM, MessageConstants.FROMROOM);
         message.put(GeneralConstants.ROOMIDATTR, this.getId());
-        message.put(GeneralConstants.SENDERIDATTR, senderID);
+        message.put(GeneralConstants.CLIENTIDATTR, senderID);
         message.put(MessageConstants.MESSAGE, msg);
         participants.values().forEach((c) -> {
             if(!c.getId().equals(senderID))
