@@ -67,8 +67,7 @@ public class Room{
         HashMap<String, String> message = new HashMap<>();
         message.put(GeneralConstants.REPLYTYPEATTR, order);
         message.put(GeneralConstants.CLIENTIDATTR, c.getId());
-        message.put(GeneralConstants.CLIENTNAMEATTR, c.getName());
-        message.put(GeneralConstants.CLIENTSTATUSATTR, c.getStatus());
+        //message.put(GeneralConstants.CLIENTSTATUSATTR, c.getStatus());
         cl.send(message);
     }
     private void sendNewParticipantToOtherParticipants(Client newClient,String order){

@@ -52,8 +52,8 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
     @Override
     public void run(){
         try {
+            ServerSocket ss = new ServerSocket(ServerConstants.SERVERPORT);
             while(true){
-                ServerSocket ss = new ServerSocket(ServerConstants.SERVERPORT);
                 handleClientRequest(ss.accept());
             }
         } catch (IOException ex) {
@@ -79,7 +79,7 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
         String id = IDGenerator.generateClientID();
         String initialStatus = ClientConstants.INITSTATUS;
         String name = clientName;
-        return new Client(id, initialStatus, name, CommunicationLink.generateCommunicationLink(this, id, s));
+        return new Client(id, s.getInetAddress().toString(), initialStatus, name, CommunicationLink.generateCommunicationLink(this, s));
     }
     
     private void handleClientRequest(Socket clientSocket){
@@ -88,12 +88,12 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
             ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream());
             ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream());
             //1) read message
-            HashMap<String, String> connctionRequest = (HashMap<String, String>)ois.readObject();
+            HashMap<String, String> connectionRequest = (HashMap<String, String>)ois.readObject();
             //2) check client Request type (control connection or room creation/joining connection)
-            String connectionType = connctionRequest.get(GeneralConstants.REQUESTTYPEATTR);
+            String connectionType = connectionRequest.get(GeneralConstants.REQUESTTYPEATTR);
             if(connectionType.equals(ClientConstants.MAINCONNECTION)){
                 //create new client on server
-                Client newClient = createClient(clientSocket, connctionRequest.get(GeneralConstants.CLIENTNAMEATTR));
+                Client newClient = createClient(clientSocket, connectionRequest.get(GeneralConstants.CLIENTNAMEATTR));
                 oos.writeUTF(newClient.getId());
                 //send the new client current server state
                 sendClients(newClient.getCommunicationLink());
@@ -102,10 +102,6 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
                 clients.put(newClient.getId(), newClient);
                 //update other clients of the new added client
                 sendNewClientToOtherClients(newClient);
-                
-            }else if(connectionType.equals(ClientConstants.ROOMCREATECONNECTION)){
-                
-            }else if(connectionType.equals(ClientConstants.ROOMJOINCONNECTION)){
                 
             }
         } catch (Exception ex) {
@@ -120,6 +116,7 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
         message.put(GeneralConstants.CLIENTIDATTR, c.getId());
         message.put(GeneralConstants.CLIENTNAMEATTR, c.getName());
         message.put(GeneralConstants.CLIENTSTATUSATTR, c.getStatus());
+        message.put(GeneralConstants.CLIENTIPATTR, c.getIp());
         cl.send(message);
     }
     public void sendClients(CommunicationLink cl) {

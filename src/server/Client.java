@@ -16,10 +16,12 @@ public class Client {
     protected String id;
     protected String status;
     protected String name;
+    protected String ip;
     protected CommunicationLink cl;
 
-    public Client(String id, String status, String name, CommunicationLink cl) {
+    public Client(String id, String ip, String status, String name, CommunicationLink cl) {
         this.id = id;
+        this.ip = ip;
         this.status = status;
         this.name = name;
         this.cl = cl;
@@ -45,7 +47,14 @@ public class Client {
     public String getId() {
         return id;
     }
-
+    
+    /**
+     * @return the ip
+     */
+    public String getIp() {
+        return ip;
+    }
+    
     /**
      * @return the status
      */
