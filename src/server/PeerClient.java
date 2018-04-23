@@ -5,6 +5,7 @@
  */
 package server;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -45,17 +46,31 @@ public class PeerClient extends Client implements CallbackOnReceiveHandler {
         }
     }
 
-    public void connectToPeer(Socket s) {
+    public void receivePeerConnection(Socket s) {
         try {
             ObjectInputStream ois = new ObjectInputStream(s.getInputStream());
-            ObjectOutputStream oos = new ObjectOutputStream(s.getOutputStream());
-            oos.writeObject(this.id);
+            CommunicationLink cl = (CommunicationLink) ois.readObject();
             String peerID = ois.readUTF();
-            CommunicationLink tmp = CommunicationLink.generateCommunicationLink(this, s);
-            this.cls.put(peerID, tmp);
+            this.cls.put(peerID, cl);
         } catch (Exception e) {
         }
 
+    }
+
+    public CommunicationLink connectToPeer(String peerID, String ip, int port) {
+        CommunicationLink cl = null;
+        Socket s = null;
+        try {
+            ObjectInputStream ois = new ObjectInputStream(s.getInputStream());
+            ObjectOutputStream oos = new ObjectOutputStream(s.getOutputStream());
+            cl = CommunicationLink.generateCommunicationLink(this, s);
+            oos.writeObject(cl);
+            oos.writeObject(this.id);
+            s = new Socket(ip, port);
+            this.cls.put(peerID, cl);
+        } catch (IOException ex) {
+        }
+        return cl;
     }
 
     public void createRoom(String name) {
@@ -150,7 +165,5 @@ public class PeerClient extends Client implements CallbackOnReceiveHandler {
         String roomID = msg.get(GeneralConstants.ROOMIDATTR);
         //GUI add new room
     }
-
-
 
 }

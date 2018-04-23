@@ -40,7 +40,7 @@ public class listener extends Thread {
             ss = new ServerSocket(port);
             while (true) {
                 sc = ss.accept();
-                pc.connectToPeer(sc);
+                pc.receivePeerConnection(sc);
 
             }
         } catch (IOException e) {
