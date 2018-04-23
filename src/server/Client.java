@@ -6,6 +6,7 @@
 package server;
 
 import java.net.Socket;
+import java.util.ArrayList;
 import network.CommunicationLink;
 
 /**
@@ -17,14 +18,17 @@ public class Client {
     protected String status;
     protected String name;
     protected String ip;
-    protected CommunicationLink cl;
+    protected CommunicationLink server_cl;
+     
+    
 
     public Client(String id, String ip, String status, String name, CommunicationLink cl) {
         this.id = id;
         this.ip = ip;
         this.status = status;
         this.name = name;
-        this.cl = cl;
+        this.server_cl = cl;
+        
     }
     public Client(String id, String status, String name ) {
         this.id = id;
@@ -38,7 +42,7 @@ public class Client {
      * @return the id
      */
     public CommunicationLink getCommunicationLink() {
-        return this.cl;
+        return this.server_cl;
     }
 
     /**

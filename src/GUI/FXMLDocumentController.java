@@ -42,7 +42,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Pair;
 import server.Client;
 import server.Room;
-import private_chat.*;
 
 /**
  *
@@ -485,17 +484,7 @@ public class FXMLDocumentController implements Initializable {
         AddNewUser(c2);
         AddNewUser(c3);
         //test with kyrollos
-        class tmp implements Runnable {
-
-            @Override
-            public void run() {
-                privateChat pc = new privateChat();
-                System.out.println("before join");
-                pc.Join("41.47.189.54", 12345);
-            }
-        }
-
-        Thread t = new Thread(new tmp());
-        t.start();
+        Socket s = new Socket("127.0.0.1",15000);
+        
     }
 }

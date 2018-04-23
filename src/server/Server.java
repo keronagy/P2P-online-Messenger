@@ -160,7 +160,7 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
         HashMap<String,String> confirmation = new HashMap();
         confirmation.put(GeneralConstants.REPLYTYPEATTR, ServerConstants.CONFIRMJOINROOMORDER);
         confirmation.put(GeneralConstants.ROOMIDATTR, roomID);
-        sender.cl.send(confirmation);
+        sender.server_cl.send(confirmation);
     }
     
     public void handleRoomJoin(HashMap<String,String> message)
@@ -173,7 +173,7 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
         HashMap<String,String> confirmation = new HashMap();
         confirmation.put(GeneralConstants.REPLYTYPEATTR, ServerConstants.CONFIRMJOINROOMORDER);
         confirmation.put(GeneralConstants.ROOMIDATTR, roomID);
-        sender.cl.send(confirmation);
+        sender.server_cl.send(confirmation);
     }
     
     public void handleRoomLeave(HashMap<String,String> message)
@@ -186,7 +186,7 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
         HashMap<String,String> confirmation = new HashMap();
         confirmation.put(GeneralConstants.REPLYTYPEATTR, ServerConstants.CONFIRMLEAVEROOMORDER);
         confirmation.put(GeneralConstants.ROOMIDATTR, roomID);
-        sender.cl.send(confirmation);
+        sender.server_cl.send(confirmation);
     }
     
     

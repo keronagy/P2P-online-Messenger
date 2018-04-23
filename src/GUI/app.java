@@ -5,6 +5,7 @@
  */
 package GUI;
 
+import server.listener;
 import java.io.File;
 import java.io.FileInputStream;
 import javafx.application.Application;
@@ -13,7 +14,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import private_chat.*;
 
 /**
  *
@@ -21,18 +21,14 @@ import private_chat.*;
  */
 public class app extends Application {
 
-    listener plc = new listener();
-    Thread t1 = new Thread(plc);
-
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = null;
-        t1.start();
-        try {
-            root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+        
+        listener t = new listener("from GUI");
+        t.start();
+        
+        Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
+
         final Font f = Font.loadFont(new FileInputStream(new File("OpenSansEmoji.ttf")), 10);
 
         Scene scene = new Scene(root);
