@@ -57,18 +57,18 @@ public class PeerClient extends Client implements CallbackOnReceiveHandler {
 
     }
 
-    public CommunicationLink connectToPeer(String peerID, String ip, int port) {
+    public void connectToPeer(String peerID, String ip, int port) {
         CommunicationLink cl = null;
-        Socket s = null;
+
         try {
+            Socket s = new Socket(ip, port);
             ObjectOutputStream oos = new ObjectOutputStream(s.getOutputStream());
             cl = CommunicationLink.generateCommunicationLink(this, s);
             oos.writeObject(this.id);
-            s = new Socket(ip, port);
+
             this.cls.put(peerID, cl);
         } catch (IOException ex) {
         }
-        return cl;
     }
 
     public void createRoom(String name) {
