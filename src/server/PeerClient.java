@@ -49,7 +49,7 @@ public class PeerClient extends Client implements CallbackOnReceiveHandler {
     public void receivePeerConnection(Socket s) {
         try {
             ObjectInputStream ois = new ObjectInputStream(s.getInputStream());
-            CommunicationLink cl = (CommunicationLink) ois.readObject();
+            CommunicationLink cl = CommunicationLink.generateCommunicationLink(this, s);
             String peerID = ois.readUTF();
             this.cls.put(peerID, cl);
         } catch (Exception e) {
@@ -61,10 +61,8 @@ public class PeerClient extends Client implements CallbackOnReceiveHandler {
         CommunicationLink cl = null;
         Socket s = null;
         try {
-            ObjectInputStream ois = new ObjectInputStream(s.getInputStream());
             ObjectOutputStream oos = new ObjectOutputStream(s.getOutputStream());
             cl = CommunicationLink.generateCommunicationLink(this, s);
-            oos.writeObject(cl);
             oos.writeObject(this.id);
             s = new Socket(ip, port);
             this.cls.put(peerID, cl);

@@ -5,7 +5,10 @@
         <group>
             <file>file:/home/khaled/smartgit/projects/Regaletna/src/network/CommunicationLink.java</file>
             <file>file:/home/khaled/smartgit/projects/Regaletna/src/GUI/FXMLDocumentController.java</file>
-            <file>file:/home/khaled/smartgit/projects/Regaletna/src/private_chat/listener.java</file>
+            <file>file:/home/khaled/smartgit/projects/Regaletna/src/server/listener.java</file>
+            <file>file:/home/khaled/smartgit/projects/Regaletna/src/server/PeerClient.java</file>
+            <file>file:/home/khaled/smartgit/projects/Regaletna/src/server/Server.java</file>
+            <file>file:/home/khaled/smartgit/projects/Regaletna/src/server/Client.java</file>
             <file>file:/home/khaled/smartgit/projects/Regaletna/src/GUI/app.java</file>
         </group>
     </open-files>

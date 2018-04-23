@@ -25,13 +25,14 @@ public class listener extends Thread {
 
     ServerSocket ss;
     Socket sc;
-    static int port = 15000;
     String userID;
     PeerClient pc;
+    int port;
 
-    public listener(String userID) {
+    public listener(String userID, int port) {
         this.userID = userID;
         pc = new PeerClient("Online", userID);
+        this.port = port;
     }
 
     @Override
@@ -41,7 +42,6 @@ public class listener extends Thread {
             while (true) {
                 sc = ss.accept();
                 pc.receivePeerConnection(sc);
-
             }
         } catch (IOException e) {
         }

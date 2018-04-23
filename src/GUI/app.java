@@ -24,7 +24,7 @@ public class app extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         
-        listener t = new listener("from GUI");
+        listener t = new listener("from GUI",utility.ClientConstants.P2PPORT);
         t.start();
         
         Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
