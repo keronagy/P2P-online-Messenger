@@ -13,7 +13,11 @@ and open the template in the editor.
 /*.tab-pane .tab-header-area .tab-header-background {
     -fx-opacity: 0;
 }*/
-
+* {
+    -fx-primary :  #2e2f30;
+    -fx-secondary: #ffff8d;
+    -fx-primarytext: #B2B2B2;
+}
 .tab-pane .tab-header-area .tab-header-background {
     /*-fx-opacity: 1;*/
     -fx-background-color: #3c3c3c;;
@@ -104,4 +108,18 @@ and open the template in the editor.
     -fx-background-radius: 30; 
     -fx-border-radius: 30; 
     -fx-border-width:5;
+}
+
+
+.button{
+    -fx-text-fill: -fx-primarytext;
+    -fx-border-color: -fx-secondary;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+}
+.button:hover{
+    -fx-border-color: -fx-secondary;
+    -fx-background-color: -fx-secondary;
+    -fx-text-fill: -fx-primary;
+
 }

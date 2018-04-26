@@ -5,6 +5,7 @@
  */
 package onlinep2pmessenger;
 
+import com.jfoenix.controls.JFXButton;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -20,9 +21,13 @@ import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -41,6 +46,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Pair;
 import server.Client;
 import server.Room;
@@ -113,6 +121,8 @@ public class FXMLDocumentController implements Initializable {
     private VBox UserTabVbox;
     @FXML
     private VBox GroupTabVbox;
+    @FXML
+    private JFXButton AddRoomBtn;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -516,6 +526,43 @@ public class FXMLDocumentController implements Initializable {
     {
 //        RecieveMesNotifStackPane("1");
         tabs.getSelectionModel().getSelectedItem().getTabPane().getChildrenUnmodifiable().add(RecieveMesNotifStackPane("1"));
+    }
+    public void AddRoomDialog()
+    {
+        
+        Parent root;
+        try {
+           
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("AddRom.fxml"));
+//        final Pane rootPane = (Pane)loader.load();
+//        Scene scene =  new Scene(rootPane);
+
+
+            root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Adding Room");
+            stage.setScene(new Scene(root));
+            Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+            stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2); 
+            stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 4);
+            stage.setResizable(false);
+            stage.show();
+            AddRomController controller = loader.<AddRomController>getController();
+            stage.setOnHidden((EventHandler<WindowEvent>) new EventHandler<WindowEvent>() {
+            public void handle(WindowEvent we) {
+                String RoomName = controller.onClose();
+                if(!RoomName.equals("")){
+                    System.out.println(RoomName);
+                    //AddNewGroup(new Room(RoomName, admin, RoomName));
+                }             
+            }
+        });
+
+        }
+        catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
     
 }

@@ -13,11 +13,11 @@
         <URL value="@login.css" />
     </stylesheets>
    <children>
-      <JFXTextField labelFloat="true" layoutX="118.0" layoutY="108.0" promptText="Name">
+      <JFXTextField fx:id="NameTxt" labelFloat="true" layoutX="118.0" layoutY="108.0" promptText="Name">
          <font>
             <Font size="13.0" />
          </font></JFXTextField>
-      <Label alignment="CENTER" layoutX="14.0" layoutY="6.0" prefHeight="60.0" prefWidth="381.0" style="-fx-background-color: #2e2f30;" stylesheets="@login.css" text="Regaletna Chat xD" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <Label fx:id="error" alignment="CENTER" layoutX="14.0" layoutY="6.0" prefHeight="60.0" prefWidth="381.0" style="-fx-background-color: #2e2f30;" stylesheets="@login.css" text="Regaletna Chat xD" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <font>
             <Font size="18.0" />
          </font>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXButton?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -96,9 +97,9 @@
                         <Font size="17.0" />
                      </font>
                   </Label>
-                  <ScrollPane layoutY="49.0" pannable="true" prefHeight="234.0" prefWidth="200.0">
+                  <ScrollPane layoutY="49.0" pannable="true" prefHeight="190.0" prefWidth="200.0">
                      <content>
-                        <VBox fx:id="groupVbox" prefHeight="232.0" prefWidth="181.0" style="-fx-background-color: #2e2f30;">
+                        <VBox fx:id="groupVbox" prefHeight="188.0" prefWidth="181.0" style="-fx-background-color: #2e2f30;">
                            <padding>
                               <Insets left="10.0" top="7.0" />
                            </padding>
@@ -106,6 +107,7 @@
                      </content>
                   </ScrollPane>
                   <Line endX="40.0" layoutX="110.0" layoutY="42.0" startX="-100.0" stroke="#a16e6e" />
+                  <JFXButton fx:id="AddRoomBtn" layoutX="39.0" layoutY="247.0" onAction="#AddRoomDialog" prefHeight="27.0" prefWidth="123.0" text="Create New Room" />
                </children>
             </Pane>
          </children>

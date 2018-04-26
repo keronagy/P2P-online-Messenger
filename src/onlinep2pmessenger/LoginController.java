@@ -6,6 +6,7 @@
 package onlinep2pmessenger;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXTextField;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -15,6 +16,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -30,6 +32,10 @@ public class LoginController implements Initializable {
      */
     @FXML
     private JFXButton StartBtn;
+    @FXML
+    private JFXTextField NameTxt;
+    @FXML
+    private Label error; 
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -41,10 +47,18 @@ public class LoginController implements Initializable {
         
         Parent root;
         try {
+            if(NameTxt.getText().equals(""))
+        {
+            error.setText("please enter the name");
+            error.setStyle("-fx-background-color: red;");
+        }
+            else
+            {
+        
             StartBtn.getScene().getWindow().hide();
             root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
             Stage stage = new Stage();
-            stage.setTitle("My New Stage Title");
+            stage.setTitle("Regaletna Messenger");
             stage.setScene(new Scene(root, 450, 450));
             stage.setHeight(635);
             stage.setWidth(920);
@@ -53,6 +67,7 @@ public class LoginController implements Initializable {
             stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 4);
             stage.setResizable(false);
             stage.show();
+        }
 
         }
         catch (IOException e) {
