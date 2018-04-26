@@ -19,6 +19,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -123,7 +124,9 @@ public class FXMLDocumentController implements Initializable {
     private VBox GroupTabVbox;
     @FXML
     private JFXButton AddRoomBtn;
-
+    @FXML
+    private Button receiveTest;
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
@@ -316,37 +319,44 @@ public class FXMLDocumentController implements Initializable {
     public void AddTab(String ID, String UserName) {
 
         Tab t = new Tab(UserName);
-
+        
         tabs.getTabs().add(t);
         t.setId(ID);
         t.setOnCloseRequest((e -> onTabClose(t.getId())));
-        id++;
+        t.setOnSelectionChanged((e -> onTabClick(t.getId())));
         tabs.getSelectionModel().select(t);
         ScrollPane scrollPane = new ScrollPane();
-
         t.setContent(scrollPane);
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
-        final Rectangle rect = new Rectangle(200, 200, 800, 600);
-        rect.setFill(Color.BLACK);
         VBox root = new VBox();
-
-        // root.getChildren().addAll(new Button("button1"), new Button("button2"), new Button("button3"));
         root.setSpacing(10);
         root.setPadding(new Insets(10));
         scrollPane.setContent(root);
         scrollPane.vvalueProperty().bind(root.heightProperty());
         vboxes.add(new Pair(t.getId(), root));
-        for (int i = 0; i < vboxes.size(); i++) {
-            if (vboxes.get(i).getKey() == tabs.getSelectionModel().getSelectedItem().getId()) {
-                //    vboxes.get(i).getValue().getChildren().add(rect);
-            }
-        }
-        for (int i = 0; i < vboxes.size(); i++) {
-            //System.out.println(vboxes.get(i).getKey().toString());
+        if(ID.charAt(0)=='r')
+        {
+            
+            ScrollPane MembersScroll = new ScrollPane();
+            
+            
+            MembersScroll.setMaxHeight(100);
+            MembersScroll.setMinHeight(100);
+            MembersScroll.setFitToWidth(true);
+            HBox MembersCircles  = new HBox();
+            MembersCircles.setMaxHeight(50);
+            MembersCircles.setMinHeight(50);
+            MembersCircles.setStyle("-fx-border-width:5; -fx-border-color: #555; -fx-border-radius: 20px; -fx-background-radius: 20px;");
+            MembersScroll.setContent(MembersCircles);
+            root.getChildren().add(MembersScroll);
+            JFXButton GroupOptions = new JFXButton("Group Options");
+            MembersCircles.getChildren().add(GroupOptions);
+            
+            
         }
 
-        //System.out.println();
+        
     }
 
     public void onTabClose(String id) {
@@ -369,7 +379,21 @@ public class FXMLDocumentController implements Initializable {
             if (vboxes.get(i).getKey() == ID) {
                 found = true;
                 StackPane p1 = new StackPane();
-
+//                vboxes.get(i).getValue().getStyleClass().add("receiveMsg");
+                for (int j = 0; j < tabs.getTabs().size(); j++) {
+                    if(tabs.getTabs().get(j).getId().equals(ID))
+                    {
+                        Tab ta = tabs.getTabs().get(j);
+                        if(tabs.getSelectionModel().getSelectedItem() == ta)
+                            break;
+                        if(!ta.getStyleClass().contains("receiveMsg"))
+                        {
+                            ta.setText(ta.getText()+ "!!!");
+                            ta.getStyleClass().add("receiveMsg");
+                        }
+                        break;
+                    }
+                }
                 p1.setStyle("-fx-background-color: #fff; -fx-background-radius: 30; -fx-border-radius: 30; -fx-border-width:5;");
                 p1.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
                 p1.setMinHeight(Region.USE_PREF_SIZE);
@@ -417,13 +441,14 @@ public class FXMLDocumentController implements Initializable {
 
                     StackPane p = new StackPane();
                     p.setMinHeight(Region.USE_PREF_SIZE);
-                    //p.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+                    p.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
                     p.setStyle("-fx-background-color: #00FFFF; -fx-background-radius: 30; -fx-border-radius: 30; -fx-border-width:5;");
                     
                     Label lbl = new Label(msg);
                     lbl.setPadding(new Insets(10));
                     lbl.setText(msg);
                     lbl.setTextFill(Color.BLACK);
+                    lbl.setWrapText(true);
                   //= tr
                     p.getChildren().add(lbl);
                     vboxes.get(i).getValue().getChildren().add(p);
@@ -503,7 +528,7 @@ public class FXMLDocumentController implements Initializable {
         AddNewUser(c2);
         AddNewUser(c3);
         Shownotif();
-        //test with kyrollos
+        //test with kyrillos
 //        Socket s = new Socket("127.0.0.1",15000);
         
     }
@@ -554,7 +579,7 @@ public class FXMLDocumentController implements Initializable {
                 String RoomName = controller.onClose();
                 if(!RoomName.equals("")){
                     System.out.println(RoomName);
-                    //AddNewGroup(new Room(RoomName, admin, RoomName));
+//                    AddNewGroup(new Room(RoomName, admin, RoomName));
                 }             
             }
         });
@@ -564,5 +589,19 @@ public class FXMLDocumentController implements Initializable {
             System.out.println(e.getMessage());
         }
     }
+    public void onReceive()
+    {
+        receive("kokokoko", "r1", "fefe");
+    }
+
+    private void onTabClick(String id) {
+        if(tabs.getSelectionModel().getSelectedItem().getStyleClass().contains("receiveMsg"))
+        {Tab ta = tabs.getSelectionModel().getSelectedItem();
+            ta.getStyleClass().remove("receiveMsg");
+            ta.setText(ta.getText().replace("!!!", ""));
+        }
+        
+    }
+    
     
 }

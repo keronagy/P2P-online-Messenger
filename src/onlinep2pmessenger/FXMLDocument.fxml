@@ -79,6 +79,7 @@
                            <children>
                               <Button mnemonicParsing="false" onMouseClicked="#TestBtn" text="Add Tab" />
                               <Button fx:id="TestGroup" mnemonicParsing="false" text="TestGrouppane" />
+                              <Button fx:id="receiveTest" mnemonicParsing="false" onAction="#onReceive" text="TestReceive" />
                            </children></VBox>
                      </content>
                   </ScrollPane>

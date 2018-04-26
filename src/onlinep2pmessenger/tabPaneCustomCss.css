@@ -62,7 +62,10 @@ and open the template in the editor.
     -fx-text-fill: #96b946;
 }
 
-
+.receiveMsg .tab-label{
+    -fx-text-fill: red;
+    -fx-font-weight: bold;
+}
 
 
 /*scroll pane*/
@@ -116,6 +119,7 @@ and open the template in the editor.
     -fx-border-color: -fx-secondary;
     -fx-border-radius: 20px;
     -fx-background-radius: 20px;
+    
 }
 .button:hover{
     -fx-border-color: -fx-secondary;
@@ -123,3 +127,4 @@ and open the template in the editor.
     -fx-text-fill: -fx-primary;
 
 }
+
