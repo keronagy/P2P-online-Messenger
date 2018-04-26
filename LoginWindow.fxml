@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="240.0" prefWidth="339.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/9.0.1" fx:controller="GUI.LoginWindowController">
+<AnchorPane id="AnchorPane" prefHeight="240.0" prefWidth="339.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/9.0.1" fx:controller="onlinep2pmessenger.LoginWindowController">
     <stylesheets>
         <URL value="@loginwindow.css" />
     </stylesheets>

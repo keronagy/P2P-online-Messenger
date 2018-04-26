@@ -16,7 +16,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="609.0" prefWidth="919.0" style="-fx-background-color: #484c4a;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.FXMLDocumentController">
+<AnchorPane id="AnchorPane" prefHeight="605.0" prefWidth="920.0" style="-fx-background-color: #484c4a;" stylesheets="@tabPaneCustomCss.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="onlinep2pmessenger.FXMLDocumentController">
     <children>
         <Label fx:id="label" layoutX="126" layoutY="120" minHeight="16" minWidth="69" />
       <Pane layoutX="709.0" layoutY="37.0" prefHeight="571.0" prefWidth="208.0" style="-fx-background-color: #2e2f30;">

@@ -1,0 +1,29 @@
+/*
+ * Empty Stylesheet file.
+ */
+* {
+    -fx-primary :  #2e2f30;
+    -fx-secondary: #ffff8d;
+    -fx-primarytext: #B2B2B2;
+}
+.root{
+    -fx-background-color: -fx-primary;
+}
+
+.button{
+    -fx-text-fill: -fx-primarytext;
+    -fx-border-color: -fx-secondary;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+}
+.button:hover{
+    -fx-border-color: -fx-secondary;
+    -fx-background-color: -fx-secondary;
+    -fx-text-fill: -fx-primary;
+
+}
+.text-field{
+    -fx-text-fill: -fx-primarytext;
+    -fx-font-size: 13pt;
+    -jfx-focus-color: -fx-secondary;
+}
