@@ -16,6 +16,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -55,7 +56,13 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Pair;
 import server.Client;
+import server.PeerClient;
 import server.Room;
+import server.Server;
+import utility.CallbackOnReceiveHandler;
+import utility.GeneralConstants;
+import utility.MessageConstants;
+import utility.ServerConstants;
 
 /**
  *
@@ -141,14 +148,76 @@ public class FXMLDocumentController implements Initializable {
     VBox EmojiesPopupVbox = new VBox();
     @FXML
     private ImageView emojies;
+
+
+    private PeerClient hamed; //client
+    
+    //hashmap for clients
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
+            Server.initiateServer(); // initiating the server
+            hamed = new PeerClient("online", "hamed");
+            hamed.connect(ServerConstants.SERVERIP, ServerConstants.SERVERPORT, new CallbackOnReceiveHandler() {
+                @Override
+                public void handleReceivedData(HashMap<String, String> msg) {
+                    try {
+                        java.lang.reflect.Method handle;
+                        handle = this.getClass().getMethod(msg.get(GeneralConstants.REPLYTYPEATTR), HashMap.class);
+                        handle.invoke(this, msg);
+                    } catch (Exception ex) {
+                        System.out.println("Error");
+                    }
+                }
+
+                public void handleRoomJoined(HashMap<String, String> msg) {
+                    String roomID = msg.get(GeneralConstants.ROOMIDATTR);
+                    //GUI open room
+                }
+
+                public void handleRoomLeft(HashMap<String, String> msg) {
+                    String roomID = msg.get(GeneralConstants.ROOMIDATTR);
+                    //GUI close room
+                }
+
+                public void handleClientAddedtoRoom(HashMap<String, String> msg) {
+                    String clientID = msg.get(GeneralConstants.CLIENTIDATTR);
+                    //GUI add client to room
+                }
+
+                public void handleClientRemovedFromRoom(HashMap<String, String> msg) {
+                    String clientID = msg.get(GeneralConstants.CLIENTIDATTR);
+                    //GUI remove client from room
+                }
+
+                public void handleMessageFromRoom(HashMap<String, String> msg) {
+                    String roomID = msg.get(GeneralConstants.ROOMIDATTR);
+                    String senderID = msg.get(GeneralConstants.CLIENTIDATTR);
+                    String message = msg.get(MessageConstants.MESSAGE);
+                    //GUI add message to chat
+                }
+
+                public void handleNewClient(HashMap<String, String> msg) {
+                    String clientName = msg.get(GeneralConstants.CLIENTNAMEATTR);
+                    String clientID = msg.get(GeneralConstants.CLIENTIDATTR);
+                    String clientStatus = msg.get(GeneralConstants.CLIENTSTATUSATTR);
+                    String clientIp = msg.get(GeneralConstants.CLIENTIPATTR);
+                    //GUI add new client
+                }
+
+                public void handleNewRoom(HashMap<String, String> msg) {
+                    String roomName = msg.get(GeneralConstants.ROOMNAMEATTR);
+                    String roomID = msg.get(GeneralConstants.ROOMIDATTR);
+                    //GUI add room
+                }
+            }
+            );
             final Font f = Font.loadFont(new FileInputStream(new File("OpenSansEmoji.ttf")), 12);
-             if(f == null) {
-            throw new IllegalArgumentException("Can't load font for url ");
-        }
+            if (f == null) {
+                throw new IllegalArgumentException("Can't load font for url ");
+            }
+
             ChatTxt.setFont(f);
 
         } catch (FileNotFoundException ex) {
@@ -156,6 +225,7 @@ public class FXMLDocumentController implements Initializable {
         }
         ArrayList<ImageView> imgsv = new ArrayList<>(Arrays.asList(i1,i2,i3,i4,i5,i6,i7,i8,i9,i10,i11,i12,i13,i14,i15,i16));
         
+
         i1.setOnMouseClicked(e -> appendEmoji(1));
         i2.setOnMouseClicked(e -> appendEmoji(2));
         i3.setOnMouseClicked(e -> appendEmoji(3));
@@ -192,7 +262,7 @@ public class FXMLDocumentController implements Initializable {
         String emojiAsString;
         switch (index) {
             case 1:
-                emojiBytes = new byte[]{(byte) 0xF0, (byte) 0x9F, (byte) 0x98, (byte) 0x82};
+                emojiBytes = new byte[]{(byte) 0xF0, (byte) 0x9F, (byte) 0x98, (byte) 0x82}; // shit
                 emojiAsString = new String(emojiBytes, Charset.forName("UTF-8"));
                 ChatTxt.insertText(ChatTxt.caretPositionProperty().get(), emojiAsString);
                 break;
@@ -322,13 +392,13 @@ public class FXMLDocumentController implements Initializable {
         UserTabVboxes.add(new Pair<>(c1.getId(),user));
     }
 
-    public void AddNewGroup(Room r1) {
+    public void AddNewGroup(String roomName, String roomID) {
         StackPane group = new StackPane();
         group.getStyleClass().add("group-pane");
         group.setPadding(new Insets(5));
         Label lbl = new Label();
         lbl.setPadding(new Insets(5));
-        lbl.setText(r1.getName());
+        lbl.setText(roomName);
         lbl.setTextFill(Color.BLACK);
         group.getChildren().add(lbl);
         group.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -336,21 +406,21 @@ public class FXMLDocumentController implements Initializable {
             public void handle(MouseEvent mouseEvent) {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                     if (mouseEvent.getClickCount() == 2) {
-                        AddTab(r1.getId(), r1.getId());
+                        AddTab(roomID, roomID);
                     }
                 }
             }
         });
         GroupTabVbox.setSpacing(5);
         GroupTabVbox.getChildren().add(group);
-        GroupTabVboxes.add(new Pair<>(r1.getId(),group));
+        GroupTabVboxes.add(new Pair<>(roomID,group));
 
     }
 
     public void AddTab(String ID, String UserName) {
 
         Tab t = new Tab(UserName);
-        
+
         tabs.getTabs().add(t);
         t.setId(ID);
         t.setOnCloseRequest((e -> onTabClose(t.getId())));
@@ -366,16 +436,14 @@ public class FXMLDocumentController implements Initializable {
         scrollPane.setContent(root);
         scrollPane.vvalueProperty().bind(root.heightProperty());
         vboxes.add(new Pair(t.getId(), root));
-        if(ID.charAt(0)=='r')
-        {
-            
+        if (ID.charAt(0) == 'r') {
+
             ScrollPane MembersScroll = new ScrollPane();
-            
-            
+
             MembersScroll.setMaxHeight(100);
             MembersScroll.setMinHeight(100);
             MembersScroll.setFitToWidth(true);
-            HBox MembersCircles  = new HBox();
+            HBox MembersCircles = new HBox();
             MembersCircles.setMaxHeight(50);
             MembersCircles.setMinHeight(50);
             MembersCircles.setStyle("-fx-border-width:5; -fx-border-color: #555; -fx-border-radius: 20px; -fx-background-radius: 20px;");
@@ -385,11 +453,8 @@ public class FXMLDocumentController implements Initializable {
             GroupOptions.setOnMouseClicked(e -> ShowPopupRoom(GroupOptions,ID,e));
             MembersCircles.getChildren().add(GroupOptions);
             membersInRomPane.add(new Pair<>(ID,MembersCircles));
-            
-            
         }
 
-        
     }
     public void RoomOptionPopUp()
     {
@@ -429,14 +494,13 @@ public class FXMLDocumentController implements Initializable {
                 StackPane p1 = new StackPane();
 //                vboxes.get(i).getValue().getStyleClass().add("receiveMsg");
                 for (int j = 0; j < tabs.getTabs().size(); j++) {
-                    if(tabs.getTabs().get(j).getId().equals(ID))
-                    {
+                    if (tabs.getTabs().get(j).getId().equals(ID)) {
                         Tab ta = tabs.getTabs().get(j);
-                        if(tabs.getSelectionModel().getSelectedItem() == ta)
+                        if (tabs.getSelectionModel().getSelectedItem() == ta) {
                             break;
-                        if(!ta.getStyleClass().contains("receiveMsg"))
-                        {
-                            ta.setText(ta.getText()+ "!!!");
+                        }
+                        if (!ta.getStyleClass().contains("receiveMsg")) {
+                            ta.setText(ta.getText() + "!!!");
                             ta.getStyleClass().add("receiveMsg");
                         }
                         break;
@@ -491,13 +555,13 @@ public class FXMLDocumentController implements Initializable {
                     p.setMinHeight(Region.USE_PREF_SIZE);
                     p.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
                     p.setStyle("-fx-background-color: #00FFFF; -fx-background-radius: 30; -fx-border-radius: 30; -fx-border-width:5;");
-                    
+
                     Label lbl = new Label(msg);
                     lbl.setPadding(new Insets(10));
                     lbl.setText(msg);
                     lbl.setTextFill(Color.BLACK);
                     lbl.setWrapText(true);
-                  //= tr
+                    //= tr
                     p.getChildren().add(lbl);
                     vboxes.get(i).getValue().getChildren().add(p);
                     ChatTxt.setText("");
@@ -577,62 +641,62 @@ public class FXMLDocumentController implements Initializable {
         AddNewUser(c3);
         //test with kyrillos
 //        Socket s = new Socket("127.0.0.1",15000);
-        
+
     }
     
     
    
-    public void AddRoomDialog()
-    {
-        
+
+    
+    public void AddRoomDialog() {
+
         Parent root;
         try {
-           
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("AddRom.fxml"));
+
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("AddRom.fxml"));
 //        final Pane rootPane = (Pane)loader.load();
 //        Scene scene =  new Scene(rootPane);
-
 
             root = loader.load();
             Stage stage = new Stage();
             stage.setTitle("Adding Room");
             stage.setScene(new Scene(root));
             Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
-            stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2); 
+            stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
             stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 4);
             stage.setResizable(false);
             stage.show();
             AddRomController controller = loader.<AddRomController>getController();
             stage.setOnHidden((EventHandler<WindowEvent>) new EventHandler<WindowEvent>() {
-            public void handle(WindowEvent we) {
-                String RoomName = controller.onClose();
-                if(!RoomName.equals("")){
-                    System.out.println(RoomName);
+                public void handle(WindowEvent we) {
+                    String RoomName = controller.onClose();
+                    
+                    if (!RoomName.equals("")) {
+                        System.out.println(RoomName);
 //                    AddNewGroup(new Room(RoomName, admin, RoomName));
-                }             
-            }
-        });
+                    }
+                }
+            });
 
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             System.out.println(e.getMessage());
         }
     }
-    public void onReceive()
-    {
+
+    public void onReceive() {
         receive("kokokoko", "r1", "fefe");
         RemoveRoomFromTabsAndPanels("r1");
         
     }
 
     private void onTabClick(String id) {
-        if(tabs.getSelectionModel().getSelectedItem().getStyleClass().contains("receiveMsg"))
-        {Tab ta = tabs.getSelectionModel().getSelectedItem();
+        if (tabs.getSelectionModel().getSelectedItem().getStyleClass().contains("receiveMsg")) {
+            Tab ta = tabs.getSelectionModel().getSelectedItem();
             ta.getStyleClass().remove("receiveMsg");
             ta.setText(ta.getText().replace("!!!", ""));
         }
-        
+
     }
     
     public void RemoveUserFromTabsAndPanels(String ID)

@@ -52,8 +52,10 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
     @Override
     public void run(){
         try {
+            clients = new HashMap();
+            rooms = new HashMap();
             ServerSocket ss = new ServerSocket(ServerConstants.SERVERPORT);
-            while(true){
+            while(true){               
                 handleClientRequest(ss.accept());
             }
         } catch (IOException ex) {
@@ -75,8 +77,7 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
         }
     }
     
-    private Client createClient(Socket s, String clientName){
-        String id = IDGenerator.generateClientID();
+    private Client createClient(String id, Socket s, String clientName){
         String initialStatus = ClientConstants.INITSTATUS;
         String name = clientName;
         return new Client(id, s.getInetAddress().toString(), initialStatus, name, CommunicationLink.generateCommunicationLink(this, s));
@@ -85,25 +86,28 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
     private void handleClientRequest(Socket clientSocket){
 
         try {
-            ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream());
             ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream());
-            //1) read message
+            ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream());
             HashMap<String, String> connectionRequest = (HashMap<String, String>)ois.readObject();
+            
             //2) check client Request type (control connection or room creation/joining connection)
             String connectionType = connectionRequest.get(GeneralConstants.REQUESTTYPEATTR);
             if(connectionType.equals(ClientConstants.MAINCONNECTION)){
                 //create new client on server
-                Client newClient = createClient(clientSocket, connectionRequest.get(GeneralConstants.CLIENTNAMEATTR));
-                oos.writeUTF(newClient.getId());
+                String id = IDGenerator.generateClientID();
+                oos.writeUTF(id);
+                oos.flush();
+                Client newClient = createClient(id, clientSocket, connectionRequest.get(GeneralConstants.CLIENTNAMEATTR));
                 //send the new client current server state
                 sendClients(newClient.getCommunicationLink());
                 sendRooms(newClient.getCommunicationLink());
                 //add client to server state
-                clients.put(newClient.getId(), newClient);
+                
                 //update other clients of the new added client
                 sendNewClientToOtherClients(newClient);
-                
+                clients.put(newClient.getId(), newClient);
             }
+            
         } catch (Exception ex) {
             System.out.println("server.Server.handleClientRequest()");
         } 
