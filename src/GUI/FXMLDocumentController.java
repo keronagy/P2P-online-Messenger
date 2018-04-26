@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -37,6 +38,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Pair;
@@ -87,6 +89,7 @@ public class FXMLDocumentController implements Initializable {
     private ImageView i15;
     @FXML
     private ImageView i16;
+//    ImageView[] imojies = new ImageView[] {i1,i2,i3,i4,i5,i6,i7,i8,i9,i10,i11,i12,i13,i14,i15,i16};
     @FXML
     private Pane emojiPane;
     private boolean emojispanevis = false;
@@ -123,7 +126,7 @@ public class FXMLDocumentController implements Initializable {
         } catch (FileNotFoundException ex) {
             Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+       
         i1.setOnMouseClicked(e -> appendEmoji(1));
         i2.setOnMouseClicked(e -> appendEmoji(2));
         i3.setOnMouseClicked(e -> appendEmoji(3));
@@ -248,12 +251,13 @@ public class FXMLDocumentController implements Initializable {
     public void AddNewUser(Client c1) {
         StackPane user = new StackPane();
         user.getStyleClass().add("group-pane");
+        user.setPadding(new Insets(5));
         VBox lblsvbox = new VBox();
         Label lbl = new Label();
         lbl.setPadding(new Insets(5));
         lbl.setText(c1.getName());
         lbl.setTextFill(Color.CYAN);
-
+        lbl.setPadding(new Insets(5));
         Label lbl2 = new Label();
         lbl2.setPadding(new Insets(5));
         lbl2.setText(c1.getStatus());
@@ -279,6 +283,7 @@ public class FXMLDocumentController implements Initializable {
     public void AddNewGroup(Room r1) {
         StackPane group = new StackPane();
         group.getStyleClass().add("group-pane");
+        group.setPadding(new Insets(5));
         Label lbl = new Label();
         lbl.setPadding(new Insets(5));
         lbl.setText(r1.getName());
@@ -402,12 +407,14 @@ public class FXMLDocumentController implements Initializable {
 
                     StackPane p = new StackPane();
                     p.setMinHeight(Region.USE_PREF_SIZE);
-                    p.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+                    //p.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
                     p.setStyle("-fx-background-color: #00FFFF; -fx-background-radius: 30; -fx-border-radius: 30; -fx-border-width:5;");
+                    
                     Label lbl = new Label(msg);
                     lbl.setPadding(new Insets(10));
                     lbl.setText(msg);
                     lbl.setTextFill(Color.BLACK);
+                  //= tr
                     p.getChildren().add(lbl);
                     vboxes.get(i).getValue().getChildren().add(p);
                     ChatTxt.setText("");
@@ -422,6 +429,7 @@ public class FXMLDocumentController implements Initializable {
     public void createUserPane(String UserID, String Status, String UserName) {
         StackPane user = new StackPane();
         user.getStyleClass().add("group-pane");
+        user.setPadding(new Insets(5));
         VBox lblsvbox = new VBox();
         Label lbl = new Label();
         lbl.setPadding(new Insets(5));
@@ -454,6 +462,7 @@ public class FXMLDocumentController implements Initializable {
     public void createGroupPane(String groupID, String GroupName) {
         StackPane group = new StackPane();
         group.getStyleClass().add("group-pane");
+        group.setPadding(new Insets(5));
         Label lbl = new Label();
         lbl.setPadding(new Insets(5));
         lbl.setText(GroupName);
@@ -483,8 +492,30 @@ public class FXMLDocumentController implements Initializable {
         AddNewUser(c1);
         AddNewUser(c2);
         AddNewUser(c3);
+        Shownotif();
         //test with kyrollos
-        Socket s = new Socket("127.0.0.1",15000);
+//        Socket s = new Socket("127.0.0.1",15000);
         
     }
+    
+    
+    public StackPane RecieveMesNotifStackPane(String num)
+    {
+    StackPane p = new StackPane();
+    Label lab = new Label(num);
+    lab.setStyle("-fx-text-fill:white");
+    Circle cercle = new Circle(10, Color.rgb(200, 0, 0, .9));
+    cercle.setStrokeWidth(2.0);
+    cercle.setStyle("-fx-background-insets: 0 0 -1 0, 0, 1, 2;");
+    cercle.setSmooth(true);
+    p.getChildren().addAll(cercle, lab);
+    return p;
+    }
+    
+    public void Shownotif()
+    {
+//        RecieveMesNotifStackPane("1");
+        tabs.getSelectionModel().getSelectedItem().getTabPane().getChildrenUnmodifiable().add(RecieveMesNotifStackPane("1"));
+    }
+    
 }

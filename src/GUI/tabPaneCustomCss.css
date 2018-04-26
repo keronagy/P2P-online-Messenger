@@ -101,4 +101,7 @@ and open the template in the editor.
 
 .group-pane {
     -fx-background-color: #555;
+    -fx-background-radius: 30; 
+    -fx-border-radius: 30; 
+    -fx-border-width:5;
 }

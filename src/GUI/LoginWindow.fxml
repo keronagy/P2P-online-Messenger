@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXTextField?>
+<?import java.net.URL?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="240.0" prefWidth="339.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/9.0.1" fx:controller="GUI.LoginWindowController">
+    <stylesheets>
+        <URL value="@loginwindow.css" />
+    </stylesheets>
+   <children>
+      <Label alignment="CENTER" layoutY="6.0" prefHeight="53.0" prefWidth="339.0" style="-fx-background-color: #2e2f30; -fx-text-fill: #fff;" text="Regaletna Chat xD" AnchorPane.bottomAnchor="187.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <JFXTextField layoutX="88.0" layoutY="95.0" />
+   </children>
+</AnchorPane>

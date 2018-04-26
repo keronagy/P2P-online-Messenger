@@ -16,6 +16,7 @@
             <name>OnlineP2PMessenger</name>
             <source-roots>
                 <root id="src.dir"/>
+                <root id="src.GUI.dir"/>
             </source-roots>
             <test-roots>
                 <root id="test.src.dir"/>
