@@ -6,6 +6,7 @@
 package onlinep2pmessenger;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXPopup;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -14,6 +15,7 @@ import java.net.Socket;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,6 +40,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -60,6 +63,8 @@ import server.Room;
  */
 public class FXMLDocumentController implements Initializable {
 
+    @FXML
+    AnchorPane Toproot;
     @FXML
     private Label label;
     @FXML
@@ -117,15 +122,25 @@ public class FXMLDocumentController implements Initializable {
     private ScrollPane chatScroll;
     @FXML
     private VBox UsersVbox;
-    ArrayList<Pair<String, VBox>> usersVboxes = new ArrayList<>();
+    ArrayList<Pair<String, StackPane>> usersVboxes = new ArrayList<>();
     @FXML
     private VBox UserTabVbox;
+    ArrayList<Pair<String, StackPane>> UserTabVboxes = new ArrayList<>();
     @FXML
     private VBox GroupTabVbox;
+    ArrayList<Pair<String, StackPane>> GroupTabVboxes = new ArrayList<>();
     @FXML
     private JFXButton AddRoomBtn;
     @FXML
     private Button receiveTest;
+    ArrayList<Pair<String, HBox>> membersInRomPane = new ArrayList<>();
+    private JFXPopup RoomPopUp = new JFXPopup();
+    private JFXPopup LeftUsersPopUp = new JFXPopup();
+    private JFXPopup LeftRoomsPopUp = new JFXPopup();
+    private JFXPopup EmojiesPopUp = new JFXPopup();
+    VBox EmojiesPopupVbox = new VBox();
+    @FXML
+    private ImageView emojies;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -139,7 +154,8 @@ public class FXMLDocumentController implements Initializable {
         } catch (FileNotFoundException ex) {
             Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
         }
-       
+        ArrayList<ImageView> imgsv = new ArrayList<>(Arrays.asList(i1,i2,i3,i4,i5,i6,i7,i8,i9,i10,i11,i12,i13,i14,i15,i16));
+        
         i1.setOnMouseClicked(e -> appendEmoji(1));
         i2.setOnMouseClicked(e -> appendEmoji(2));
         i3.setOnMouseClicked(e -> appendEmoji(3));
@@ -157,7 +173,18 @@ public class FXMLDocumentController implements Initializable {
         i15.setOnMouseClicked(e -> appendEmoji(15));
         i16.setOnMouseClicked(e -> appendEmoji(16));
         TestGroup.setOnMouseClicked(e -> createUserPane("u1", "staus", "kero"));
-
+        EmojiesPopupVbox.setStyle("-fx-background-color:  #2e2f30;");
+        for (int i = 0; i < 16; i+=4) {
+            HBox kk = new HBox(imgsv.get(i),imgsv.get(i+1),imgsv.get(i+2),imgsv.get(i+3));
+            kk.setSpacing(5);
+            kk.setPadding(new Insets(5));
+            EmojiesPopupVbox.getChildren().add(kk);
+            
+        }
+        
+        EmojiesPopUp.setPopupContent(EmojiesPopupVbox);
+        emojies.setOnMouseClicked(e -> showEmojis(e));
+        RoomOptionPopUp();
     }
 
     public void appendEmoji(int index) {
@@ -250,14 +277,15 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
-    public void showEmojis() {
-        if (emojispanevis == false) {
-            emojiPane.setVisible(true);
-            emojispanevis = true;
-        } else {
-            emojiPane.setVisible(false);
-            emojispanevis = false;
-        }
+    public void showEmojis(MouseEvent e) {
+//        if (emojispanevis == false) {
+//            emojiPane.setVisible(true);
+//            emojispanevis = true;
+//        } else {
+//            emojiPane.setVisible(false);
+//            emojispanevis = false;
+//        }
+        EmojiesPopUp.show(Toproot,JFXPopup.PopupVPosition.BOTTOM,JFXPopup.PopupHPosition.LEFT,e.getX()+200,e.getY()-50);
 
     }
 
@@ -291,6 +319,7 @@ public class FXMLDocumentController implements Initializable {
         });
         UserTabVbox.setSpacing(5);
         UserTabVbox.getChildren().add(user);
+        UserTabVboxes.add(new Pair<>(c1.getId(),user));
     }
 
     public void AddNewGroup(Room r1) {
@@ -314,6 +343,8 @@ public class FXMLDocumentController implements Initializable {
         });
         GroupTabVbox.setSpacing(5);
         GroupTabVbox.getChildren().add(group);
+        GroupTabVboxes.add(new Pair<>(r1.getId(),group));
+
     }
 
     public void AddTab(String ID, String UserName) {
@@ -351,14 +382,31 @@ public class FXMLDocumentController implements Initializable {
             MembersScroll.setContent(MembersCircles);
             root.getChildren().add(MembersScroll);
             JFXButton GroupOptions = new JFXButton("Group Options");
+            GroupOptions.setOnMouseClicked(e -> ShowPopupRoom(GroupOptions,ID,e));
             MembersCircles.getChildren().add(GroupOptions);
+            membersInRomPane.add(new Pair<>(ID,MembersCircles));
             
             
         }
 
         
     }
+    public void RoomOptionPopUp()
+    {
+        JFXButton AddMember = new JFXButton("Add Member");
+        JFXButton RemoveMember = new JFXButton("Remove Member");
+        JFXButton MakeAdmin = new JFXButton("Make Admin");
+        JFXButton LeaveRoom = new JFXButton("Leave Room");
+        VBox BtnsPop = new VBox(AddMember,RemoveMember,MakeAdmin,LeaveRoom);
+        RoomPopUp.setPopupContent(BtnsPop);
+        
+        
 
+    }
+    public void ShowPopupRoom(JFXButton GroupOptions, String ID, MouseEvent e){
+        if(e.getButton()== MouseButton.SECONDARY)
+            RoomPopUp.show(emojies,JFXPopup.PopupVPosition.TOP,JFXPopup.PopupHPosition.LEFT);
+    }
     public void onTabClose(String id) {
         for (int i = 0; i < vboxes.size(); i++) {
             if (vboxes.get(i).getKey() == id) {
@@ -488,7 +536,7 @@ public class FXMLDocumentController implements Initializable {
                 }
             }
         });
-        usersVboxes.add(new Pair<>(UserID, lblsvbox));
+        usersVboxes.add(new Pair<>(UserID, user));
         UsersVbox.setSpacing(5);
         UsersVbox.getChildren().add(user);
 
@@ -527,31 +575,13 @@ public class FXMLDocumentController implements Initializable {
         AddNewUser(c1);
         AddNewUser(c2);
         AddNewUser(c3);
-        Shownotif();
         //test with kyrillos
 //        Socket s = new Socket("127.0.0.1",15000);
         
     }
     
     
-    public StackPane RecieveMesNotifStackPane(String num)
-    {
-    StackPane p = new StackPane();
-    Label lab = new Label(num);
-    lab.setStyle("-fx-text-fill:white");
-    Circle cercle = new Circle(10, Color.rgb(200, 0, 0, .9));
-    cercle.setStrokeWidth(2.0);
-    cercle.setStyle("-fx-background-insets: 0 0 -1 0, 0, 1, 2;");
-    cercle.setSmooth(true);
-    p.getChildren().addAll(cercle, lab);
-    return p;
-    }
-    
-    public void Shownotif()
-    {
-//        RecieveMesNotifStackPane("1");
-        tabs.getSelectionModel().getSelectedItem().getTabPane().getChildrenUnmodifiable().add(RecieveMesNotifStackPane("1"));
-    }
+   
     public void AddRoomDialog()
     {
         
@@ -592,6 +622,8 @@ public class FXMLDocumentController implements Initializable {
     public void onReceive()
     {
         receive("kokokoko", "r1", "fefe");
+        RemoveRoomFromTabsAndPanels("r1");
+        
     }
 
     private void onTabClick(String id) {
@@ -601,6 +633,69 @@ public class FXMLDocumentController implements Initializable {
             ta.setText(ta.getText().replace("!!!", ""));
         }
         
+    }
+    
+    public void RemoveUserFromTabsAndPanels(String ID)
+    {
+        for (int i = 0; i < usersVboxes.size(); i++) {
+            if(ID.equals(usersVboxes.get(i).getKey()))
+            {                
+                UsersVbox.getChildren().remove(groupVboxes.get(i).getValue());
+
+                
+                for (int j = 0; j < tabs.getTabs().size(); j++) {
+                    if(tabs.getTabs().get(j).getId().equals(ID))
+                    { tabs.getTabs().remove(i);
+                    break;}
+                }
+                for (int j = 0; j < UserTabVboxes.size(); j++) {
+                    if(ID.equals(UserTabVboxes.get(j).getKey()))
+                    {UserTabVboxes.remove(j);
+                        break;
+                    }
+                }
+                for (int j = 0; j < vboxes.size(); j++) {
+                    if(ID.equals(vboxes.get(j).getKey()))
+                    {vboxes.remove(j);
+                        break;
+                    }
+                }
+                usersVboxes.remove(i);
+                
+                break;
+            }
+        }
+    }
+    public void RemoveRoomFromTabsAndPanels(String ID)
+    {
+        for (int i = 0; i < groupVboxes.size(); i++) {
+            if(ID.equals(groupVboxes.get(i).getKey()))
+            {
+                groupVbox.getChildren().remove(groupVboxes.get(i).getValue());
+                for (int j = 0; j < tabs.getTabs().size(); j++) {
+                    if(tabs.getTabs().get(j).getId().equals(ID))
+                    {   
+                        tabs.getTabs().remove(j);
+                    break;}
+                }
+                for (int j = 0; j < GroupTabVboxes.size(); j++) {
+                    if(ID.equals(GroupTabVboxes.get(j).getKey()))
+                    {   
+                            GroupTabVboxes.remove(j);
+                            break;
+                    }
+                }
+                for (int j = 0; j < vboxes.size(); j++) {
+                    if(ID.equals(vboxes.get(j).getKey()))
+                    {vboxes.remove(j);
+                        break;
+                    }
+                }
+                
+                groupVboxes.remove(i);
+                break;
+            }
+        }
     }
     
     

@@ -59,7 +59,7 @@ public class LoginController implements Initializable {
             root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
             Stage stage = new Stage();
             stage.setTitle("Regaletna Messenger");
-            stage.setScene(new Scene(root, 450, 450));
+            stage.setScene(new Scene(root));
             stage.setHeight(635);
             stage.setWidth(920);
             Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
