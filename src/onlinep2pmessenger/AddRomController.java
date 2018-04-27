@@ -36,7 +36,8 @@ public class AddRomController implements Initializable {
         return RoomName.getText();
     }
     public void close(){
-        if(RoomName.getText().equals(""))
+        String txt = RoomName.getText();
+        if(txt.equals("") || txt.replace(" ", "").length()==0)
         {
             error.setText("please enter the name");
             error.setStyle("-fx-background-color: red;");

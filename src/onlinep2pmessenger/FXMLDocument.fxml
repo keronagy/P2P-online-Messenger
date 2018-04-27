@@ -55,7 +55,10 @@
                            <children>
                               <ScrollPane prefHeight="480.0" prefWidth="200.0">
                                  <content>
-                                    <VBox fx:id="GroupTabVbox" prefHeight="478.0" prefWidth="196.0" style="-fx-background-color: #2e2f30;" />
+                                    <VBox fx:id="GroupTabVbox" prefHeight="478.0" prefWidth="196.0" style="-fx-background-color: #2e2f30;">
+                                       <children>
+                                          <Button mnemonicParsing="false" text="Button" />
+                                       </children></VBox>
                                  </content>
                               </ScrollPane>
                            </children></AnchorPane>
@@ -108,7 +111,7 @@
                      </content>
                   </ScrollPane>
                   <Line endX="40.0" layoutX="110.0" layoutY="42.0" startX="-100.0" stroke="#a16e6e" />
-                  <JFXButton fx:id="AddRoomBtn" layoutX="39.0" layoutY="247.0" onAction="#AddRoomDialog" prefHeight="27.0" prefWidth="123.0" text="Create New Room" />
+                  <JFXButton fx:id="AddRoomBtn" layoutX="39.0" layoutY="247.0" prefHeight="27.0" prefWidth="123.0" text="Create New Room" />
                </children>
             </Pane>
          </children>
