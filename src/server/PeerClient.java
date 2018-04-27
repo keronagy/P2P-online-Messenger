@@ -8,10 +8,12 @@ package server;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 import network.CommunicationLink;
 import utility.*;
+import onlinep2pmessenger.FXMLDocumentController;
 
 /**
  *
@@ -20,6 +22,8 @@ import utility.*;
 public class PeerClient extends Client {
 
     protected HashMap<String, CommunicationLink> cls;
+
+    private ServerSocket peerSocket;
 
     public PeerClient(String status, String name) {
         super("", status, name);
@@ -39,32 +43,34 @@ public class PeerClient extends Client {
             oos.flush();
             this.id = ois.readUTF();
             this.server_cl = CommunicationLink.generateCommunicationLink(handler, s);
+            peerSocket = new ServerSocket(ServerConstants.SERVERPORT + 1);
         } catch (Exception ex) {
             System.out.println("Connection failed");
         }
     }
 
-    public void receivePeerConnection(Socket s) {
+    public String waitForConnection(CallbackOnReceiveHandler handler) {
         try {
+            Socket s = peerSocket.accept();
             ObjectInputStream ois = new ObjectInputStream(s.getInputStream());
-            //CommunicationLink cl = CommunicationLink.generateCommunicationLink(this, s);
             String peerID = ois.readUTF();
-            //this.cls.put(peerID, cl);
+            CommunicationLink cl = CommunicationLink.generateCommunicationLink(handler, s);
+            this.cls.put(peerID, cl);
+            return peerID;
         } catch (Exception e) {
+            return "";
         }
-
     }
 
-    public void connectToPeer(String peerID, String ip, int port) {
-        CommunicationLink cl = null;
 
+    public void connectToPeer(String peerID, String ip, int port, CallbackOnReceiveHandler handler) {
         try {
             Socket s = new Socket(ip, port);
             ObjectOutputStream oos = new ObjectOutputStream(s.getOutputStream());
-            //cl = CommunicationLink.generateCommunicationLink(this, s);
-            oos.writeObject(this.id);
-
-            // this.cls.put(peerID, cl);
+            oos.writeUTF(this.id);
+            oos.flush();
+            CommunicationLink cl = CommunicationLink.generateCommunicationLink(handler, s);
+            this.cls.put(peerID, cl);
         } catch (IOException ex) {
         }
     }
@@ -105,8 +111,7 @@ public class PeerClient extends Client {
     public void sendMessageToPeer(String peerID, String msg) {
         CommunicationLink cl = this.cls.get(peerID);
         HashMap<String, String> message = new HashMap();
-        message.put(GeneralConstants.CLIENTIDATTR, this.id);
-        message.put(MessageConstants.MESSAGE, msg);
+        message.put(ClientConstants.PEERMESSAGE, msg);
         cl.send(message);
     }
 
