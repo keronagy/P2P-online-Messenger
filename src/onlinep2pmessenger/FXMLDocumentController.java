@@ -226,6 +226,7 @@ public class FXMLDocumentController implements Initializable {
                     String roomID = msg.get(GeneralConstants.ROOMIDATTR);
                     //GUI add room
                     Platform.runLater(()->AddNewGroup(roomName, roomID));
+                    AddTab(roomID, roomName);
                     
                 }
             }
@@ -423,7 +424,7 @@ public class FXMLDocumentController implements Initializable {
         GroupTabVbox.setSpacing(5);
         GroupTabVbox.getChildren().add(group);
         GroupTabVboxes.add(new Pair<>(roomID,group));
-        AddTab(roomID, roomName);
+        //AddTab(roomID, roomName);
     }
 
     public void AddTab(String ID, String UserName) {
