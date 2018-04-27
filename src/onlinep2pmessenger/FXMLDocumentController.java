@@ -160,87 +160,11 @@ public class FXMLDocumentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-            Server.initiateServer(); // initiating the server
+            //Server.initiateServer(); // initiating the server
             hamed = new PeerClient("online", "hamed");
-            hamed.connect(ServerConstants.SERVERIP, ServerConstants.SERVERPORT, new CallbackOnReceiveHandler() {
-                @Override
-                public void handleReceivedData(HashMap<String, String> msg) {
-                    try {
-                        java.lang.reflect.Method handle;
-                        handle = this.getClass().getMethod(msg.get(GeneralConstants.REPLYTYPEATTR), HashMap.class);
-                        handle.invoke(this, msg);
-                    } catch (Exception ex) {
-                        System.out.println(ex.getLocalizedMessage());
+            hamed.connect(ServerConstants.SERVERIP, ServerConstants.SERVERPORT, new ServerHandler());
 
-                        for (StackTraceElement ste : ex.getStackTrace()) {
-                            System.out.println(ste);
-                        }
-
-                    }
-                }
-
-                public void handleRoomJoined(HashMap<String, String> msg) {
-                    String roomID = msg.get(GeneralConstants.ROOMIDATTR);
-                    //GUI open room
-                    //AddNewGroup(roomID, roomID);
-                    //AddTab(roomID, roomID);
-                    //createGroupPane(roomID, roomName);
-                }
-
-                public void handleRoomLeft(HashMap<String, String> msg) {
-                    String roomID = msg.get(GeneralConstants.ROOMIDATTR);
-                    //GUI close room
-                    RemoveRoomFromTabsAndLeftPanels(roomID);
-                }
-
-                public void handleClientAddedtoRoom(HashMap<String, String> msg) {
-                    String clientID = msg.get(GeneralConstants.CLIENTIDATTR);
-                    //GUI add client to room
-                }
-
-                public void handleClientRemovedFromRoom(HashMap<String, String> msg) {
-                    String clientID = msg.get(GeneralConstants.CLIENTIDATTR);
-                    //GUI remove client from room
-                }
-
-                public void handleMessageFromRoom(HashMap<String, String> msg) {
-                    String roomID = msg.get(GeneralConstants.ROOMIDATTR);
-                    String senderID = msg.get(GeneralConstants.CLIENTIDATTR);
-                    String message = msg.get(MessageConstants.MESSAGE);
-                    //GUI add message to chat
-                    Platform.runLater(() -> receiveRoom(message, roomID, senderID, "kero", "ddd"));
-                }
-
-                public void handleNewClient(HashMap<String, String> msg) {
-                    String clientName = msg.get(GeneralConstants.CLIENTNAMEATTR);
-                    String clientID = msg.get(GeneralConstants.CLIENTIDATTR);
-                    String clientStatus = msg.get(GeneralConstants.CLIENTSTATUSATTR);
-                    String clientIp = msg.get(GeneralConstants.CLIENTIPATTR);
-                    //GUI add new client
-                    Platform.runLater(() -> AddNewUser(clientID, clientName, clientStatus));
-                }
-
-                public void handleNewRoom(HashMap<String, String> msg) {
-                    String roomName = msg.get(GeneralConstants.ROOMNAMEATTR);
-                    String roomID = msg.get(GeneralConstants.ROOMIDATTR);
-                    //GUI add room
-                    Platform.runLater(() -> AddNewGroup(roomName, roomID));
-                    AddTab(roomID, roomName);
-
-                }
-            }
-            );
-
-            Thread t = new Thread(new Runnable() {
-                public void run() {
-                    while (true) {
-                        PeerHandler handler = new PeerHandler();
-                        handler.setPeerID(hamed.waitForConnection((CallbackOnReceiveHandler)handler));
-                    }
-                }
-            }
-            );
-            t.start();
+            waitForConnections();
 
             final Font f = Font.loadFont(new FileInputStream(new File("OpenSansEmoji.ttf")), 12);
             if (f
@@ -277,8 +201,21 @@ public class FXMLDocumentController implements Initializable {
     }
 
     public void createPrivateChat(String clientID) {
-        hamed.connectToPeer(clientID, ServerConstants.SERVERIP, ServerConstants.SERVERPORT, new PeerHandler(clientID)
+        hamed.connectToPeer(clientID, ServerConstants.SERVERIP, ServerConstants.SERVERPORT + 1, new PeerHandler(clientID)
         );
+    }
+
+    private void waitForConnections() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    PeerHandler handler = new PeerHandler();
+                    handler.setPeerID(hamed.waitForConnection(handler));
+                }
+            }
+        }
+        ).start();
     }
 
     public void appendEmoji(int index) {
@@ -849,9 +786,78 @@ public class FXMLDocumentController implements Initializable {
 
         public void handleReceivedData(HashMap<String, String> msg) {
             String message = msg.get(ClientConstants.PEERMESSAGE);
-            //gui, show the message in the desired location using "clientID"
+            //gui, show the message in the desired location using "peerID"
+            System.out.println(peerID + " " + message);
         }
 
+    }
+
+    class ServerHandler implements CallbackOnReceiveHandler {
+
+        public void handleReceivedData(HashMap<String, String> msg) {
+            try {
+                java.lang.reflect.Method handle;
+                handle = this.getClass().getMethod(msg.get(GeneralConstants.REPLYTYPEATTR), HashMap.class);
+                handle.invoke(this, msg);
+            } catch (Exception ex) {
+                System.out.println(ex.getLocalizedMessage());
+
+                for (StackTraceElement ste : ex.getStackTrace()) {
+                    System.out.println(ste);
+                }
+
+            }
+        }
+
+        public void handleRoomJoined(HashMap<String, String> msg) {
+            String roomID = msg.get(GeneralConstants.ROOMIDATTR);
+            //GUI open room
+            //AddNewGroup(roomID, roomID);
+            //AddTab(roomID, roomID);
+            //createGroupPane(roomID, roomName);
+        }
+
+        public void handleRoomLeft(HashMap<String, String> msg) {
+            String roomID = msg.get(GeneralConstants.ROOMIDATTR);
+            //GUI close room
+            RemoveRoomFromTabsAndLeftPanels(roomID);
+        }
+
+        public void handleClientAddedtoRoom(HashMap<String, String> msg) {
+            String clientID = msg.get(GeneralConstants.CLIENTIDATTR);
+            //GUI add client to room
+        }
+
+        public void handleClientRemovedFromRoom(HashMap<String, String> msg) {
+            String clientID = msg.get(GeneralConstants.CLIENTIDATTR);
+            //GUI remove client from room
+        }
+
+        public void handleMessageFromRoom(HashMap<String, String> msg) {
+            String roomID = msg.get(GeneralConstants.ROOMIDATTR);
+            String senderID = msg.get(GeneralConstants.CLIENTIDATTR);
+            String message = msg.get(MessageConstants.MESSAGE);
+            //GUI add message to chat
+            Platform.runLater(() -> receiveRoom(message, roomID, senderID, "kero", "ddd"));
+        }
+
+        public void handleNewClient(HashMap<String, String> msg) {
+            String clientName = msg.get(GeneralConstants.CLIENTNAMEATTR);
+            String clientID = msg.get(GeneralConstants.CLIENTIDATTR);
+            String clientStatus = msg.get(GeneralConstants.CLIENTSTATUSATTR);
+            String clientIp = msg.get(GeneralConstants.CLIENTIPATTR);
+            //GUI add new client
+            Platform.runLater(() -> AddNewUser(clientID, clientName, clientStatus));
+        }
+
+        public void handleNewRoom(HashMap<String, String> msg) {
+            String roomName = msg.get(GeneralConstants.ROOMNAMEATTR);
+            String roomID = msg.get(GeneralConstants.ROOMIDATTR);
+            //GUI add room
+            Platform.runLater(() -> AddNewGroup(roomName, roomID));
+            AddTab(roomID, roomName);
+
+        }
     }
 
 }
