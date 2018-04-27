@@ -164,7 +164,7 @@ public class FXMLDocumentController implements Initializable {
             hamed = new PeerClient("online", "hamed");
             hamed.connect(ServerConstants.SERVERIP, ServerConstants.SERVERPORT, new ServerHandler());
 
-            waitForConnections();
+            handleNewConnections();
 
             final Font f = Font.loadFont(new FileInputStream(new File("OpenSansEmoji.ttf")), 12);
             if (f
@@ -205,12 +205,12 @@ public class FXMLDocumentController implements Initializable {
         );
     }
 
-    private void waitForConnections() {
+    private void handleNewConnections() {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 while (true) {
-                    PeerHandler handler = new PeerHandler();
+                    PeerHandler handler = new PeerHandler();    
                     handler.setPeerID(hamed.waitForConnection(handler));
                 }
             }
@@ -769,9 +769,9 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
-    class PeerHandler implements CallbackOnReceiveHandler {
+    private class PeerHandler implements CallbackOnReceiveHandler {
 
-        String peerID;
+        private String peerID;
 
         public PeerHandler() {
         }
@@ -792,7 +792,7 @@ public class FXMLDocumentController implements Initializable {
 
     }
 
-    class ServerHandler implements CallbackOnReceiveHandler {
+    private class ServerHandler implements CallbackOnReceiveHandler {
 
         public void handleReceivedData(HashMap<String, String> msg) {
             try {
