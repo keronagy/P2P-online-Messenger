@@ -147,15 +147,12 @@ public class FXMLDocumentController implements Initializable {
     private JFXPopup LeftUsersPopUp = new JFXPopup();
     private JFXPopup LeftRoomsPopUp = new JFXPopup();
     private JFXPopup EmojiesPopUp = new JFXPopup();
-
-    private String createdRoomName = "";
     VBox EmojiesPopupVbox = new VBox();
     @FXML
     private ImageView emojies;
 
     private PeerClient hamed; //client
-    private PeerClient kero; //client
-    //hashmap for clients
+    private HashMap<String,ClientTuple> clients = new HashMap();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -786,6 +783,7 @@ public class FXMLDocumentController implements Initializable {
 
         public void handleReceivedData(HashMap<String, String> msg) {
             String message = msg.get(ClientConstants.PEERMESSAGE);
+            String clientName = clients.get(peerID).getName();
             //gui, show the message in the desired location using "peerID"
             System.out.println(peerID + " " + message);
         }
@@ -825,6 +823,7 @@ public class FXMLDocumentController implements Initializable {
 
         public void handleClientAddedtoRoom(HashMap<String, String> msg) {
             String clientID = msg.get(GeneralConstants.CLIENTIDATTR);
+            String clientName = clients.get(clientID).getName();
             //GUI add client to room
         }
 
@@ -838,7 +837,7 @@ public class FXMLDocumentController implements Initializable {
             String senderID = msg.get(GeneralConstants.CLIENTIDATTR);
             String message = msg.get(MessageConstants.MESSAGE);
             //GUI add message to chat
-            Platform.runLater(() -> receiveRoom(message, roomID, senderID, "kero", "ddd"));
+            Platform.runLater(() -> receiveRoom(message, roomID, senderID, clients.get(senderID).getName(), "ddd"));
         }
 
         public void handleNewClient(HashMap<String, String> msg) {
@@ -846,6 +845,7 @@ public class FXMLDocumentController implements Initializable {
             String clientID = msg.get(GeneralConstants.CLIENTIDATTR);
             String clientStatus = msg.get(GeneralConstants.CLIENTSTATUSATTR);
             String clientIp = msg.get(GeneralConstants.CLIENTIPATTR);
+            clients.put(clientID, new ClientTuple(clientIp,clientName,clientStatus));
             //GUI add new client
             Platform.runLater(() -> AddNewUser(clientID, clientName, clientStatus));
         }
