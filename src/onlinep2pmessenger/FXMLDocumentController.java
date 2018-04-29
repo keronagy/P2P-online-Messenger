@@ -200,7 +200,7 @@ public class FXMLDocumentController implements Initializable {
     }
 
     public void createPrivateChat(String clientID) {
-        hamed.connectToPeer(clientID, clients.get(clientID).getIp().substring(1), ServerConstants.SERVERPORT + 1, new PeerHandler(clientID)
+        hamed.connectToPeer(clientID, clients.get(clientID).getIp(), ServerConstants.SERVERPORT + 1, new PeerHandler(clientID)
         );
         JoinClient(clientID );
     }
@@ -807,7 +807,7 @@ public class FXMLDocumentController implements Initializable {
             String clientID = msg.get(GeneralConstants.CLIENTIDATTR);
             String clientStatus = msg.get(GeneralConstants.CLIENTSTATUSATTR);
             String clientIp = msg.get(GeneralConstants.CLIENTIPATTR);
-            clients.put(clientID, new ClientTuple(clientIp, clientName, clientStatus));
+            clients.put(clientID, new ClientTuple(clientIp.substring(1), clientName, clientStatus));
             //GUI add new client
             Platform.runLater(() -> AddNewUser(clientID, clientName, clientStatus));
         }
