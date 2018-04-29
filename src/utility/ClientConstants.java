@@ -11,7 +11,7 @@ package utility;
  */
 public class ClientConstants {
 
-    public static final String INITSTATUS = "1";
+    public static final String INITSTATUS = "online";
     public static final String MAINCONNECTION = "serverConn";
     public static final String ROOMJOINCONNECTION = "handleRoomJoin";
     public static final String ROOMCREATECONNECTION = "handleRoomCreate";

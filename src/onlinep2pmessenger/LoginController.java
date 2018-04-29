@@ -47,25 +47,33 @@ public class LoginController implements Initializable {
         
         Parent root;
         try {
-            if(NameTxt.getText().equals(""))
+            if(NameTxt.getText().equals("") || NameTxt.getText().replace(" ", "").length()==0)
         {
             error.setText("please enter the name");
             error.setStyle("-fx-background-color: red;");
         }
             else
             {
-        
-            StartBtn.getScene().getWindow().hide();
-            root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
+                FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("FXMLDocument.fxml"));
+            
+            
+            
+            FXMLDocumentController controller = new FXMLDocumentController();
+            controller.setUserName(NameTxt.getText());
+            loader.setController(controller);
+            root = loader.load();
             Stage stage = new Stage();
-            stage.setTitle("Regaletna Messenger");
             stage.setScene(new Scene(root));
+            StartBtn.getScene().getWindow().hide();
+            stage.setTitle("Regaletna Messenger");
             stage.setHeight(635);
             stage.setWidth(920);
             Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
             stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2); 
             stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 4);
             stage.setResizable(false);
+            
             stage.show();
         }
 

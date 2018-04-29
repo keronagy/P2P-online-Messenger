@@ -26,6 +26,7 @@ import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -121,28 +122,28 @@ public class FXMLDocumentController implements Initializable {
     private Button AddTab;
     @FXML
     private TabPane tabs;
-    ArrayList<Pair<String, VBox>> vboxes = new ArrayList<>();
+    HashMap<String, VBox> vboxes = new HashMap();
     @FXML
     private VBox groupVbox;
-    ArrayList<Pair<String, StackPane>> groupVboxes = new ArrayList<>();
+    HashMap<String, StackPane> groupVboxes = new HashMap();
     @FXML
     private Button TestGroup;
     @FXML
     private ScrollPane chatScroll;
     @FXML
     private VBox UsersVbox;
-    ArrayList<Pair<String, StackPane>> usersVboxes = new ArrayList<>();
+    HashMap<String, StackPane> usersVboxes = new HashMap();
     @FXML
     private VBox UserTabVbox;
-    ArrayList<Pair<String, StackPane>> UserTabVboxes = new ArrayList<>();
+    HashMap<String, StackPane> UserTabVboxes = new HashMap();
     @FXML
     private VBox GroupTabVbox;
-    ArrayList<Pair<String, StackPane>> GroupTabVboxes = new ArrayList<>();
+    HashMap<String, StackPane> GroupTabVboxes = new HashMap();
     @FXML
     private JFXButton AddRoomBtn;
     @FXML
     private Button receiveTest;
-    ArrayList<Pair<String, HBox>> membersInRomPane = new ArrayList<>();
+    HashMap<String, HBox> membersInRomPane = new HashMap();
     private JFXPopup RoomPopUp = new JFXPopup();
     private JFXPopup LeftUsersPopUp = new JFXPopup();
     private JFXPopup LeftRoomsPopUp = new JFXPopup();
@@ -152,13 +153,14 @@ public class FXMLDocumentController implements Initializable {
     private ImageView emojies;
 
     private PeerClient hamed; //client
-    private HashMap<String,ClientTuple> clients = new HashMap();
+    private HashMap<String, ClientTuple> clients = new HashMap();
+    public String userName;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-            //Server.initiateServer(); // initiating the server
-            hamed = new PeerClient("online", "hamed");
+            Server.initiateServer(); // initiating the server
+            hamed = new PeerClient("online",userName);
             hamed.connect(ServerConstants.SERVERIP, ServerConstants.SERVERPORT, new ServerHandler());
 
             handleNewConnections();
@@ -174,17 +176,17 @@ public class FXMLDocumentController implements Initializable {
         } catch (FileNotFoundException ex) {
             Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        ArrayList<ImageView> imgsv = new ArrayList<>(Arrays.asList(i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15, i16));
+        ImageView[] imgsv = {i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15, i16};
 
         for (int i = 1; i <= 16; i++) {
             final int value = i;
-            imgsv.get(i - 1).setOnMouseClicked(e -> appendEmoji(value));
+            imgsv[i - 1].setOnMouseClicked(e -> appendEmoji(value));
         }
 
         TestGroup.setOnMouseClicked(e -> createUserPane("u1", "staus", "kero"));
         EmojiesPopupVbox.setStyle("-fx-background-color:  #2e2f30;");
         for (int i = 0; i < 16; i += 4) {
-            HBox kk = new HBox(imgsv.get(i), imgsv.get(i + 1), imgsv.get(i + 2), imgsv.get(i + 3));
+            HBox kk = new HBox(imgsv[i], imgsv[i + 1], imgsv[i + 2], imgsv[i + 3]);
             kk.setSpacing(5);
             kk.setPadding(new Insets(5));
             EmojiesPopupVbox.getChildren().add(kk);
@@ -198,8 +200,9 @@ public class FXMLDocumentController implements Initializable {
     }
 
     public void createPrivateChat(String clientID) {
-        hamed.connectToPeer(clientID, ServerConstants.SERVERIP, ServerConstants.SERVERPORT + 1, new PeerHandler(clientID)
+        hamed.connectToPeer(clientID, clients.get(clientID).getIp().substring(1), ServerConstants.SERVERPORT + 1, new PeerHandler(clientID)
         );
+        JoinClient(clientID );
     }
 
     private void handleNewConnections() {
@@ -207,7 +210,7 @@ public class FXMLDocumentController implements Initializable {
             @Override
             public void run() {
                 while (true) {
-                    PeerHandler handler = new PeerHandler();    
+                    PeerHandler handler = new PeerHandler();
                     handler.setPeerID(hamed.waitForConnection(handler));
                 }
             }
@@ -339,15 +342,14 @@ public class FXMLDocumentController implements Initializable {
             public void handle(MouseEvent mouseEvent) {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                     if (mouseEvent.getClickCount() == 2) {
-                        AddTab(ID, Name);
-                        createUserPane(ID, Status, Name);
+                        createPrivateChat(ID);
                     }
                 }
             }
         });
         UserTabVbox.setSpacing(5);
         UserTabVbox.getChildren().add(user);
-        UserTabVboxes.add(new Pair<>(ID, user));
+        UserTabVboxes.put(ID, user);
     }
 
     public void AddNewGroup(String roomName, String roomID) {
@@ -363,17 +365,17 @@ public class FXMLDocumentController implements Initializable {
         group.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
+                
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                     if (mouseEvent.getClickCount() == 2) {
-                        AddTab(roomID, roomID);
+                        hamed.joinRoom(roomID);
                     }
                 }
             }
         });
         GroupTabVbox.setSpacing(5);
         GroupTabVbox.getChildren().add(group);
-        GroupTabVboxes.add(new Pair<>(roomID, group));
-        //AddTab(roomID, roomName);
+        GroupTabVboxes.put(roomID, group);
     }
 
     public void AddTab(String ID, String UserName) {
@@ -394,7 +396,7 @@ public class FXMLDocumentController implements Initializable {
         root.setPadding(new Insets(10));
         scrollPane.setContent(root);
         scrollPane.vvalueProperty().bind(root.heightProperty());
-        vboxes.add(new Pair(t.getId(), root));
+        vboxes.put(t.getId(), root);
         if (ID.charAt(0) == 'r') {
 
             ScrollPane MembersScroll = new ScrollPane();
@@ -411,7 +413,7 @@ public class FXMLDocumentController implements Initializable {
             JFXButton GroupOptions = new JFXButton("Group Options");
             GroupOptions.setOnMouseClicked(e -> ShowPopupRoom(GroupOptions, ID, e));
             MembersCircles.getChildren().add(GroupOptions);
-            membersInRomPane.add(new Pair<>(ID, MembersCircles));
+            membersInRomPane.put(ID, MembersCircles);
         }
 
     }
@@ -421,6 +423,7 @@ public class FXMLDocumentController implements Initializable {
         JFXButton RemoveMember = new JFXButton("Remove Member");
         JFXButton MakeAdmin = new JFXButton("Make Admin");
         JFXButton LeaveRoom = new JFXButton("Leave Room");
+        LeaveRoom.setOnMousePressed(e-> hamed.LeaveRoom("r-0"));
         VBox BtnsPop = new VBox(AddMember, RemoveMember, MakeAdmin, LeaveRoom);
         RoomPopUp.setPopupContent(BtnsPop);
 
@@ -428,17 +431,13 @@ public class FXMLDocumentController implements Initializable {
 
     public void ShowPopupRoom(JFXButton GroupOptions, String ID, MouseEvent e) {
         if (e.getButton() == MouseButton.SECONDARY) {
-            RoomPopUp.show(emojies, JFXPopup.PopupVPosition.TOP, JFXPopup.PopupHPosition.LEFT);
+            RoomPopUp.show(GroupOptions, JFXPopup.PopupVPosition.TOP, JFXPopup.PopupHPosition.LEFT);
         }
     }
 
     public void onTabClose(String id) {
-        for (int i = 0; i < vboxes.size(); i++) {
-            if (vboxes.get(i).getKey() == id) {
-                vboxes.remove(i);
-                break;
-            }
-        }
+
+        vboxes.remove(id);
         for (int j = 0; j < tabs.getTabs().size(); j++) {
             if (tabs.getTabs().get(j).getId().equals(id)) {
                 tabs.getTabs().remove(j);
@@ -447,148 +446,98 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
+    public HBox createReceivedMsgStackPane(String Msg) {
+        StackPane p1 = new StackPane();
+        p1.setStyle("-fx-background-color: #fff; -fx-background-radius: 30; -fx-border-radius: 30; -fx-border-width:5;");
+        p1.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        p1.setMinHeight(Region.USE_PREF_SIZE);
+        Label lbl1 = new Label(Msg);
+        lbl1.setPadding(new Insets(10));
+        lbl1.setText(Msg);
+        lbl1.setTextFill(Color.BLACK);
+        HBox hob = new HBox();
+        hob.setPrefWidth(470);
+        hob.setAlignment(Pos.CENTER_RIGHT);
+        p1.getChildren().add(lbl1);
+        hob.getChildren().add(p1);
+        return hob;
+    }
+
     public void receiveClient(String Msg, String ClientID, String ClientName) {
-        boolean found = false;
-        for (int i = 0; i < vboxes.size(); i++) {
-            if (vboxes.get(i).getKey() == ClientID) {
-                found = true;
-                StackPane p1 = new StackPane();
-                for (int j = 0; j < tabs.getTabs().size(); j++) {
-                    if (tabs.getTabs().get(j).getId().equals(ClientID)) {
-                        Tab ta = tabs.getTabs().get(j);
-                        if (tabs.getSelectionModel().getSelectedItem() == ta) {
-                            break;
-                        }
-                        if (!ta.getStyleClass().contains("receiveMsg")) {
-                            ta.setText(ta.getText() + "!!!");
-                            ta.getStyleClass().add("receiveMsg");
-                        }
+
+        if (vboxes.get(ClientID) != null) {
+
+            for (int j = 0; j < tabs.getTabs().size(); j++) {
+                if (tabs.getTabs().get(j).getId().equals(ClientID)) {
+                    Tab ta = tabs.getTabs().get(j);
+                    if (tabs.getSelectionModel().getSelectedItem() == ta) {
                         break;
                     }
+                    if (!ta.getStyleClass().contains("receiveMsg")) {
+                        ta.setText(ta.getText() + "!!!");
+                        ta.getStyleClass().add("receiveMsg");
+                    }
+                    break;
                 }
-                p1.setStyle("-fx-background-color: #fff; -fx-background-radius: 30; -fx-border-radius: 30; -fx-border-width:5;");
-                p1.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-                p1.setMinHeight(Region.USE_PREF_SIZE);
-                Label lbl1 = new Label(Msg);
-                lbl1.setPadding(new Insets(10));
-                lbl1.setText(Msg);
-                lbl1.setTextFill(Color.BLACK);
-                HBox hob = new HBox();
-                hob.setPrefWidth(470);
-                hob.setAlignment(Pos.CENTER_RIGHT);
-                p1.getChildren().add(lbl1);
-                hob.getChildren().add(p1);
-                vboxes.get(i).getValue().getChildren().add(hob);
-                break;
             }
-
-        }
-        if (found == false) {
+        } else {
             AddTab(ClientID, ClientName);
             createUserPane(ClientID, "online", ClientName);
-            StackPane p1 = new StackPane();
 
-            p1.setStyle("-fx-background-color: #fff; -fx-background-radius: 30; -fx-border-radius: 30; -fx-border-width:5;");
-            p1.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-            p1.setMinHeight(Region.USE_PREF_SIZE);
-            Label lbl1 = new Label(Msg);
-            lbl1.setPadding(new Insets(10));
-            lbl1.setText(Msg);
-            lbl1.setTextFill(Color.BLACK);
-            HBox hob = new HBox();
-            hob.setPrefWidth(470);
-            hob.setAlignment(Pos.CENTER_RIGHT);
-            p1.getChildren().add(lbl1);
-            hob.getChildren().add(p1);
-            vboxes.get(vboxes.size() - 1).getValue().getChildren().add(hob);
         }
-
+        vboxes.get(ClientID).getChildren().add(createReceivedMsgStackPane(Msg));
     }
 
     public void receiveRoom(String Msg, String RoomID, String UserID, String UserName, String RoomName) {
-        boolean found = false;
-        for (int i = 0; i < vboxes.size(); i++) {
-            if (vboxes.get(i).getKey() == RoomID) {
-                found = true;
-                StackPane p1 = new StackPane();
-                for (int j = 0; j < tabs.getTabs().size(); j++) {
-                    if (tabs.getTabs().get(j).getId().equals(RoomID)) {
-                        Tab ta = tabs.getTabs().get(j);
-                        if (tabs.getSelectionModel().getSelectedItem() == ta) {
-                            break;
-                        }
-                        if (!ta.getStyleClass().contains("receiveMsg")) {
-                            ta.setText(ta.getText() + "!!!");
-                            ta.getStyleClass().add("receiveMsg");
-                        }
+
+        if (vboxes.get(RoomID) != null) {
+
+            for (int j = 0; j < tabs.getTabs().size(); j++) {
+                if (tabs.getTabs().get(j).getId().equals(RoomID)) {
+                    Tab ta = tabs.getTabs().get(j);
+                    if (tabs.getSelectionModel().getSelectedItem() == ta) {
                         break;
                     }
+                    if (!ta.getStyleClass().contains("receiveMsg")) {
+                        ta.setText(ta.getText() + "!!!");
+                        ta.getStyleClass().add("receiveMsg");
+                    }
+                    break;
                 }
-                p1.setStyle("-fx-background-color: #fff; -fx-background-radius: 30; -fx-border-radius: 30; -fx-border-width:5;");
-                p1.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-                p1.setMinHeight(Region.USE_PREF_SIZE);
-                Label lbl1 = new Label(UserName + ": " + Msg);
-                lbl1.setPadding(new Insets(10));
-                lbl1.setText(Msg);
-                lbl1.setTextFill(Color.BLACK);
-                HBox hob = new HBox();
-                hob.setPrefWidth(470);
-                hob.setAlignment(Pos.CENTER_RIGHT);
-                p1.getChildren().add(lbl1);
-                hob.getChildren().add(p1);
-                vboxes.get(i).getValue().getChildren().add(hob);
-                break;
             }
 
-        }
-        if (found == false) {
+        } else {
             AddTab(RoomID, RoomName);
             createGroupPane(RoomID, RoomName);
-            StackPane p1 = new StackPane();
 
-            p1.setStyle("-fx-background-color: #fff; -fx-background-radius: 30; -fx-border-radius: 30; -fx-border-width:5;");
-            p1.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-            p1.setMinHeight(Region.USE_PREF_SIZE);
-            Label lbl1 = new Label(Msg);
-            lbl1.setPadding(new Insets(10));
-            lbl1.setText(Msg);
-            lbl1.setTextFill(Color.BLACK);
-            HBox hob = new HBox();
-            hob.setPrefWidth(470);
-            hob.setAlignment(Pos.CENTER_RIGHT);
-            p1.getChildren().add(lbl1);
-            hob.getChildren().add(p1);
-            vboxes.get(vboxes.size() - 1).getValue().getChildren().add(hob);
         }
-
+        vboxes.get(RoomID).getChildren().add(createReceivedMsgStackPane(UserName + ": " + Msg));
     }
 
     public void sendBtn() {
         if (!ChatTxt.getText().equals("")) {
-            for (int i = 0; i < vboxes.size(); i++) {
-                if (vboxes.get(i).getKey() == tabs.getSelectionModel().getSelectedItem().getId()) {
-                    String msg = ChatTxt.getText();
 
-                    StackPane p = new StackPane();
-                    p.setMinHeight(Region.USE_PREF_SIZE);
-                    p.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-                    p.setStyle("-fx-background-color: #00FFFF; -fx-background-radius: 30; -fx-border-radius: 30; -fx-border-width:5;");
+            String msg = ChatTxt.getText();
+            String ID = tabs.getSelectionModel().getSelectedItem().getId();
+            StackPane p = new StackPane();
+            p.setMinHeight(Region.USE_PREF_SIZE);
+            p.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+            p.setStyle("-fx-background-color: #00FFFF; -fx-background-radius: 30; -fx-border-radius: 30; -fx-border-width:5;");
 
-                    Label lbl = new Label(msg);
-                    lbl.setPadding(new Insets(10));
-                    lbl.setText(msg);
-                    lbl.setTextFill(Color.BLACK);
-                    lbl.setWrapText(true);
-                    //= tr
-                    p.getChildren().add(lbl);
-                    vboxes.get(i).getValue().getChildren().add(p);
-                    ChatTxt.setText("");
-                    emojiPane.setVisible(false);
-                    hamed.sendMessageToRoom(tabs.getSelectionModel().getSelectedItem().getId(), msg);
-
-                    break;
-                }
-            }
+            Label lbl = new Label(msg);
+            lbl.setPadding(new Insets(10));
+            lbl.setText(msg);
+            lbl.setTextFill(Color.BLACK);
+            lbl.setWrapText(true);
+            //= tr
+            p.getChildren().add(lbl);
+            vboxes.get(ID).getChildren().add(p);
+            ChatTxt.setText("");
+            emojiPane.setVisible(false);
+            if(ID.charAt(0)=='r')
+                hamed.sendMessageToRoom(ID, msg);
+            else
+                hamed.sendMessageToPeer(ID, msg);
 
         }
     }
@@ -620,7 +569,7 @@ public class FXMLDocumentController implements Initializable {
                 }
             }
         });
-        usersVboxes.add(new Pair<>(UserID, user));
+        usersVboxes.put(UserID, user);
         UsersVbox.setSpacing(5);
         UsersVbox.getChildren().add(user);
 
@@ -645,7 +594,7 @@ public class FXMLDocumentController implements Initializable {
                 }
             }
         });
-        groupVboxes.add(new Pair<>(groupID, group));
+        groupVboxes.put(groupID, group);
         groupVbox.setSpacing(5);
         groupVbox.getChildren().add(group);
 
@@ -661,6 +610,11 @@ public class FXMLDocumentController implements Initializable {
 //        AddNewUser(c3);
         //test with kyrillos
 //        Socket s = new Socket("127.0.0.1",15000);
+    }
+    
+    public void setUserName(String name)
+    {
+        userName = name;
     }
 
     public String AddRoomDialog() {
@@ -717,10 +671,10 @@ public class FXMLDocumentController implements Initializable {
 
     }
 
-    public void RemoveUserFromTabsAndLeftPanels(String ID) {
-        for (int i = 0; i < usersVboxes.size(); i++) {
-            if (ID.equals(usersVboxes.get(i).getKey())) {
-                UsersVbox.getChildren().remove(groupVboxes.get(i).getValue());
+    /*public void RemoveUserFromTabsAndLeftPanels(String ID) {
+        
+                if(usersVboxes.get(ID)!=null){
+                UsersVbox.getChildren().remove(usersVboxes.get(ID));
 
                 for (int j = 0; j < tabs.getTabs().size(); j++) {
                     if (tabs.getTabs().get(j).getId().equals(ID)) {
@@ -729,23 +683,15 @@ public class FXMLDocumentController implements Initializable {
                     }
                 }
 
-                for (int j = 0; j < vboxes.size(); j++) {
-                    if (ID.equals(vboxes.get(j).getKey())) {
-                        vboxes.remove(j);
-                        break;
-                    }
+                vboxes.remove(ID);
+                usersVboxes.remove(ID);
                 }
-                usersVboxes.remove(i);
-
-                break;
-            }
-        }
+        
     }
-
-    public void RemoveRoomFromTabsAndLeftPanels(String ID) {
-        for (int i = 0; i < groupVboxes.size(); i++) {
-            if (ID.equals(groupVboxes.get(i).getKey())) {
-                groupVbox.getChildren().remove(groupVboxes.get(i).getValue());
+*/
+    public void RemoveVboxFromTabsAndLeftPanels(VBox VB,HashMap VBs,String ID) {
+            if (VBs.get(ID)!=null) {
+                VB.getChildren().remove(VBs.get(ID));
                 for (int j = 0; j < tabs.getTabs().size(); j++) {
                     if (tabs.getTabs().get(j).getId().equals(ID)) {
                         tabs.getTabs().remove(j);
@@ -753,23 +699,25 @@ public class FXMLDocumentController implements Initializable {
                     }
                 }
 
-                for (int j = 0; j < vboxes.size(); j++) {
-                    if (ID.equals(vboxes.get(j).getKey())) {
-                        vboxes.remove(j);
-                        break;
-                    }
-                }
+                vboxes.remove(ID);
 
-                groupVboxes.remove(i);
-                break;
+                VBs.remove(ID);
             }
-        }
     }
-
+     public void JoinRoom(String roomID , String roomName )
+        {
+            AddTab(roomID, roomName);
+            createGroupPane(roomID,roomName);
+        }
+      public void JoinClient(String clientID )
+        {
+            AddTab(clientID, clients.get(clientID).getName());
+            createUserPane(clientID,clients.get(clientID).getStatus(),clients.get(clientID).getName());
+        }
     private class PeerHandler implements CallbackOnReceiveHandler {
 
         private String peerID;
-
+        private boolean first = true;
         public PeerHandler() {
         }
 
@@ -782,10 +730,19 @@ public class FXMLDocumentController implements Initializable {
         }
 
         public void handleReceivedData(HashMap<String, String> msg) {
+            if(first)
+            {
+                   Platform.runLater(()-> JoinClient(peerID));
+                    first = false;
+            }
             String message = msg.get(ClientConstants.PEERMESSAGE);
             String clientName = clients.get(peerID).getName();
             //gui, show the message in the desired location using "peerID"
-            System.out.println(peerID + " " + message);
+            Platform.runLater(()->receiveClient(message, peerID, clientName));
+        }
+
+        private String getPeerID() {
+            return peerID;
         }
 
     }
@@ -809,16 +766,20 @@ public class FXMLDocumentController implements Initializable {
 
         public void handleRoomJoined(HashMap<String, String> msg) {
             String roomID = msg.get(GeneralConstants.ROOMIDATTR);
+            String roomName = "ddd";
             //GUI open room
             //AddNewGroup(roomID, roomID);
             //AddTab(roomID, roomID);
             //createGroupPane(roomID, roomName);
+            //double click on right room
+            Platform.runLater(()->JoinRoom(roomID,roomName));
         }
+       
 
         public void handleRoomLeft(HashMap<String, String> msg) {
             String roomID = msg.get(GeneralConstants.ROOMIDATTR);
             //GUI close room
-            RemoveRoomFromTabsAndLeftPanels(roomID);
+            Platform.runLater(()->RemoveVboxFromTabsAndLeftPanels(groupVbox,groupVboxes,roomID));
         }
 
         public void handleClientAddedtoRoom(HashMap<String, String> msg) {
@@ -836,8 +797,9 @@ public class FXMLDocumentController implements Initializable {
             String roomID = msg.get(GeneralConstants.ROOMIDATTR);
             String senderID = msg.get(GeneralConstants.CLIENTIDATTR);
             String message = msg.get(MessageConstants.MESSAGE);
+            String roomName = "ddd";
             //GUI add message to chat
-            Platform.runLater(() -> receiveRoom(message, roomID, senderID, clients.get(senderID).getName(), "ddd"));
+            Platform.runLater(() -> receiveRoom(message, roomID, senderID, clients.get(senderID).getName(), roomName));
         }
 
         public void handleNewClient(HashMap<String, String> msg) {
@@ -845,7 +807,7 @@ public class FXMLDocumentController implements Initializable {
             String clientID = msg.get(GeneralConstants.CLIENTIDATTR);
             String clientStatus = msg.get(GeneralConstants.CLIENTSTATUSATTR);
             String clientIp = msg.get(GeneralConstants.CLIENTIPATTR);
-            clients.put(clientID, new ClientTuple(clientIp,clientName,clientStatus));
+            clients.put(clientID, new ClientTuple(clientIp, clientName, clientStatus));
             //GUI add new client
             Platform.runLater(() -> AddNewUser(clientID, clientName, clientStatus));
         }
@@ -855,7 +817,7 @@ public class FXMLDocumentController implements Initializable {
             String roomID = msg.get(GeneralConstants.ROOMIDATTR);
             //GUI add room
             Platform.runLater(() -> AddNewGroup(roomName, roomID));
-            AddTab(roomID, roomName);
+            
 
         }
     }
