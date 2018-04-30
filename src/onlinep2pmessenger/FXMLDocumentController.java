@@ -155,6 +155,17 @@ public class FXMLDocumentController implements Initializable {
     private PeerClient hamed; //client
     private HashMap<String, ClientTuple> clients = new HashMap();
     public String userName;
+    private String IPAddress;
+    private String ProtNum;
+
+    public void setIPAddress(String IPAddress) {
+        this.IPAddress = IPAddress;
+    }
+
+    public void setProtNum(String ProtNum) {
+        this.ProtNum = ProtNum;
+    }
+
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -701,6 +712,17 @@ public class FXMLDocumentController implements Initializable {
 
                 vboxes.remove(ID);
 
+                VBs.remove(ID);
+            }
+    }
+    
+    public void RemoveVboxFromRightPanels(VBox VB,HashMap VBs,String ID) {
+        /* UserTabVbox , UserTabVboxes for user panel
+            GroupTabVbox ,GroupTabVboxes for room panel
+        */
+            
+        if (VBs.get(ID)!=null) {
+                VB.getChildren().remove(VBs.get(ID));
                 VBs.remove(ID);
             }
     }

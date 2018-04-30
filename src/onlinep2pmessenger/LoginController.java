@@ -36,7 +36,10 @@ public class LoginController implements Initializable {
     private JFXTextField NameTxt;
     @FXML
     private Label error; 
-    
+    @FXML
+    private JFXTextField IPTxt;
+    @FXML
+    private JFXTextField PortTxt;
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
@@ -47,7 +50,10 @@ public class LoginController implements Initializable {
         
         Parent root;
         try {
-            if(NameTxt.getText().equals("") || NameTxt.getText().replace(" ", "").length()==0)
+            String name = NameTxt.getText();
+            String IP = IPTxt.getText();
+            String Port = PortTxt.getText();
+            if(name.equals("") || name.replace(" ", "").length()==0 ||IP.equals("") || IP.replace(" ", "").length()==0 || Port.equals("") || Port.replace(" ", "").length()==0 )
         {
             error.setText("please enter the name");
             error.setStyle("-fx-background-color: red;");
