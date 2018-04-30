@@ -15,8 +15,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -144,9 +147,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Button receiveTest;
     HashMap<String, HBox> membersInRomPane = new HashMap();
-    private JFXPopup RoomPopUp = new JFXPopup();
     private JFXPopup LeftUsersPopUp = new JFXPopup();
-    private JFXPopup LeftRoomsPopUp = new JFXPopup();
     private JFXPopup EmojiesPopUp = new JFXPopup();
     VBox EmojiesPopupVbox = new VBox();
     @FXML
@@ -206,7 +207,6 @@ public class FXMLDocumentController implements Initializable {
 
         EmojiesPopUp.setPopupContent(EmojiesPopupVbox);
         emojies.setOnMouseClicked(e -> showEmojis(e));
-        RoomOptionPopUp();
         AddRoomBtn.setOnMouseClicked(e -> AddRoomDialog());
     }
 
@@ -325,22 +325,8 @@ public class FXMLDocumentController implements Initializable {
     }
 
     public void AddNewUser(String ID, String Name, String Status) {
-        StackPane user = new StackPane();
-        user.getStyleClass().add("group-pane");
-        user.setPadding(new Insets(5));
-        VBox lblsvbox = new VBox();
-        Label lbl = new Label();
-        lbl.setPadding(new Insets(5));
-        lbl.setText(Name);
-        lbl.setTextFill(Color.CYAN);
-        lbl.setPadding(new Insets(5));
-        Label lbl2 = new Label();
-        lbl2.setPadding(new Insets(5));
-        lbl2.setText(Status);
-        lbl2.setTextFill(Color.BLACK);
-        lblsvbox.getChildren().add(lbl);
-        lblsvbox.getChildren().add(lbl2);
-        user.getChildren().add(lblsvbox);
+        CustomStackPane user = new CustomStackPane(ID, Name, Status);
+        
         user.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -357,15 +343,7 @@ public class FXMLDocumentController implements Initializable {
     }
 
     public void AddNewGroup(String roomName, String roomID) {
-        RoomStackPane group = new RoomStackPane(roomID,roomName);
-        group.getStyleClass().add("group-pane");
-        group.setPadding(new Insets(5));
-        Label lbl = new Label();
-        lbl.setPadding(new Insets(5));
-        lbl.setText(roomName);
-        lbl.setTextFill(Color.BLACK);
-        group.getChildren().add(lbl);
-
+        CustomStackPane group = new CustomStackPane(roomID,roomName);
         group.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -383,6 +361,7 @@ public class FXMLDocumentController implements Initializable {
     }
 
     public void AddTab(String ID, String UserName) {
+        
 
         Tab t = new Tab(UserName);
 
@@ -402,40 +381,76 @@ public class FXMLDocumentController implements Initializable {
         scrollPane.vvalueProperty().bind(root.heightProperty());
         vboxes.put(t.getId(), root);
         if (ID.charAt(0) == 'r') {
-
+            JFXPopup RoomPopUp = new JFXPopup();
+            JFXButton AddMember = new JFXButton("Add Member");
+            JFXButton RemoveMember = new JFXButton("Remove Member");
+            JFXButton MakeAdmin = new JFXButton("Make Admin");
+            JFXButton LeaveRoom = new JFXButton("Leave Room");
+            LeaveRoom.setOnMousePressed(e-> hamed.LeaveRoom(ID));
+            VBox BtnsPop = new VBox(AddMember, RemoveMember, MakeAdmin, LeaveRoom);
+            RoomPopUp.setPopupContent(BtnsPop);
+            JFXButton GroupOptions = new JFXButton("Group Options");
+            
+            GroupOptions.setOnMouseClicked(e -> ShowPopupRoom(RoomPopUp,GroupOptions, e));
             ScrollPane MembersScroll = new ScrollPane();
 
             MembersScroll.setMaxHeight(100);
             MembersScroll.setMinHeight(100);
             MembersScroll.setFitToWidth(true);
             HBox MembersCircles = new HBox();
-            MembersCircles.setMaxHeight(50);
-            MembersCircles.setMinHeight(50);
-            MembersCircles.setStyle("-fx-border-width:5; -fx-border-color: #555; -fx-border-radius: 20px; -fx-background-radius: 20px;");
+            MembersCircles.setMaxHeight(100);
+            MembersCircles.setMinHeight(100);
+            MembersCircles.setStyle("-fx-border-width:5; -fx-border-color: #555; -fx-border-radius: 50px; -fx-background-radius: 50px;");
             MembersScroll.setContent(MembersCircles);
+            root.getChildren().add(GroupOptions);
             root.getChildren().add(MembersScroll);
-            JFXButton GroupOptions = new JFXButton("Group Options");
-            GroupOptions.setOnMouseClicked(e -> ShowPopupRoom(GroupOptions, ID, e));
-            MembersCircles.getChildren().add(GroupOptions);
+            
+//            MembersCircles.getChildren().add(GroupOptions);
             membersInRomPane.put(ID, MembersCircles);
+            EnterRoomUserCircle(UserName,ID, "online now", ID);
         }
 
     }
-
-    public void RoomOptionPopUp() {
-        JFXButton AddMember = new JFXButton("Add Member");
-        JFXButton RemoveMember = new JFXButton("Remove Member");
-        JFXButton MakeAdmin = new JFXButton("Make Admin");
-        JFXButton LeaveRoom = new JFXButton("Leave Room");
-        LeaveRoom.setOnMousePressed(e-> hamed.LeaveRoom("r-0"));
-        VBox BtnsPop = new VBox(AddMember, RemoveMember, MakeAdmin, LeaveRoom);
-        RoomPopUp.setPopupContent(BtnsPop);
-
+    
+    public void EnterRoomUserCircle(String UserName, String UserID, String Status,String RoomID)
+    {
+        String[] letters = UserName.split(" ");
+        JFXButton UserBtn ;
+        if(letters.length <2)
+        {
+            System.out.println("1 char "+ letters[0].charAt(0)+"");
+            UserBtn = new JFXButton(letters[0].charAt(0)+"");
+        }
+        else
+        {
+            System.out.println("else 2 chars "+ letters[0].charAt(0)+letters[1].charAt(0)+"");
+            UserBtn = new JFXButton(letters[0].charAt(0)+""+letters[1].charAt(0)+"");
+        }
+        UserBtn.getStyleClass().add("roundbutton");
+        
+        Font font= null;
+        try {
+            font = Font.loadFont(new FileInputStream(new File("Fonts/ingeborg.otf")), 17);
+            UserBtn.setFont(font);
+            UserBtn.setMinSize(Region.USE_COMPUTED_SIZE,Region.USE_COMPUTED_SIZE);
+        } catch (FileNotFoundException ex) {
+            System.out.println("error");
+        }
+        JFXPopup CirclePopUp = new JFXPopup();
+            
+            JFXButton RemoveMember = new JFXButton("Remove Member");
+            JFXButton MakeAdmin = new JFXButton("Make Admin");
+            
+            VBox BtnsPop = new VBox(RemoveMember, MakeAdmin);
+            CirclePopUp.setPopupContent(BtnsPop);
+            
+            membersInRomPane.get(RoomID).getChildren().add(UserBtn);
+            UserBtn.setOnMouseClicked(e -> ShowPopupRoom(CirclePopUp,UserBtn, e));
     }
 
-    public void ShowPopupRoom(JFXButton GroupOptions, String ID, MouseEvent e) {
+    public void ShowPopupRoom(JFXPopup RoomPopUp,JFXButton GroupOptions, MouseEvent e) {
         if (e.getButton() == MouseButton.SECONDARY) {
-            RoomPopUp.show(GroupOptions, JFXPopup.PopupVPosition.TOP, JFXPopup.PopupHPosition.LEFT);
+            RoomPopUp.show(GroupOptions, JFXPopup.PopupVPosition.TOP, JFXPopup.PopupHPosition.LEFT,e.getX(),e.getY());
         }
     }
 
@@ -450,7 +465,8 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
-    public HBox createReceivedMsgStackPane(String Msg) {
+    public HBox createReceivedMsgStackPane(String Msg, int Type) {
+        // type is 1 for client or 2 for room
         StackPane p1 = new StackPane();
         p1.setStyle("-fx-background-color: #fff; -fx-background-radius: 30; -fx-border-radius: 30; -fx-border-width:5;");
         p1.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
@@ -463,8 +479,36 @@ public class FXMLDocumentController implements Initializable {
         hob.setPrefWidth(470);
         hob.setAlignment(Pos.CENTER_RIGHT);
         p1.getChildren().add(lbl1);
+        
+        if(Type==1)
+        {
         hob.getChildren().add(p1);
         return hob;
+        }
+        else
+        {
+            VBox RoomMsg = new VBox();
+            Label lbl = new Label(Msg);
+            lbl.setPadding(new Insets(5));
+            lbl.setText("name of sender");
+            lbl.setTextFill(Color.WHITE);
+            
+            
+            String datelbl = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date());
+            Label Timelbl = new Label();
+            Timelbl.setPadding(new Insets(5));
+            Timelbl.setText(datelbl);
+            Timelbl.setTextFill(Color.WHITE);
+            
+            
+            System.out.println();
+            RoomMsg.getChildren().add(lbl);
+            RoomMsg.getChildren().add(p1);
+            RoomMsg.getChildren().add(Timelbl);
+            
+            hob.getChildren().add(RoomMsg);
+            return hob;
+        }
     }
 
     public void receiveClient(String Msg, String ClientID, String ClientName) {
@@ -489,7 +533,7 @@ public class FXMLDocumentController implements Initializable {
             createUserPane(ClientID, "online", ClientName);
 
         }
-        vboxes.get(ClientID).getChildren().add(createReceivedMsgStackPane(Msg));
+        vboxes.get(ClientID).getChildren().add(createReceivedMsgStackPane(Msg,1));
     }
 
     public void receiveRoom(String Msg, String RoomID, String UserID, String UserName, String RoomName) {
@@ -515,7 +559,7 @@ public class FXMLDocumentController implements Initializable {
             createGroupPane(RoomID, RoomName);
 
         }
-        vboxes.get(RoomID).getChildren().add(createReceivedMsgStackPane(UserName + ": " + Msg));
+        vboxes.get(RoomID).getChildren().add(createReceivedMsgStackPane(UserName + ": " + Msg,2));
     }
 
     public void sendBtn() {
@@ -547,22 +591,8 @@ public class FXMLDocumentController implements Initializable {
     }
 
     public void createUserPane(String UserID, String Status, String UserName) {
-        StackPane user = new StackPane();
-        user.getStyleClass().add("group-pane");
-        user.setPadding(new Insets(5));
-        VBox lblsvbox = new VBox();
-        Label lbl = new Label();
-        lbl.setPadding(new Insets(5));
-        lbl.setText(UserName);
-        lbl.setTextFill(Color.CYAN);
-
-        Label lbl2 = new Label();
-        lbl2.setPadding(new Insets(5));
-        lbl2.setText(Status);
-        lbl2.setTextFill(Color.BLACK);
-        lblsvbox.getChildren().add(lbl);
-        lblsvbox.getChildren().add(lbl2);
-        user.getChildren().add(lblsvbox);
+        CustomStackPane user = new CustomStackPane(UserID, UserName, Status);
+        
         user.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -580,14 +610,7 @@ public class FXMLDocumentController implements Initializable {
     }
 
     public void createGroupPane(String groupID, String GroupName) {
-        StackPane group = new StackPane();
-        group.getStyleClass().add("group-pane");
-        group.setPadding(new Insets(5));
-        Label lbl = new Label();
-        lbl.setPadding(new Insets(5));
-        lbl.setText(GroupName);
-        lbl.setTextFill(Color.BLACK);
-        group.getChildren().add(lbl);
+        CustomStackPane group = new CustomStackPane(groupID, GroupName);
         group.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -605,15 +628,7 @@ public class FXMLDocumentController implements Initializable {
     }
 
     public void TestBtn() throws IOException {
-        Client c1 = new Client("1", "online", "kero");
-        Client c2 = new Client("2", "online", "kord");
-        Client c3 = new Client("3", "online", "fadi");
 
-//        AddNewUser(c1);
-//        AddNewUser(c2);
-//        AddNewUser(c3);
-        //test with kyrillos
-//        Socket s = new Socket("127.0.0.1",15000);
     }
     
     public void setUserName(String name)
@@ -628,9 +643,6 @@ public class FXMLDocumentController implements Initializable {
 
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("AddRom.fxml"));
-//        final Pane rootPane = (Pane)loader.load();
-//        Scene scene =  new Scene(rootPane);
-
             root = loader.load();
             Stage stage = new Stage();
             stage.setTitle("Adding Room");
@@ -655,13 +667,10 @@ public class FXMLDocumentController implements Initializable {
         if (!RoomName.equals("")) {
             System.out.println(RoomName);
             hamed.createRoom(RoomName);
-//              AddNewGroup(RoomName, RoomName);
         }
     }
 
     public void onReceive() {
-//        receive("kokokoko", "r1", "fefe");
-//        RemoveRoomFromTabsAndLeftPanels(ID)Panels("r1");
         AddNewGroup("kero", "keork");
 
     }
@@ -781,7 +790,7 @@ public class FXMLDocumentController implements Initializable {
 
         public void handleRoomJoined(HashMap<String, String> msg) {
             String roomID = msg.get(GeneralConstants.ROOMIDATTR);
-            String roomName = "ddd";
+            String roomName = ((CustomStackPane)GroupTabVboxes.get(roomID)).getName();
             //GUI open room
             //AddNewGroup(roomID, roomID);
             //AddTab(roomID, roomID);
@@ -812,7 +821,7 @@ public class FXMLDocumentController implements Initializable {
             String roomID = msg.get(GeneralConstants.ROOMIDATTR);
             String senderID = msg.get(GeneralConstants.CLIENTIDATTR);
             String message = msg.get(MessageConstants.MESSAGE);
-            String roomName = "ddd";
+            String roomName = ((CustomStackPane)GroupTabVboxes.get(roomID)).getName();
             //GUI add message to chat
             Platform.runLater(() -> receiveRoom(message, roomID, senderID, clients.get(senderID).getName(), roomName));
         }

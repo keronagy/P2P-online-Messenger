@@ -57,7 +57,7 @@
                                  <content>
                                     <VBox fx:id="GroupTabVbox" prefHeight="478.0" prefWidth="196.0" style="-fx-background-color: #2e2f30;">
                                        <children>
-                                          <Button mnemonicParsing="false" text="Button" />
+                                          <Button mnemonicParsing="false" style="-fx-background-color: white; -fx-background-radius: 16.4, 15;" stylesheets="@roundbutton.css" text="Button" />
                                        </children></VBox>
                                  </content>
                               </ScrollPane>

@@ -128,3 +128,13 @@ and open the template in the editor.
 
 }
 
+.roundbutton {
+    -fx-background-radius: 30px; 
+    -fx-min-width: 60px;
+    -fx-min-height: 60px;
+    -fx-max-width: 60px;
+    -fx-max-height: 60px;
+    -fx-border-radius: 60px;
+    -fx-background-color: white; 
+    -fx-text-fill: -fx-primary;
+}
