@@ -60,13 +60,15 @@ public class LoginController implements Initializable {
         }
             else
             {
-                FXMLLoader loader = new FXMLLoader();
+             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("FXMLDocument.fxml"));
             
             
             
             FXMLDocumentController controller = new FXMLDocumentController();
-            controller.setUserName(NameTxt.getText());
+            controller.setUserName(name);
+            controller.setIPAddress(IP);
+            controller.setProtNum(Port);
             loader.setController(controller);
             root = loader.load();
             Stage stage = new Stage();

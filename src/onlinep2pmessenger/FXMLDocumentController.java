@@ -320,13 +320,6 @@ public class FXMLDocumentController implements Initializable {
     }
 
     public void showEmojis(MouseEvent e) {
-//        if (emojispanevis == false) {
-//            emojiPane.setVisible(true);
-//            emojispanevis = true;
-//        } else {
-//            emojiPane.setVisible(false);
-//            emojispanevis = false;
-//        }
         EmojiesPopUp.show(Toproot, JFXPopup.PopupVPosition.BOTTOM, JFXPopup.PopupHPosition.LEFT, e.getX() + 200, e.getY() - 50);
 
     }
@@ -364,7 +357,7 @@ public class FXMLDocumentController implements Initializable {
     }
 
     public void AddNewGroup(String roomName, String roomID) {
-        StackPane group = new StackPane();
+        RoomStackPane group = new RoomStackPane(roomID,roomName);
         group.getStyleClass().add("group-pane");
         group.setPadding(new Insets(5));
         Label lbl = new Label();
