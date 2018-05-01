@@ -66,6 +66,7 @@ public class Room{
     public void sendClient(Client c, CommunicationLink cl,String order) {
         HashMap<String, String> message = new HashMap<>();
         message.put(GeneralConstants.REPLYTYPEATTR, order);
+        message.put(GeneralConstants.ROOMIDATTR, this.getId());
         message.put(GeneralConstants.CLIENTIDATTR, c.getId());
         //message.put(GeneralConstants.CLIENTSTATUSATTR, c.getStatus());
         cl.send(message);
