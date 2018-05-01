@@ -6,6 +6,7 @@
 package onlinep2pmessenger;
 
 import com.jfoenix.controls.JFXPopup;
+import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
@@ -19,7 +20,7 @@ import javafx.scene.paint.Color;
 public class CustomStackPane extends StackPane {
     private String ID;
     private String Name;
-    private String UserStatus;
+    private StringProperty UserStatus;
     private Label lbl = new Label();
     private Label lbl2 = new Label();
 
@@ -39,6 +40,7 @@ public class CustomStackPane extends StackPane {
         
         this.ID = ClientID;
         this.Name = ClientName;
+        this.UserStatus.setValue(Status);
         this.getStyleClass().add("group-pane");
         this.setPadding(new Insets(5));
         VBox lblsvbox = new VBox();
@@ -49,7 +51,7 @@ public class CustomStackPane extends StackPane {
         lbl.setPadding(new Insets(5));
         
         lbl2.setPadding(new Insets(5));
-        lbl2.setText(Status);
+        lbl2.textProperty().bind(UserStatus);
         lbl2.setTextFill(Color.BLACK);
         lblsvbox.getChildren().add(lbl);
         lblsvbox.getChildren().add(lbl2);
@@ -65,8 +67,7 @@ public class CustomStackPane extends StackPane {
     }
 
     public void setUserStatus(String UserStatus) {
-        this.UserStatus = UserStatus;
-        this.lbl2.setText(UserStatus);
+        this.UserStatus.setValue(UserStatus);
     }
 
     public String getID() {
@@ -78,7 +79,7 @@ public class CustomStackPane extends StackPane {
     }
 
     public String getUserStatus() {
-        return UserStatus;
+        return UserStatus.getValue();
     }
     
     

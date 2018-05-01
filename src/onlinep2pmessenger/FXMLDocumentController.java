@@ -394,50 +394,29 @@ public class FXMLDocumentController implements Initializable {
             GroupOptions.setOnMouseClicked(e -> ShowPopupRoom(RoomPopUp,GroupOptions, e));
             ScrollPane MembersScroll = new ScrollPane();
 
-            MembersScroll.setMaxHeight(100);
-            MembersScroll.setMinHeight(100);
+            MembersScroll.setMaxHeight(80);
+            MembersScroll.setMinHeight(80);
             MembersScroll.setFitToWidth(true);
             HBox MembersCircles = new HBox();
-            MembersCircles.setMaxHeight(100);
-            MembersCircles.setMinHeight(100);
+            MembersCircles.setMaxHeight(80);
+            MembersCircles.setMinHeight(80);
             MembersCircles.setStyle("-fx-border-width:5; -fx-border-color: #555; -fx-border-radius: 50px; -fx-background-radius: 50px;");
             MembersScroll.setContent(MembersCircles);
             root.getChildren().add(GroupOptions);
             root.getChildren().add(MembersScroll);
             MembersCircles.setPadding(new Insets(13));
-//            MembersCircles.getChildren().add(GroupOptions);
             membersInRomPane.put(ID, MembersCircles);
-            EnterRoomUserCircle(UserName,ID, "online now", ID);
+//            EnterRoomUserCircle(UserName,ID, "online now", ID);
         }
 
     }
     
     public void EnterRoomUserCircle(String UserName, String UserID, String Status,String RoomID)
     {
-        String[] letters = UserName.split(" ");
-        JFXButton UserBtn ;
-        if(letters.length <2)
-        {
-            System.out.println("1 char "+ letters[0].charAt(0)+"");
-            UserBtn = new JFXButton(letters[0].charAt(0)+"");
-        }
-        else
-        {
-            System.out.println("else 2 chars "+ letters[0].charAt(0)+letters[1].charAt(0)+"");
-            UserBtn = new JFXButton(letters[0].charAt(0)+""+letters[1].charAt(0)+"");
-        }
-        UserBtn.getStyleClass().add("roundbutton");
         
-        Font font= null;
-        try {
-            font = Font.loadFont(new FileInputStream(new File("Fonts/ingeborg.otf")), 17);
-            UserBtn.setFont(font);
-            UserBtn.setMinSize(Region.USE_COMPUTED_SIZE,Region.USE_COMPUTED_SIZE);
-            
-            
-        } catch (FileNotFoundException ex) {
-            System.out.println("error");
-        }
+        
+        RoomCircleBtn UserBtn = new RoomCircleBtn(UserName, UserID, Status, RoomID);
+        
         JFXPopup CirclePopUp = new JFXPopup();
             
             JFXButton RemoveMember = new JFXButton("Remove Member");
@@ -448,7 +427,7 @@ public class FXMLDocumentController implements Initializable {
             
             
             membersInRomPane.get(RoomID).getChildren().add(UserBtn);
-            UserBtn.setPadding(new Insets(10));
+            
             UserBtn.setOnMouseClicked(e -> ShowPopupRoom(CirclePopUp,UserBtn, e));
     }
 
