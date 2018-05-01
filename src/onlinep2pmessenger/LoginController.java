@@ -93,6 +93,7 @@ public class LoginController implements Initializable {
             stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2); 
             stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 4);
             stage.setResizable(false);
+            stage.setOnCloseRequest(e -> closeWindow());
             
             stage.show();
         }
@@ -101,6 +102,10 @@ public class LoginController implements Initializable {
         catch (IOException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    private void closeWindow() {
+        System.exit(0);
     }
     
 }

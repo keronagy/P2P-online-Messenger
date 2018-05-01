@@ -39,7 +39,7 @@ public class Room{
         this.adminID = admin.getId();
         this.name = name;
         participants = new HashMap();
-        participants.put(this.adminID, admin);
+        //participants.put(this.adminID, admin);
     }
     
     public void addClient(Client client)

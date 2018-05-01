@@ -5,6 +5,8 @@
  */
 package onlinep2pmessenger;
 
+import javafx.beans.property.SimpleStringProperty;
+
 /**
  *
  * @author Islam
@@ -12,12 +14,14 @@ package onlinep2pmessenger;
 public class ClientTuple {
     private String ip;
     private String name;
-    private String status;
+    private SimpleStringProperty status ;
 
     public ClientTuple(String ip, String name, String status) {
+        this.status = new SimpleStringProperty();
+                
         this.ip = ip;
         this.name = name;
-        this.status = status;
+        this.status.setValue(status);
     }
 
     public String getName() {
@@ -33,14 +37,14 @@ public class ClientTuple {
     }
 
     public void setStatus(String status) {
-        this.status = status;
+        this.status.setValue(status);
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public String getStatus() {
+    public SimpleStringProperty getStatus() {
         return status;
     }
     

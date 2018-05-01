@@ -6,6 +6,7 @@
 package onlinep2pmessenger;
 
 import com.jfoenix.controls.JFXPopup;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
@@ -20,12 +21,12 @@ import javafx.scene.paint.Color;
 public class CustomStackPane extends StackPane {
     private String ID;
     private String Name;
-    private StringProperty UserStatus;
+    private SimpleStringProperty UserStatus;
     private Label lbl = new Label();
     private Label lbl2 = new Label();
 
     public CustomStackPane(String RoomID, String RoomName) {
-        
+        super();
         this.ID = RoomID;
         this.Name = RoomName;
         this.getStyleClass().add("group-pane");
@@ -36,11 +37,11 @@ public class CustomStackPane extends StackPane {
         lbl.setTextFill(Color.BLACK);
         this.getChildren().add(lbl);  
     }
-    public CustomStackPane(String ClientID, String ClientName, String Status) {
+    public CustomStackPane(String ClientID, String ClientName, SimpleStringProperty Status) {
         
         this.ID = ClientID;
         this.Name = ClientName;
-        this.UserStatus.setValue(Status);
+        this.UserStatus= Status;
         this.getStyleClass().add("group-pane");
         this.setPadding(new Insets(5));
         VBox lblsvbox = new VBox();

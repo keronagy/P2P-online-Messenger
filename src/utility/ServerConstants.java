@@ -16,6 +16,7 @@ public class ServerConstants {
     public static final String ADDNEWROOMORDER = "handleNewRoom";
     public static final String ADDNEWCLIENTTOROOMORDER = "handleClientAddedtoRoom";
     public static final String REMOVECLIENTFROMROOMORDER = "handleClientRemovedFromRoom";
+    public static final String CONFIRMCREATEROOMORDER = "handleRoomCreated";
     public static final String CONFIRMJOINROOMORDER = "handleRoomJoined";
     public static final String CONFIRMLEAVEROOMORDER = "handleRoomLeft";
 }

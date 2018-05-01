@@ -160,11 +160,11 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
         Client sender = clients.get(senderID);
         Room r = new Room(roomID, sender, roomName);
         rooms.put(roomID, r);
-        sendNewRoomToOtherClients(r);
         HashMap<String,String> confirmation = new HashMap();
-        confirmation.put(GeneralConstants.REPLYTYPEATTR, ServerConstants.CONFIRMJOINROOMORDER);
+        confirmation.put(GeneralConstants.REPLYTYPEATTR, ServerConstants.CONFIRMCREATEROOMORDER);
         confirmation.put(GeneralConstants.ROOMIDATTR, roomID);
         sender.server_cl.send(confirmation);
+        sendNewRoomToOtherClients(r);
     }
     
     public void handleRoomJoin(HashMap<String,String> message)
@@ -173,11 +173,12 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
         senderID = message.get(GeneralConstants.CLIENTIDATTR);
         roomID = message.get(GeneralConstants.ROOMIDATTR);
         Client sender = clients.get(senderID);
-        rooms.get(roomID).addClient(sender);
         HashMap<String,String> confirmation = new HashMap();
         confirmation.put(GeneralConstants.REPLYTYPEATTR, ServerConstants.CONFIRMJOINROOMORDER);
         confirmation.put(GeneralConstants.ROOMIDATTR, roomID);
+        confirmation.put(GeneralConstants.ROOMNAMEATTR, rooms.get(roomID).getName());
         sender.server_cl.send(confirmation);
+        rooms.get(roomID).addClient(sender);
     }
     
     public void handleRoomLeave(HashMap<String,String> message)

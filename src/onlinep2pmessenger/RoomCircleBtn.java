@@ -9,6 +9,7 @@ import com.jfoenix.controls.JFXButton;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Region;
@@ -21,11 +22,13 @@ import javafx.scene.text.Font;
 public class RoomCircleBtn extends JFXButton {
     String UserName;
     String UserID;
-    StringProperty Status;
+    StringProperty Status ;
     Tooltip StatusTT;
     String RoomID;
             
-    public RoomCircleBtn(String UserName, String UserID, String Status,String RoomID) {
+    public RoomCircleBtn(String UserName, String UserID, SimpleStringProperty Status,String RoomID) {
+        
+        this.Status = Status;
         String[] letters = UserName.split(" ");
         if(letters.length <2)
         {
@@ -49,6 +52,13 @@ public class RoomCircleBtn extends JFXButton {
         } catch (FileNotFoundException ex) {
             System.out.println("error");
         }
+        StatusTT = new Tooltip();
+        StatusTT.textProperty().bind(this.Status);
+        StatusTT.setStyle("-fx-font: normal bold 10 Langdon; "
+        + "-fx-base: #AE3522; "
+        + "-fx-text-fill: orange;");
+
+        this.setTooltip(StatusTT);
     }
     
     
