@@ -22,11 +22,14 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.ResourceBundle;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -126,7 +129,7 @@ public class FXMLDocumentController implements Initializable {
     private Button AddTab;
     @FXML
     private TabPane tabs;
-    HashMap<String, VBox> vboxes = new HashMap();
+    ConcurrentHashMap<String, VBox> vboxes = new ConcurrentHashMap();
     @FXML
     private VBox groupVbox;
     HashMap<String, StackPane> groupVboxes = new HashMap();
@@ -153,12 +156,15 @@ public class FXMLDocumentController implements Initializable {
     VBox EmojiesPopupVbox = new VBox();
     @FXML
     private ImageView emojies;
+    @FXML
+    Label TypingLbl;
 
     private PeerClient hamed; //client
     private HashMap<String, ClientTuple> clients = new HashMap();
-    public String userName;
+    private String userName;
     private String IPAddress;
     private String ProtNum;
+    private boolean type = false;
 
     public void setIPAddress(String IPAddress) {
         this.IPAddress = IPAddress;
@@ -171,7 +177,7 @@ public class FXMLDocumentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-            
+
             Server.initiateServer(); // initiating the server
             hamed = new PeerClient("online", userName);
             hamed.connect(ServerConstants.SERVERIP, ServerConstants.SERVERPORT, new ServerHandler());
@@ -195,8 +201,8 @@ public class FXMLDocumentController implements Initializable {
             final int value = i;
             imgsv[i - 1].setOnMouseClicked(e -> appendEmoji(value));
         }
+        ChatTxt.textProperty().addListener(e->typing());
 
-        
         EmojiesPopupVbox.setStyle("-fx-background-color:  #2e2f30;");
         for (int i = 0; i < 16; i += 4) {
             HBox kk = new HBox(imgsv[i], imgsv[i + 1], imgsv[i + 2], imgsv[i + 3]);
@@ -212,7 +218,7 @@ public class FXMLDocumentController implements Initializable {
     }
 
     public void createPrivateChat(String clientID) {
-        hamed.connectToPeer(clientID, clients.get(clientID).getIp(), ServerConstants.SERVERPORT + 1, new PeerHandler(clientID)
+        hamed.connectToPeer(clientID, clients.get(clientID).getIp(), ServerConstants.SERVERPORT + 2, new PeerHandler(clientID)
         );
         JoinClient(clientID);
     }
@@ -369,7 +375,7 @@ public class FXMLDocumentController implements Initializable {
         t.setId(ID);
         t.setOnCloseRequest((e -> onTabClose(t.getId())));
         t.setOnSelectionChanged((e -> onTabClick(t.getId())));
-        tabs.getSelectionModel().select(t);
+//        tabs.getSelectionModel().select(t);
         ScrollPane scrollPane = new ScrollPane();
         t.setContent(scrollPane);
         scrollPane.setFitToHeight(true);
@@ -415,7 +421,7 @@ public class FXMLDocumentController implements Initializable {
 
     public void EnterRoomUserCircle(String UserName, String UserID, SimpleStringProperty Status, String RoomID) {
 
-       RoomCircleBtn UserBtn = new RoomCircleBtn(UserName, UserID, Status, RoomID);
+        RoomCircleBtn UserBtn = new RoomCircleBtn(UserName, UserID, Status, RoomID);
 
         JFXPopup CirclePopUp = new JFXPopup();
 
@@ -479,6 +485,7 @@ public class FXMLDocumentController implements Initializable {
         MessageVbox.getChildren().add(p1);
         MessageVbox.getChildren().add(Timelbl);
         hob.getChildren().add(MessageVbox);
+
         return hob;
     }
 
@@ -511,7 +518,6 @@ public class FXMLDocumentController implements Initializable {
             }
         } else {
             AddTab(ClientID, ClientName);
-            createUserPane(ClientID, clients.get(ClientID).getStatus(), ClientName);
 
         }
         vboxes.get(ClientID).getChildren().add(createReceivedMsgStackPane(Msg, 1));
@@ -594,7 +600,7 @@ public class FXMLDocumentController implements Initializable {
     }
 
     public void createGroupPane(String groupID, String GroupName) {
-        
+
         CustomStackPane group = new CustomStackPane(groupID, GroupName);
         group.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -608,14 +614,16 @@ public class FXMLDocumentController implements Initializable {
         });
         groupVboxes.put(groupID, group);
         groupVbox.setSpacing(5);
-        try{
-        groupVbox.getChildren().add(group);
-        }catch(Exception ex){System.out.println(ex.getMessage());}
+        try {
+            groupVbox.getChildren().add(group);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
 
     }
 
     public void TestBtn() throws IOException {
-            clients.get("c-0").setStatus("fafafd");
+        clients.get("c-0").setStatus("fafafd");
     }
 
     public void setUserName(String name) {
@@ -667,6 +675,10 @@ public class FXMLDocumentController implements Initializable {
             Tab ta = tabs.getSelectionModel().getSelectedItem();
             ta.getStyleClass().remove("receiveMsg");
             ta.setText(ta.getText().replace("!!!", ""));
+            if (id.charAt(0) == 'c') {//yyyy.MM.dd.HH.mm.ss
+                String datelbl = new SimpleDateFormat("HH:mm:ss").format(new java.util.Date());
+                hamed.confirmSeen(id, datelbl);
+            }
         }
 
     }
@@ -732,10 +744,12 @@ public class FXMLDocumentController implements Initializable {
         private boolean first = true;
 
         public PeerHandler() {
+            first = true;
         }
 
         public PeerHandler(String peerID) {
             this.peerID = peerID;
+            first = false;
         }
 
         public void setPeerID(String peerID) {
@@ -757,33 +771,30 @@ public class FXMLDocumentController implements Initializable {
 
             }
         }
-        public void handleMessageFromPeer(HashMap<String,String> msg){
-            if(first)
-            {
-                   Platform.runLater(()-> JoinClient(peerID));
-                    first = false;
+
+        public void handleMessageFromPeer(HashMap<String, String> msg) {
+            if (first) {
+                first = false;
+                Platform.runLater(() -> JoinClient(peerID));
             }
             String message = msg.get(ClientConstants.PEERMESSAGE);
             //gui, show the message in the desired location using "peerID"
             Platform.runLater(() -> receiveClient(message, peerID));
         }
-        public void handleTyping(HashMap<String,String> msg){
+
+        public void handleTyping(HashMap<String, String> msg) {
             String status = msg.get(ClientConstants.TYPINGSTATUS);
-            String clientName = clients.get(peerID).getName();
-            if(status.isEmpty())
-            {
-                //not typing
-                //set label text to: ""
-            }
-            else
-            {
-                //typing
-                //set label text to: clientName+status
-            }
+            Platform.runLater(() -> changeTypingStatus(peerID, status));
         }
-        public void handleSeen(HashMap<String,String> msg){
+
+        public void handleSeen(HashMap<String, String> msg) {
             String timeSeenAt = msg.get(ClientConstants.SEENTIME);
             //set label text to: "seen at " + timeSeenAt
+            Label seen = new Label();
+            seen.setPadding(new Insets(5));
+            seen.setTextFill(Color.WHITE);
+            seen.setText("seen at " + timeSeenAt);
+            Platform.runLater(() -> vboxes.get(peerID).getChildren().add(seen));
         }
 
         private String getPeerID() {
@@ -820,7 +831,7 @@ public class FXMLDocumentController implements Initializable {
             //double click on right room
             Platform.runLater(() -> JoinRoom(roomID, roomName));
         }
-        
+
         public void handleRoomCreated(HashMap<String, String> msg) {
             String roomID = msg.get(GeneralConstants.ROOMIDATTR);
             //GUI open room
@@ -843,7 +854,7 @@ public class FXMLDocumentController implements Initializable {
             SimpleStringProperty clientStatus = clients.get(clientID).getStatus();
             String roomID = msg.get(GeneralConstants.ROOMIDATTR);
             //GUI add client to room
-            Platform.runLater(()->EnterRoomUserCircle(clientName, clientID, clientStatus, roomID));
+            Platform.runLater(() -> EnterRoomUserCircle(clientName, clientID, clientStatus, roomID));
         }
 
         public void handleClientRemovedFromRoom(HashMap<String, String> msg) {
@@ -880,4 +891,29 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
+    public void typing() {
+        String ID = tabs.getSelectionModel().getSelectedItem().getId();
+        if (ID.charAt(0) == 'c') {
+            if (ChatTxt.getText().isEmpty()) {
+                type = false;
+                hamed.stoppedTyping(ID);
+            } else if (!type) {
+                type = true;
+                hamed.isTyping(ID);
+            }
+        }
+    }
+
+    public void changeTypingStatus(String clientID, String status) {
+        String ID = tabs.getSelectionModel().getSelectedItem().getId();
+        if (clientID.equals(ID)) {
+            String clientName = clients.get(clientID).getName();
+            if (status.isEmpty()) {
+                TypingLbl.setText("");
+            } else {
+                TypingLbl.setText(clientName + status);
+            }
+        }
+    }
 }
+            

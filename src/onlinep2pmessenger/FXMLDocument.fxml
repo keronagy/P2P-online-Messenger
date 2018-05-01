@@ -116,7 +116,7 @@
             </Pane>
          </children>
       </Pane>
-      <Pane layoutX="205.0" layoutY="37.0" prefHeight="571.0" prefWidth="500.0" style="-fx-background-color: #2e2f30;">
+      <Pane layoutX="205.0" layoutY="37.0" prefHeight="571.0" prefWidth="501.0" style="-fx-background-color: #2e2f30;">
          <children>
             <BorderPane layoutX="-1.0" layoutY="526.0" prefHeight="38.0" prefWidth="505.0" style="-fx-border-width: 2; -fx-border-color: #555;" />
             <TextField fx:id="ChatTxt" layoutX="40.0" layoutY="532.0" prefHeight="25.0" prefWidth="356.0" style="-fx-background-color: #555; -fx-text-fill: white;" />
@@ -125,7 +125,7 @@
                   <Image url="@imgs/imoji.png" />
                </image>
             </ImageView>
-            <TabPane fx:id="tabs" prefHeight="524.0" prefWidth="500.0" tabClosingPolicy="ALL_TABS" />
+            <TabPane fx:id="tabs" prefHeight="499.0" prefWidth="501.0" tabClosingPolicy="ALL_TABS" />
             <Pane fx:id="emojiPane" layoutX="-1.0" layoutY="398.0" prefHeight="137.0" prefWidth="151.0" visible="false">
                <children>
                   <ImageView fx:id="i5" fitHeight="20.0" fitWidth="20.0" layoutX="15.0" layoutY="47.0" pickOnBounds="true" preserveRatio="true">
@@ -211,6 +211,7 @@
                </children>
             </Pane>
             <Button layoutX="412.0" layoutY="532.0" mnemonicParsing="false" onMouseClicked="#sendBtn" style="-fx-background-color: #232;" text="Send" textFill="#278313" />
+            <Label fx:id="TypingLbl" layoutX="9.0" layoutY="499.0" prefHeight="25.0" prefWidth="490.0" style="-fx-text-fill: orange; -fx-font-style: italic;" />
          </children>
       </Pane>
     </children>
