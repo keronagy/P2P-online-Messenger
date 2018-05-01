@@ -18,6 +18,8 @@ public class ClientConstants {
     public static final String ROOMSENDMESSAGE = "handleRoomMessage";
     public static final String ROOMLEAVECONNECTION = "handleRoomLeave";
     public static final String PEERMESSAGE = "peermessage";
+    public static final String TYPINGSTATUS = "typingstatus";
+    public static final String SEENTIME = "seentime";
     public static final int P2PPORT = 5555;
 
 }

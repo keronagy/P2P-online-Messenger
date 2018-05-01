@@ -13,7 +13,10 @@ public class MessageConstants {
     public static final String MESSAGEFROM = "mfrom";
     
     public static final String MESSAGEFROMROOM = "handleMessageFromRoom";
-    public static final String MESSAGEFROMCLIENT = "fromc";
-    
+    public static final String MESSAGEFROMCLIENT = "handleMessageFromPeer";
+    public static final String TYPINGHANDLE = "handleTyping";
+    public static final String SEENHANDLE = "handleSeen";
+    public static final String ISTYPING = "is typing...";
+    public static final String NOTTYPING = "";
     public static final String MESSAGE = "msg";
 }

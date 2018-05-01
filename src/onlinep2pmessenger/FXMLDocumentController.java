@@ -743,13 +743,47 @@ public class FXMLDocumentController implements Initializable {
         }
 
         public void handleReceivedData(HashMap<String, String> msg) {
-            if (first) {
-                Platform.runLater(() -> JoinClient(peerID));
-                first = false;
+
+            try {
+                java.lang.reflect.Method handle;
+                handle = this.getClass().getMethod(msg.get(GeneralConstants.REQUESTTYPEATTR), HashMap.class);
+                handle.invoke(this, msg);
+            } catch (Exception ex) {
+                System.out.println(ex.getLocalizedMessage());
+
+                for (StackTraceElement ste : ex.getStackTrace()) {
+                    System.out.println(ste);
+                }
+
+            }
+        }
+        public void handleMessageFromPeer(HashMap<String,String> msg){
+            if(first)
+            {
+                   Platform.runLater(()-> JoinClient(peerID));
+                    first = false;
             }
             String message = msg.get(ClientConstants.PEERMESSAGE);
             //gui, show the message in the desired location using "peerID"
             Platform.runLater(() -> receiveClient(message, peerID));
+        }
+        public void handleTyping(HashMap<String,String> msg){
+            String status = msg.get(ClientConstants.TYPINGSTATUS);
+            String clientName = clients.get(peerID).getName();
+            if(status.isEmpty())
+            {
+                //not typing
+                //set label text to: ""
+            }
+            else
+            {
+                //typing
+                //set label text to: clientName+status
+            }
+        }
+        public void handleSeen(HashMap<String,String> msg){
+            String timeSeenAt = msg.get(ClientConstants.SEENTIME);
+            //set label text to: "seen at " + timeSeenAt
         }
 
         private String getPeerID() {
