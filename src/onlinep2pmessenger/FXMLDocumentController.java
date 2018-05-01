@@ -404,7 +404,7 @@ public class FXMLDocumentController implements Initializable {
             MembersScroll.setContent(MembersCircles);
             root.getChildren().add(GroupOptions);
             root.getChildren().add(MembersScroll);
-            
+            MembersCircles.setPadding(new Insets(13));
 //            MembersCircles.getChildren().add(GroupOptions);
             membersInRomPane.put(ID, MembersCircles);
             EnterRoomUserCircle(UserName,ID, "online now", ID);
@@ -433,6 +433,8 @@ public class FXMLDocumentController implements Initializable {
             font = Font.loadFont(new FileInputStream(new File("Fonts/ingeborg.otf")), 17);
             UserBtn.setFont(font);
             UserBtn.setMinSize(Region.USE_COMPUTED_SIZE,Region.USE_COMPUTED_SIZE);
+            
+            
         } catch (FileNotFoundException ex) {
             System.out.println("error");
         }
@@ -444,7 +446,9 @@ public class FXMLDocumentController implements Initializable {
             VBox BtnsPop = new VBox(RemoveMember, MakeAdmin);
             CirclePopUp.setPopupContent(BtnsPop);
             
+            
             membersInRomPane.get(RoomID).getChildren().add(UserBtn);
+            UserBtn.setPadding(new Insets(10));
             UserBtn.setOnMouseClicked(e -> ShowPopupRoom(CirclePopUp,UserBtn, e));
     }
 
