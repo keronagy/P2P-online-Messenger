@@ -471,44 +471,43 @@ public class FXMLDocumentController implements Initializable {
         p1.setStyle("-fx-background-color: #fff; -fx-background-radius: 30; -fx-border-radius: 30; -fx-border-width:5;");
         p1.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         p1.setMinHeight(Region.USE_PREF_SIZE);
-        Label lbl1 = new Label(Msg);
+        Label lbl1 = new Label();
         lbl1.setPadding(new Insets(10));
-        lbl1.setText(Msg);
+        if(Type == 1)
+            lbl1.setText(Msg);
+        else
+            lbl1.setText(Msg.substring( Msg.indexOf(":")+1,Msg.length()));
         lbl1.setTextFill(Color.BLACK);
         HBox hob = new HBox();
         hob.setPrefWidth(470);
         hob.setAlignment(Pos.CENTER_RIGHT);
         p1.getChildren().add(lbl1);
-        
-        if(Type==1)
-        {
-        hob.getChildren().add(p1);
-        return hob;
-        }
-        else
-        {
-            VBox RoomMsg = new VBox();
-            Label lbl = new Label(Msg);
+        Label Timelbl = createDateLbl();
+        VBox MessageVbox = new VBox();
+        if (Type == 2) {
+
+            Label lbl = new Label();
             lbl.setPadding(new Insets(5));
-            lbl.setText("name of sender");
+            lbl.setText(Msg.substring(0, Msg.indexOf(":")));
             lbl.setTextFill(Color.WHITE);
-            
-            
-            String datelbl = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date());
-            Label Timelbl = new Label();
-            Timelbl.setPadding(new Insets(5));
-            Timelbl.setText(datelbl);
-            Timelbl.setTextFill(Color.WHITE);
-            
-            
-            System.out.println();
-            RoomMsg.getChildren().add(lbl);
-            RoomMsg.getChildren().add(p1);
-            RoomMsg.getChildren().add(Timelbl);
-            
-            hob.getChildren().add(RoomMsg);
-            return hob;
+            MessageVbox.getChildren().add(lbl);
+
         }
+        MessageVbox.getChildren().add(p1);
+        MessageVbox.getChildren().add(Timelbl);
+        hob.getChildren().add(MessageVbox);
+        return hob;
+    }
+    
+    private Label createDateLbl()
+    {
+        //yyyy.MM.dd.HH.mm.ss
+        String datelbl = new SimpleDateFormat("HH:mm:ss").format(new java.util.Date());
+        Label Timelbl = new Label();
+        Timelbl.setPadding(new Insets(5));
+        Timelbl.setText(datelbl);
+        Timelbl.setTextFill(Color.WHITE);
+        return Timelbl;
     }
 
     public void receiveClient(String Msg, String ClientID, String ClientName) {
@@ -571,15 +570,17 @@ public class FXMLDocumentController implements Initializable {
             p.setMinHeight(Region.USE_PREF_SIZE);
             p.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
             p.setStyle("-fx-background-color: #00FFFF; -fx-background-radius: 30; -fx-border-radius: 30; -fx-border-width:5;");
-
+            
             Label lbl = new Label(msg);
             lbl.setPadding(new Insets(10));
             lbl.setText(msg);
             lbl.setTextFill(Color.BLACK);
             lbl.setWrapText(true);
             //= tr
+            
             p.getChildren().add(lbl);
-            vboxes.get(ID).getChildren().add(p);
+            VBox MsgPane = new VBox(p,createDateLbl());
+            vboxes.get(ID).getChildren().add(MsgPane);
             ChatTxt.setText("");
             emojiPane.setVisible(false);
             if(ID.charAt(0)=='r')
