@@ -810,11 +810,13 @@ public class FXMLDocumentController implements Initializable {
         public void handleClientAddedtoRoom(HashMap<String, String> msg) {
             String clientID = msg.get(GeneralConstants.CLIENTIDATTR);
             String clientName = clients.get(clientID).getName();
+            String roomID = msg.get(GeneralConstants.ROOMIDATTR);
             //GUI add client to room
         }
 
         public void handleClientRemovedFromRoom(HashMap<String, String> msg) {
             String clientID = msg.get(GeneralConstants.CLIENTIDATTR);
+            String roomID = msg.get(GeneralConstants.ROOMIDATTR);
             //GUI remove client from room
         }
 
