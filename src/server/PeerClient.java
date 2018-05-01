@@ -62,7 +62,6 @@ public class PeerClient extends Client {
         }
     }
 
-
     public void connectToPeer(String peerID, String ip, int port, CallbackOnReceiveHandler handler) {
         try {
             Socket s = new Socket(ip, port);
@@ -111,7 +110,32 @@ public class PeerClient extends Client {
     public void sendMessageToPeer(String peerID, String msg) {
         CommunicationLink cl = this.cls.get(peerID);
         HashMap<String, String> message = new HashMap();
+        message.put(GeneralConstants.REQUESTTYPEATTR, MessageConstants.MESSAGEFROMCLIENT);
         message.put(ClientConstants.PEERMESSAGE, msg);
+        cl.send(message);
+    }
+
+    public void isTyping(String peerID) {
+        CommunicationLink cl = this.cls.get(peerID);
+        HashMap<String, String> message = new HashMap();
+        message.put(GeneralConstants.REQUESTTYPEATTR, MessageConstants.TYPINGHANDLE);
+        message.put(ClientConstants.TYPINGSTATUS, MessageConstants.ISTYPING);
+        cl.send(message);
+    }
+
+    public void stoppedTyping(String peerID) {
+        CommunicationLink cl = this.cls.get(peerID);
+        HashMap<String, String> message = new HashMap();
+        message.put(GeneralConstants.REQUESTTYPEATTR, MessageConstants.TYPINGHANDLE);
+        message.put(ClientConstants.TYPINGSTATUS, MessageConstants.NOTTYPING);
+        cl.send(message);
+    }
+
+    public void confirmSeen(String peerID, String seenAt) {
+        CommunicationLink cl = this.cls.get(peerID);
+        HashMap<String, String> message = new HashMap();
+        message.put(GeneralConstants.REQUESTTYPEATTR, MessageConstants.SEENHANDLE);
+        message.put(ClientConstants.SEENTIME, seenAt);
         cl.send(message);
     }
 
