@@ -230,7 +230,16 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
             rooms.remove(roomID);
         }
     }
-
+    public void handleClientKickFromRoom(HashMap<String,String> message){
+        String senderID,roomID,clientID;
+        senderID = message.get(Constants.ADMINIDATTR);
+        roomID = message.get(Constants.ROOMIDATTR);
+        clientID = message.get(Constants.CLIENTIDATTR);
+        Room r = rooms.get(roomID);
+        if (senderID.equals(r.getAdminID()) || senderID.equals(adminID)) {
+            r.removeClient(clients.get(clientID));
+        }
+    }
     public void handleClientKick(HashMap<String, String> message) {
         String requester = message.get(Constants.ADMINIDATTR);
         Client client = clients.get(message.get(Constants.CLIENTIDATTR));

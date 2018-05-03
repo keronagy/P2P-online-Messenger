@@ -162,5 +162,14 @@ public class PeerClient extends Client {
         message.put(Constants.ADMINIDATTR, this.getId());
         this.server_cl.send(message);
     }
+    public void kickClientFromRoom(String roomID,String clientID) //elgabha round2
+    {
+        HashMap<String, String> message = new HashMap();
+        message.put(Constants.REQUESTTYPEATTR, Constants.KICKCLIENTFROMROOMORDER);
+        message.put(Constants.CLIENTIDATTR, clientID);
+        message.put(Constants.ADMINIDATTR, this.getId());
+        message.put(Constants.ROOMIDATTR, roomID);
+        this.server_cl.send(message);
+    }
 
 }
