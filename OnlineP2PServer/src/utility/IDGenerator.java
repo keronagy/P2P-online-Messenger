@@ -10,12 +10,15 @@ package utility;
  * @author fadia
  */
 public class IDGenerator {
+
     private static int clients = 0;
     private static int rooms = 0;
-    public static String generateClientID(){
-        return Constants.isAClient+"-"+clients++;
+
+    public static String generateClientID() {
+        return Constants.isAClient + "-" + clients++;
     }
-    public static String generateRoomID(){
-        return Constants.isARoom+"-"+rooms++;
+
+    public static String generateRoomID() {
+        return Constants.isARoom + "-" + rooms++;
     }
 }

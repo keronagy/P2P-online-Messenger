@@ -12,13 +12,14 @@ import javafx.beans.property.SimpleStringProperty;
  * @author Islam
  */
 public class ClientTuple {
+
     private String ip;
     private String name;
-    private SimpleStringProperty status ;
+    private SimpleStringProperty status;
 
     public ClientTuple(String ip, String name, String status) {
         this.status = new SimpleStringProperty();
-                
+
         this.ip = ip;
         this.name = name;
         this.status.setValue(status);
@@ -47,6 +48,5 @@ public class ClientTuple {
     public SimpleStringProperty getStatus() {
         return status;
     }
-    
-    
+
 }

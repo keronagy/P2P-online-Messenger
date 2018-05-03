@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import java.net.URL?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="286.0" prefWidth="401.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="onlinep2pmessenger.StatusChangeController">
+    <stylesheets>
+        <URL value="@login.css" />
+    </stylesheets>
+   <children>
+      <JFXTextField fx:id="StatusTxt" labelFloat="true" layoutX="118.0" layoutY="108.0" promptText="New Status">
+         <font>
+            <Font size="13.0" />
+         </font></JFXTextField>
+      <Label fx:id="error" alignment="CENTER" layoutX="14.0" layoutY="6.0" prefHeight="60.0" prefWidth="381.0" style="-fx-background-color: #2e2f30;" stylesheets="@login.css" text="Changing Status" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <JFXButton buttonType="RAISED" layoutX="150.0" layoutY="187.0" onAction="#close" prefWidth="82.0" ripplerFill="#4e514f" text="Change" textFill="#d01717" />
+      <FontAwesomeIconView fill="#b2b2b2" glyphName="PENCIL_SQUARE_ALT" layoutX="86.0" layoutY="142.0" size="25" wrappingWidth="19.0" />
+   </children>
+</AnchorPane>
