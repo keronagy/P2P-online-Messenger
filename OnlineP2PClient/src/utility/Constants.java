@@ -70,5 +70,7 @@ public class Constants {
     public static final String ROOMDELETED = "handleRoomDeleted";
     public static final String KICKCLIENTORDER = "handleClientKick";
     public static final String KICKCLIENTFROMROOMORDER = "handleClientKickFromRoom";
+    public static final String CHANGESTATUS = "handleClientStatusChange";
+    public static final String NEWPEERSTATUSUPDATE = "handleNewPeerStatus";
 
 }

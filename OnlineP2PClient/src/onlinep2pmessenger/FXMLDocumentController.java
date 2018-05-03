@@ -133,7 +133,7 @@ public class FXMLDocumentController implements Initializable {
     private JFXButton AddRoomBtn;
     @FXML
     private Button receiveTest;
-    HashMap<String, HBox> membersInRomPane = new HashMap();
+    HashMap<String, CustomCirclesHBox> membersInRomPane = new HashMap();
     private JFXPopup LeftUsersPopUp = new JFXPopup();
     private JFXPopup EmojiesPopUp = new JFXPopup();
     VBox EmojiesPopupVbox = new VBox();
@@ -161,7 +161,7 @@ public class FXMLDocumentController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         try {
 
-            hamed = new PeerClient("online", userName);
+            hamed = new PeerClient(Constants.INITSTATUS, userName);
             hamed.connect(Constants.SERVERIP, Constants.SERVERPORT, new ServerHandler());
 
             handleNewConnections();
@@ -353,46 +353,43 @@ public class FXMLDocumentController implements Initializable {
                 
                 
 
-                GroupOptions.setOnMouseClicked(e -> ShowPopupRoom(GroupOptions.getRoomPopUp(), GroupOptions, e));
+                GroupOptions.setOnMouseClicked(e -> GroupOptions.getRoomPopUp().show(GroupOptions, JFXPopup.PopupVPosition.TOP, JFXPopup.PopupHPosition.LEFT, e.getX(), e.getY()));
                 ScrollPane MembersScroll = new ScrollPane();
 
                 MembersScroll.setMaxHeight(80);
                 MembersScroll.setMinHeight(80);
                 MembersScroll.setFitToWidth(true);
-                HBox MembersCircles = new HBox();
-                MembersCircles.setMaxHeight(80);
-                MembersCircles.setMinHeight(80);
-                MembersCircles.setStyle("-fx-border-width:5; -fx-border-color: #555; -fx-border-radius: 50px; -fx-background-radius: 50px;");
+                CustomCirclesHBox MembersCircles = new CustomCirclesHBox();
                 MembersScroll.setContent(MembersCircles);
                 root.getChildren().add(GroupOptions);
                 root.getChildren().add(MembersScroll);
-                MembersCircles.setPadding(new Insets(13));
-    //            MembersCircles.getChildren().add(GroupOptions);
                 membersInRomPane.put(ID, MembersCircles);
-                //t
-
             }
         }
 
     }
 
     public void EnterRoomUserCircle(String UserName, String UserID, SimpleStringProperty Status, String RoomID, String adminID) {
+        
+        if(membersInRomPane.get(RoomID).getCircles().get(UserID)==null)
+        {
+            RoomCircleBtn UserBtn = new RoomCircleBtn(UserName, UserID, Status, RoomID);
+            VBox BtnsPop = new VBox();
+            JFXPopup CirclePopUp = new JFXPopup();
+            if(adminID.equals(hamed.getId()) || hamed.isAdmin()){
+            JFXButton RemoveMember = new JFXButton("Kick Member");
+            RemoveMember.setOnMouseClicked(e->hamed.kickClientFromRoom(RoomID, UserID));
+            BtnsPop.getChildren().add(RemoveMember);
 
-        RoomCircleBtn UserBtn = new RoomCircleBtn(UserName, UserID, Status, RoomID);
-        VBox BtnsPop = new VBox();
-        JFXPopup CirclePopUp = new JFXPopup();
-        if(adminID.equals(hamed.getId()) || hamed.isAdmin()){
-        JFXButton RemoveMember = new JFXButton("Kick Member");
-        RemoveMember.setOnMouseClicked(e->hamed.kickClientFromRoom(RoomID, UserID));
-        BtnsPop.getChildren().add(RemoveMember);
+            }
 
+            CirclePopUp.setPopupContent(BtnsPop);
+
+            membersInRomPane.get(RoomID).getChildren().add(UserBtn);
+            membersInRomPane.get(RoomID).getCircles().put(UserID, UserBtn);
+
+            UserBtn.setOnMouseClicked(e -> ShowPopupRoom(CirclePopUp, UserBtn, e));
         }
-
-        CirclePopUp.setPopupContent(BtnsPop);
-
-        membersInRomPane.get(RoomID).getChildren().add(UserBtn);
-
-        UserBtn.setOnMouseClicked(e -> ShowPopupRoom(CirclePopUp, UserBtn, e));
     }
 
     public void ShowPopupRoom(JFXPopup RoomPopUp, JFXButton GroupOptions, MouseEvent e) {
@@ -658,6 +655,8 @@ public class FXMLDocumentController implements Initializable {
         if (!newStatus.equals("")) {
             System.out.println(newStatus);
             //change statushere
+            hamed.changeStatus(newStatus);
+            
             
         }
     }
@@ -868,12 +867,13 @@ public class FXMLDocumentController implements Initializable {
             String clientID = msg.get(Constants.CLIENTIDATTR);
             String roomID = msg.get(Constants.ROOMIDATTR);
             //GUI remove client from room
+            Platform.runLater(() -> removeCircleFromRoom(roomID, clientID));
         }
 
         public void handleNewPeerStatus(HashMap<String,String> msg){
             String senderID = msg.get(Constants.CLIENTIDATTR);
             String newStatus = msg.get(Constants.CLIENTSTATUSATTR);
-            clients.get(senderID).setStatus(newStatus);
+            Platform.runLater(()->clients.get(senderID).setStatus(newStatus));
         }
         
         public void handleMessageFromRoom(HashMap<String, String> msg) {
@@ -893,7 +893,7 @@ public class FXMLDocumentController implements Initializable {
             String clientIp = msg.get(Constants.CLIENTIPATTR);
             clients.put(clientID, new ClientTuple(clientIp.substring(1), clientName, clientStatus));
             //GUI add new client
-            Platform.runLater(() -> AddNewUser(clientID, clientName, new SimpleStringProperty(clientStatus)));
+            Platform.runLater(() -> AddNewUser(clientID, clientName, clients.get(clientID).getStatus()));
         }
 
         public void handleNewRoom(HashMap<String, String> msg) {
@@ -926,9 +926,7 @@ public class FXMLDocumentController implements Initializable {
 
         public void handleConnectionClosed(HashMap<String, String> msg) {
 
-            //gui server closed
-            //JOptionPane.showMessageDialog(null, "Server ERROR!!","Error", JOptionPane.ERROR);
-           
+            //gui server closed           
         try
         {
             
@@ -985,5 +983,15 @@ public class FXMLDocumentController implements Initializable {
     {
         System.exit(0);
         
+    }
+    
+    public void removeCircleFromRoom(String roomID,String clientID)
+    {
+        RoomCircleBtn circle = membersInRomPane.get(roomID).getCircles().get(clientID);
+        if(circle!=null)
+        {
+            membersInRomPane.get(roomID).getChildren().remove(circle);
+            membersInRomPane.get(roomID).getCircles().remove(clientID);
+        }
     }
 }

@@ -20,13 +20,13 @@ public class CustomGroupOptionBtn extends JFXButton{
     VBox BtnsPop;
     public CustomGroupOptionBtn(PeerClient peer , String roomID, String adminID) {
                 
-                
-                BtnsPop = new VBox();
-                addOption("Leave Room",e->peer.LeaveRoom(roomID));
-                if(peer.getId().equals(adminID) || peer.isAdmin())
-                    addOption("Delete Room",e->peer.deleteRoom(roomID));
-                RoomPopUp.setPopupContent(BtnsPop);
-                JFXButton GroupOptions = new JFXButton("Group Options");
+    this.setText("Room Options");
+    BtnsPop = new VBox();
+    addOption("Leave Room",e->peer.LeaveRoom(roomID));
+    if(peer.getId().equals(adminID) || peer.isAdmin())
+    addOption("Delete Room",e->peer.deleteRoom(roomID));
+    RoomPopUp.setPopupContent(BtnsPop);
+    JFXButton GroupOptions = new JFXButton("Group Options");
     }
     public void addOption(String name, EventHandler e){
         JFXButton Option = new JFXButton(name);

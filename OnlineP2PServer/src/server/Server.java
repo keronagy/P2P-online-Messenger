@@ -181,7 +181,7 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
     public void sendNewClientStatusToAllOtherClients(String clientID, String newStatus){
         //message construction
         HashMap<String,String> message = new HashMap<>();
-        message.put(Constants.REQUESTTYPEATTR, Constants.NEWPEERSTATUSUPDATE);
+        message.put(Constants.REPLYTYPEATTR, Constants.NEWPEERSTATUSUPDATE);
         message.put(Constants.CLIENTIDATTR, clientID);
         message.put(Constants.CLIENTSTATUSATTR, newStatus);
         

@@ -175,3 +175,7 @@ and open the template in the editor.
 .menu-item:focused {
      -fx-background-color: #555;
 }
+.jfx-popup-container
+{
+    -fx-background-color: #2e2f30;
+}

@@ -50,7 +50,7 @@ public class RoomCircleBtn extends JFXButton {
             System.out.println("error");
         }
         StatusTT = new Tooltip();
-        StatusTT.textProperty().bind(this.Status);
+        StatusTT.textProperty().bind(this.Status.concat("\n"+ UserName) );
         StatusTT.setStyle("-fx-font: normal bold 10 Langdon; "
                 + "-fx-base: #AE3522; "
                 + "-fx-text-fill: orange;");
