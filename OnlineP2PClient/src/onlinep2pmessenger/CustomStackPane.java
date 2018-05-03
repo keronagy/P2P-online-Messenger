@@ -31,7 +31,7 @@ public class CustomStackPane extends StackPane {
     private SimpleStringProperty UserStatus;
     private Label lbl = new Label();
     private Label lbl2 = new Label();
-    private JFXPopup KickPop ;
+    private JFXPopup KickPop= new JFXPopup(); ;
     private VBox BtnsPop;
     public CustomStackPane(String RoomID, String RoomName, String adminID) {
         super();
@@ -49,13 +49,12 @@ public class CustomStackPane extends StackPane {
 
     public CustomStackPane(String ClientID, String ClientName, SimpleStringProperty Status, PeerClient peer) {
         if(peer.isAdmin()){
-        KickPop = new JFXPopup();
+         
         JFXButton kickClient = new JFXButton("Kick Client");
-        BtnsPop = new VBox( );
+        BtnsPop = new VBox( kickClient);
         
         addOption("Kick Client",e->peer.kickClient(ClientID));
         KickPop.setPopupContent(BtnsPop);
-        this.setOnMouseClicked(e -> ShowPopupRoom(KickPop , e));
         }
     
         this.ID = ClientID;
@@ -83,11 +82,7 @@ public class CustomStackPane extends StackPane {
         BtnsPop.getChildren().add(Option);
         
     }
-    public void ShowPopupRoom(JFXPopup RoomPopUp, MouseEvent e) {
-        if (e.getButton() == MouseButton.SECONDARY) {
-            RoomPopUp.show(this, JFXPopup.PopupVPosition.TOP, JFXPopup.PopupHPosition.LEFT, e.getX(), e.getY());
-        }
-    }
+   
 
     public void setID(String RoomID) {
         this.ID = RoomID;
@@ -116,6 +111,12 @@ public class CustomStackPane extends StackPane {
     public String getAdminID() {
         return adminID;
     }
+
+    public JFXPopup getKickPop() {
+        return KickPop;
+    }
+    
+    
     
 
 }

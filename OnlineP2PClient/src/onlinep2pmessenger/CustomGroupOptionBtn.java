@@ -21,7 +21,7 @@ public class CustomGroupOptionBtn extends JFXButton{
     public CustomGroupOptionBtn(PeerClient peer , String roomID, String adminID) {
                 
                 
-                BtnsPop = new VBox( );
+                BtnsPop = new VBox();
                 addOption("Leave Room",e->peer.LeaveRoom(roomID));
                 if(peer.getId().equals(adminID) || peer.isAdmin())
                     addOption("Delete Room",e->peer.deleteRoom(roomID));

@@ -283,7 +283,11 @@ public class FXMLDocumentController implements Initializable {
 
     public void AddNewUser(String ID, String Name, SimpleStringProperty Status) {
         CustomStackPane user = new CustomStackPane(ID, Name, Status,hamed);
-
+        user.setOnMouseClicked(e -> {
+                if (e.getButton() == MouseButton.SECONDARY) {
+            user.getKickPop().show(user, JFXPopup.PopupVPosition.TOP, JFXPopup.PopupHPosition.LEFT, e.getX(), e.getY());
+        }
+            });
         user.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -528,6 +532,7 @@ public class FXMLDocumentController implements Initializable {
     public void createUserPane(String UserID, SimpleStringProperty Status, String UserName) {
         if(usersVboxes.get(UserID) == null){
             CustomStackPane user = new CustomStackPane(UserID, UserName, Status,hamed);
+            
 
             user.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
@@ -548,6 +553,7 @@ public class FXMLDocumentController implements Initializable {
     public void createGroupPane(String groupID, String GroupName, String adminID) {
         if(groupVboxes.get(groupID) == null){
             CustomStackPane group = new CustomStackPane(groupID, GroupName, adminID);
+            
             group.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent mouseEvent) {
@@ -671,6 +677,7 @@ public class FXMLDocumentController implements Initializable {
     }
 
     public void JoinRoom(String roomID, String roomName, String adminID) {
+        System.out.println(adminID);
         AddTab(roomID, roomName, adminID);
         createGroupPane(roomID, roomName, adminID);
     }
@@ -746,7 +753,11 @@ public class FXMLDocumentController implements Initializable {
 
         public void handleConnectionClosed(HashMap<String, String> msg) {
             // peer connection closed
-
+            Platform.runLater(()->{
+                RemoveVboxFromTabsAndLeftPanels(UsersVbox, usersVboxes, peerID);
+                RemoveVboxFromRightPanels(UserTabVbox, UserTabVboxes, peerID);
+                    
+                    });
         }
 
     }

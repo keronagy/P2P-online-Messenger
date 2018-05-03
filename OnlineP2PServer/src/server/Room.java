@@ -38,9 +38,9 @@ public class Room {
         return name;
     }
 
-    public Room(String id, Client admin, String name) {
+    public Room(String id, String adminID, String name) {
         this.id = id;
-        this.adminID = admin.getId();
+        this.adminID = adminID;
         this.name = name;
         participants = new HashMap();
         //participants.put(this.adminID, admin);

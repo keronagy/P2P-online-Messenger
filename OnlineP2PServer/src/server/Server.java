@@ -175,7 +175,7 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
         senderID = message.get(Constants.CLIENTIDATTR);
         roomName = message.get(Constants.ROOMNAMEATTR);
         Client sender = clients.get(senderID);
-        Room r = new Room(roomID, sender, roomName);
+        Room r = new Room(roomID, senderID, roomName);
         rooms.put(roomID, r);
         HashMap<String, String> confirmation = new HashMap();
         confirmation.put(Constants.REPLYTYPEATTR, Constants.CONFIRMCREATEROOMORDER);
@@ -194,7 +194,7 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
         confirmation.put(Constants.REPLYTYPEATTR, Constants.CONFIRMJOINROOMORDER);
         confirmation.put(Constants.ROOMIDATTR, roomID);
         confirmation.put(Constants.ROOMNAMEATTR, r.getName());
-        message.put(Constants.ADMINIDATTR, r.getAdminID());
+        confirmation.put(Constants.ADMINIDATTR, r.getAdminID());
         sender.getCommunicationLink().send(confirmation);
         r.addClient(sender);
     }
