@@ -13,11 +13,11 @@ import network.CommunicationLink;
  * @author fadia
  */
 public class Client {
-    protected String id;
-    protected String status;
-    protected String name;
-    protected String ip;
-    protected CommunicationLink server_cl;
+    private String id;
+    private String status;
+    private String name;
+    private String ip;
+    private CommunicationLink server_cl;
      
     
 

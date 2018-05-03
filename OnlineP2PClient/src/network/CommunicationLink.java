@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utility.CallbackOnReceiveHandler;
+import utility.Constants;
 
 /**
  *
@@ -25,20 +26,16 @@ public class CommunicationLink extends Thread {
     /**
      * @return the id
      */
-
     private CommunicationLink(CallbackOnReceiveHandler callBackHandler, Socket s) {
         this.callBackHandler = callBackHandler;
         try {
             this.oos = new ObjectOutputStream(s.getOutputStream());
             this.ois = new ObjectInputStream(s.getInputStream());
-        } catch (IOException ex) {
-            Logger.getLogger(CommunicationLink.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
         }
-        
+
     }
 
-    
-    
     //CommunicationLink factory to run code after object construction
     public static CommunicationLink generateCommunicationLink(CallbackOnReceiveHandler callBackHandler, Socket s) {
         CommunicationLink cl = new CommunicationLink(callBackHandler, s);
@@ -53,10 +50,10 @@ public class CommunicationLink extends Thread {
             try {
                 received = (HashMap<String, String>) ois.readObject();
                 callBackHandler.handleReceivedData(received);
-            } catch (IOException ex) {
-                Logger.getLogger(CommunicationLink.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ClassNotFoundException ex) {
-                Logger.getLogger(CommunicationLink.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
+                HashMap<String, String> message = new HashMap();
+                message.put(Constants.REPLYTYPEATTR, Constants.CONNECTIONCLOSED);
+                callBackHandler.handleReceivedData(message);
             }
         }
     }

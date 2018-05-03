@@ -5,7 +5,6 @@
  */
 package server;
 
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -17,7 +16,6 @@ import java.util.logging.Logger;
 import network.CommunicationLink;
 import utility.*;
 
-
 /**
  *
  * @author fadia
@@ -27,72 +25,84 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
 
     HashMap<String, Client> clients;
     HashMap<String, Room> rooms;
+    String adminID;
+    boolean first;
 
-    private Server(){
+    private Server() {
         // to deny access to default public constructor
+        first = true;
     }
-    
+
     @Override
-    public void handleReceivedData(HashMap<String, String> msg){
+    public void handleReceivedData(HashMap<String, String> msg) {
         try {
             java.lang.reflect.Method handle;
-            handle = this.getClass().getMethod(msg.get(Constants.REQUESTTYPEATTR),HashMap.class);
+            handle = this.getClass().getMethod(msg.get(Constants.REQUESTTYPEATTR), HashMap.class);
             handle.invoke(this, msg);
         } catch (Exception ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public static void initiateServer(){
+
+    public static void initiateServer() {
         new Server().start();
     }
-    
+
     @Override
-    public void run(){
+    public void run() {
         try {
             clients = new HashMap();
             rooms = new HashMap();
             ServerSocket ss = new ServerSocket(Constants.SERVERPORT);
-            while(true){               
+            while (true) {
                 handleClientRequest(ss.accept());
             }
         } catch (IOException ex) {
             System.out.println("server.Server.run()");
         }
     }
-    
-    private void sendNewClientToOtherClients(Client newClient){
-        
-        for(Client c : clients.values()){
-            sendClient(newClient, c.getCommunicationLink());
+
+    private void sendNewClientToOtherClients(Client newClient, String order) {
+        if (order.equals(Constants.ADDNEWCLIENTORDER)) {
+            for (Client c : clients.values()) {
+                sendClientAdd(newClient, c.getCommunicationLink());
+            }
+        } else {
+            for (Client c : clients.values()) {
+                sendClientRemove(newClient, c.getCommunicationLink());
+            }
         }
     }
-    
-    private void sendNewRoomToOtherClients(Room newRoom){
-        
-        for(Client c : clients.values()){
+
+    private void sendNewRoomToOtherClients(Room newRoom) {
+
+        for (Client c : clients.values()) {
             sendRoom(newRoom, c.getCommunicationLink());
         }
     }
-    
-    private Client createClient(String id, Socket s, String clientName){
+
+    private Client createClient(String id, Socket s, String clientName) {
         String initialStatus = Constants.INITSTATUS;
         String name = clientName;
-        return new Client(id, s.getInetAddress().toString(), initialStatus, name, CommunicationLink.generateCommunicationLink(this, s));
+        return new Client(id, s.getInetAddress().toString(), initialStatus, name, CommunicationLink.generateCommunicationLink(this, s, id));
     }
-    
-    private void handleClientRequest(Socket clientSocket){
+
+    private void handleClientRequest(Socket clientSocket) {
 
         try {
             ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream());
             ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream());
-            HashMap<String, String> connectionRequest = (HashMap<String, String>)ois.readObject();
-            
+            HashMap<String, String> connectionRequest = (HashMap<String, String>) ois.readObject();
+
             //2) check client Request type (control connection or room creation/joining connection)
             String connectionType = connectionRequest.get(Constants.REQUESTTYPEATTR);
-            if(connectionType.equals(Constants.MAINCONNECTION)){
+            if (connectionType.equals(Constants.MAINCONNECTION)) {
                 //create new client on server
                 String id = IDGenerator.generateClientID();
+                if (first) {
+                    adminID = id;
+                    first = false;
+                }
                 oos.writeUTF(id);
                 oos.flush();
                 Client newClient = createClient(id, clientSocket, connectionRequest.get(Constants.CLIENTNAMEATTR));
@@ -100,19 +110,19 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
                 sendClients(newClient.getCommunicationLink());
                 sendRooms(newClient.getCommunicationLink());
                 //add client to server state
-                
+
                 //update other clients of the new added client
-                sendNewClientToOtherClients(newClient);
+                sendNewClientToOtherClients(newClient, Constants.ADDNEWCLIENTORDER);
                 clients.put(newClient.getId(), newClient);
             }
-            
+
         } catch (Exception ex) {
             System.out.println("server.Server.handleClientRequest()");
-        } 
-        
+        }
+
     }
-    
-    public void sendClient(Client c, CommunicationLink cl) {
+
+    public void sendClientAdd(Client c, CommunicationLink cl) {
         HashMap<String, String> message = new HashMap<>();
         message.put(Constants.REPLYTYPEATTR, Constants.ADDNEWCLIENTORDER);
         message.put(Constants.CLIENTIDATTR, c.getId());
@@ -121,12 +131,21 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
         message.put(Constants.CLIENTIPATTR, c.getIp());
         cl.send(message);
     }
+
+    public void sendClientRemove(Client c, CommunicationLink cl) {
+        HashMap<String, String> message = new HashMap<>();
+        message.put(Constants.REPLYTYPEATTR, Constants.REMOVECLIENTORDER);
+        message.put(Constants.CLIENTIDATTR, c.getId());
+        cl.send(message);
+    }
+
     public void sendClients(CommunicationLink cl) {
         //need to put before adding in the new client so s/he doesnt get sent to her/im self
         clients.values().forEach((c) -> {
-            sendClient(c, cl);
+            sendClientAdd(c, cl);
         });
     }
+
     public void sendRoom(Room r, CommunicationLink cl) {
         HashMap<String, String> message = new HashMap<>();
         message.put(Constants.REPLYTYPEATTR, Constants.ADDNEWROOMORDER);
@@ -134,66 +153,95 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
         message.put(Constants.ROOMNAMEATTR, r.getName());
         cl.send(message);
     }
+
     public void sendRooms(CommunicationLink cl) {
         rooms.values().forEach((r) -> {
             sendRoom(r, cl);
         });
     }
-    
-    public void handleRoomMessage(HashMap<String,String> message)
-    {
-        String roomID,senderID,msg;
+
+    public void handleRoomMessage(HashMap<String, String> message) {
+        String roomID, senderID, msg;
         roomID = message.get(Constants.ROOMIDATTR);
         senderID = message.get(Constants.CLIENTIDATTR);
         msg = message.get(Constants.MESSAGE);
         rooms.get(roomID).sendMessageToParticipants(senderID, msg);
     }
-    
-    public void handleRoomCreate(HashMap<String,String> message)
-    {
-        String roomID,senderID,roomName;
+
+    public void handleRoomCreate(HashMap<String, String> message) {
+        String roomID, senderID, roomName;
         roomID = IDGenerator.generateRoomID();
         senderID = message.get(Constants.CLIENTIDATTR);
         roomName = message.get(Constants.ROOMNAMEATTR);
         Client sender = clients.get(senderID);
         Room r = new Room(roomID, sender, roomName);
         rooms.put(roomID, r);
-        HashMap<String,String> confirmation = new HashMap();
+        HashMap<String, String> confirmation = new HashMap();
         confirmation.put(Constants.REPLYTYPEATTR, Constants.CONFIRMCREATEROOMORDER);
         confirmation.put(Constants.ROOMIDATTR, roomID);
-        sender.server_cl.send(confirmation);
+        sender.getCommunicationLink().send(confirmation);
         sendNewRoomToOtherClients(r);
     }
-    
-    public void handleRoomJoin(HashMap<String,String> message)
-    {
-        String roomID,senderID;
+
+    public void handleRoomJoin(HashMap<String, String> message) {
+        String roomID, senderID;
         senderID = message.get(Constants.CLIENTIDATTR);
         roomID = message.get(Constants.ROOMIDATTR);
         Client sender = clients.get(senderID);
-        HashMap<String,String> confirmation = new HashMap();
+        HashMap<String, String> confirmation = new HashMap();
         confirmation.put(Constants.REPLYTYPEATTR, Constants.CONFIRMJOINROOMORDER);
         confirmation.put(Constants.ROOMIDATTR, roomID);
         confirmation.put(Constants.ROOMNAMEATTR, rooms.get(roomID).getName());
-        sender.server_cl.send(confirmation);
+        sender.getCommunicationLink().send(confirmation);
         rooms.get(roomID).addClient(sender);
     }
-    
-    public void handleRoomLeave(HashMap<String,String> message)
-    {
-        String roomID,senderID;
+
+    public void handleRoomLeave(HashMap<String, String> message) {
+        String roomID, senderID;
         senderID = message.get(Constants.CLIENTIDATTR);
         roomID = message.get(Constants.ROOMIDATTR);
         Client sender = clients.get(senderID);
         rooms.get(roomID).removeClient(sender);
-        HashMap<String,String> confirmation = new HashMap();
+        HashMap<String, String> confirmation = new HashMap();
         confirmation.put(Constants.REPLYTYPEATTR, Constants.CONFIRMLEAVEROOMORDER);
         confirmation.put(Constants.ROOMIDATTR, roomID);
-        sender.server_cl.send(confirmation);
+        sender.getCommunicationLink().send(confirmation);
     }
-    
+
+    public void handleClientClosed(HashMap<String, String> message) {
+        Client client = clients.get(message.get(Constants.CLIENTIDATTR));
+        rooms.values().forEach((r) -> {
+            r.removeClient(client);
+        });
+        sendNewClientToOtherClients(client, Constants.REMOVECLIENTORDER);
+        clients.remove(client.getId());
+    }
+
+    public void handleRoomDeleteRequest(HashMap<String, String> message) {
+        String roomID, senderID;
+        senderID = message.get(Constants.CLIENTIDATTR);
+        roomID = message.get(Constants.ROOMIDATTR);
+        Room r = rooms.get(roomID);
+        if (senderID.equals(r.getAdminID()) || senderID.equals(adminID)) {
+            r.deleteRoom();
+            rooms.remove(roomID);
+        }
+    }
+
+    public void handleClientKick(HashMap<String, String> message) {
+        String requester = message.get(Constants.ADMINIDATTR);
+        Client client = clients.get(message.get(Constants.CLIENTIDATTR));
+        if (requester.equals(adminID)) {
+            handleClientClosed(message);
+            HashMap<String, String> close = new HashMap();
+            close.put(Constants.REPLYTYPEATTR, Constants.CONNECTIONCLOSED);
+            client.getCommunicationLink().send(close);
+        }
+        
+    }
+
     public static void main(String[] args) {
         initiateServer();
     }
-    
+
 }

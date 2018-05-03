@@ -42,6 +42,7 @@ public class Constants {
     public static final String isAServer = "s";
 
     //public static final String SENDERIDATTR = "senderid";
+    public static final String ADMINIDATTR = "AID";
     public static final String CLIENTIDATTR = "CID";
     public static final String CLIENTSTATUSATTR = "CSTATUS";
     public static final String CLIENTNAMEATTR = "CNAME";
@@ -61,5 +62,12 @@ public class Constants {
     public static final String ISTYPING = " is typing...";
     public static final String NOTTYPING = "";
     public static final String MESSAGE = "msg";
+    
+    public static final String REMOVECLIENTORDER = "handleRemoveClient";
+    
+    public static final String CONNECTIONCLOSED = "handleConnectionClosed";
+    public static final String ROOMDELETEORDER = "handleRoomDeleteRequest";
+    public static final String ROOMDELETED = "handleRoomDeleted";
+    public static final String KICKCLIENTORDER = "handleClientKick";
 
 }

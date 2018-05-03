@@ -14,7 +14,6 @@ import java.util.HashMap;
 import network.CommunicationLink;
 import utility.*;
 
-
 /**
  *
  * @author Islam
@@ -24,6 +23,7 @@ public class PeerClient extends Client {
     protected HashMap<String, CommunicationLink> cls;
 
     private ServerSocket peerSocket;
+    private boolean admin = false;
 
     public PeerClient(String status, String name) {
         super("", status, name);
@@ -42,11 +42,18 @@ public class PeerClient extends Client {
             oos.writeObject(connectionRequest);
             oos.flush();
             this.id = ois.readUTF();
+            if (this.id.equals("c-0")) {
+                admin = true;
+            }
             this.server_cl = CommunicationLink.generateCommunicationLink(handler, s);
             peerSocket = new ServerSocket(Constants.SERVERPORT + 1);
         } catch (Exception ex) {
             System.out.println("Connection failed");
         }
+    }
+
+    public boolean isAdmin() {
+        return this.admin;
     }
 
     public String waitForConnection(CallbackOnReceiveHandler handler) {
@@ -107,6 +114,14 @@ public class PeerClient extends Client {
         this.server_cl.send(message);
     }
 
+    public void deleteRoom(String roomID) {
+        HashMap<String, String> message = new HashMap();
+        message.put(Constants.REQUESTTYPEATTR, Constants.ROOMDELETEORDER);
+        message.put(Constants.CLIENTIDATTR, this.id);
+        message.put(Constants.ROOMIDATTR, roomID);
+        this.server_cl.send(message);
+    }
+
     public void sendMessageToPeer(String peerID, String msg) {
         CommunicationLink cl = this.cls.get(peerID);
         HashMap<String, String> message = new HashMap();
@@ -137,6 +152,15 @@ public class PeerClient extends Client {
         message.put(Constants.REQUESTTYPEATTR, Constants.SEENHANDLE);
         message.put(Constants.SEENTIME, seenAt);
         cl.send(message);
+    }
+    
+    public void kickClient(String clientID) //elgabha
+    {
+        HashMap<String, String> message = new HashMap();
+        message.put(Constants.REQUESTTYPEATTR, Constants.KICKCLIENTORDER);
+        message.put(Constants.CLIENTIDATTR, clientID);
+        message.put(Constants.ADMINIDATTR, this.getId());
+        this.server_cl.send(message);
     }
 
 }

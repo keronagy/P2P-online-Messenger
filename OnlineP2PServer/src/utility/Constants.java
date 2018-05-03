@@ -20,6 +20,7 @@ public class Constants {
     public static final String CONFIRMCREATEROOMORDER = "handleRoomCreated";
     public static final String CONFIRMJOINROOMORDER = "handleRoomJoined";
     public static final String CONFIRMLEAVEROOMORDER = "handleRoomLeft";
+    public static final String CLIENTLEFT ="handleClientClosed";
 
     public static final String INITSTATUS = "online";
     public static final String MAINCONNECTION = "serverConn";
@@ -42,6 +43,7 @@ public class Constants {
     public static final String isAServer = "s";
 
     //public static final String SENDERIDATTR = "senderid";
+    public static final String ADMINIDATTR = "AID";
     public static final String CLIENTIDATTR = "CID";
     public static final String CLIENTSTATUSATTR = "CSTATUS";
     public static final String CLIENTNAMEATTR = "CNAME";
@@ -61,5 +63,10 @@ public class Constants {
     public static final String ISTYPING = " is typing...";
     public static final String NOTTYPING = "";
     public static final String MESSAGE = "msg";
+    public static final String REMOVECLIENTORDER = "handleRemoveClient";
+    public static final String ROOMDELETED = "handleRoomDeleted";
+    public static final String ROOMDELETEORDER = "handleRoomDeleteRequest";
+    public static final String KICKCLIENTORDER = "handleClientKick";
+    public static final String CONNECTIONCLOSED = "handleConnectionClosed";
 
 }

@@ -703,6 +703,7 @@ public class FXMLDocumentController implements Initializable {
             this.peerID = peerID;
         }
 
+        @Override
         public void handleReceivedData(HashMap<String, String> msg) {
 
             try {
@@ -748,10 +749,16 @@ public class FXMLDocumentController implements Initializable {
             return peerID;
         }
 
+        public void handleConnectionClosed(HashMap<String, String> msg) {
+            // peer connection closed
+
+        }
+
     }
 
     private class ServerHandler implements CallbackOnReceiveHandler {
 
+        @Override
         public void handleReceivedData(HashMap<String, String> msg) {
             try {
                 java.lang.reflect.Method handle;
@@ -834,6 +841,20 @@ public class FXMLDocumentController implements Initializable {
             String roomID = msg.get(Constants.ROOMIDATTR);
             //GUI add room
             Platform.runLater(() -> AddNewGroup(roomName, roomID));
+
+        }
+
+        public void handleRemoveClient(HashMap<String, String> msg) {
+            String clientID = msg.get(Constants.CLIENTIDATTR);
+            //gui remove client from the server
+        }
+        public void handleRoomDeleted(HashMap<String, String> msg){
+            String roomID = msg.get(Constants.ROOMIDATTR);
+        }
+
+        public void handleConnectionClosed(HashMap<String, String> msg) {
+            
+            //gui server closed
 
         }
     }
