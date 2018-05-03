@@ -19,6 +19,7 @@ import javafx.scene.paint.Color;
  * @author koko_
  */
 public class CustomStackPane extends StackPane {
+
     private String ID;
     private String Name;
     private SimpleStringProperty UserStatus;
@@ -31,26 +32,27 @@ public class CustomStackPane extends StackPane {
         this.Name = RoomName;
         this.getStyleClass().add("group-pane");
         this.setPadding(new Insets(5));
-        
+
         lbl.setPadding(new Insets(5));
         lbl.setText(RoomName);
         lbl.setTextFill(Color.BLACK);
-        this.getChildren().add(lbl);  
+        this.getChildren().add(lbl);
     }
+
     public CustomStackPane(String ClientID, String ClientName, SimpleStringProperty Status) {
-        
+
         this.ID = ClientID;
         this.Name = ClientName;
-        this.UserStatus= Status;
+        this.UserStatus = Status;
         this.getStyleClass().add("group-pane");
         this.setPadding(new Insets(5));
         VBox lblsvbox = new VBox();
-        
+
         lbl.setPadding(new Insets(5));
         lbl.setText(Name);
         lbl.setTextFill(Color.CYAN);
         lbl.setPadding(new Insets(5));
-        
+
         lbl2.setPadding(new Insets(5));
         lbl2.textProperty().bind(UserStatus);
         lbl2.setTextFill(Color.BLACK);
@@ -82,6 +84,5 @@ public class CustomStackPane extends StackPane {
     public String getUserStatus() {
         return UserStatus.getValue();
     }
-    
-    
+
 }

@@ -848,14 +848,14 @@ public class FXMLDocumentController implements Initializable {
             String clientID = msg.get(Constants.CLIENTIDATTR);
             //gui remove client from the server
         }
-        public void handleRoomDeleted(HashMap<String, String> msg){
+
+        public void handleRoomDeleted(HashMap<String, String> msg) {
             String roomID = msg.get(Constants.ROOMIDATTR);
         }
 
         public void handleConnectionClosed(HashMap<String, String> msg) {
-            
-            //gui server closed
 
+            //gui server closed
         }
     }
 

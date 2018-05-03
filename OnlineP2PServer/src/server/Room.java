@@ -30,7 +30,7 @@ public class Room {
     public String getAdminID() {
         return adminID;
     }
-    
+
     /**
      * @return the name
      */
@@ -104,10 +104,10 @@ public class Room {
     public void deleteRoom() {
         HashMap<String, String> message = new HashMap();
         message.put(Constants.REPLYTYPEATTR, Constants.ROOMDELETED);
-        message.put(Constants.ROOMIDATTR,this.getId());
+        message.put(Constants.ROOMIDATTR, this.getId());
         participants.values().forEach((c) -> {
-                c.getCommunicationLink().send(message);
-            
+            c.getCommunicationLink().send(message);
+
         });
     }
 }

@@ -20,7 +20,7 @@ public class Constants {
     public static final String CONFIRMCREATEROOMORDER = "handleRoomCreated";
     public static final String CONFIRMJOINROOMORDER = "handleRoomJoined";
     public static final String CONFIRMLEAVEROOMORDER = "handleRoomLeft";
-    public static final String CLIENTLEFT ="handleClientClosed";
+    public static final String CLIENTLEFT = "handleClientClosed";
 
     public static final String INITSTATUS = "online";
     public static final String MAINCONNECTION = "serverConn";

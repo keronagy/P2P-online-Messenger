@@ -42,64 +42,54 @@ public class LoginController implements Initializable {
     @FXML
     private JFXTextField NameTxt;
     @FXML
-    private Label error; 
+    private Label error;
     @FXML
     private JFXTextField IPTxt;
     @FXML
     private JFXTextField PortTxt;
-    
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-        
-       
-        
 
-    }    
-    
-    public void GoToHomePage()
-    {
-        
+    }
+
+    public void GoToHomePage() {
+
         Parent root;
         try {
             String name = NameTxt.getText();
             String IP = IPTxt.getText();
             String Port = PortTxt.getText();
-            if(name.equals("") || name.replace(" ", "").length()==0 ||IP.equals("") || IP.replace(" ", "").length()==0 || Port.equals("") || Port.replace(" ", "").length()==0 )
-        {
-            error.setText("please enter the name");
-            error.setStyle("-fx-background-color: red;");
-        }
-            else
-            {
-             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("FXMLDocument.fxml"));
-            
-            
-            
-            FXMLDocumentController controller = new FXMLDocumentController();
-            controller.setUserName(name);
-            controller.setIPAddress(IP);
-            controller.setProtNum(Port);
-            loader.setController(controller);
-            root = loader.load();
-            Stage stage = new Stage();
-            stage.setScene(new Scene(root));
-            StartBtn.getScene().getWindow().hide();
-            stage.setTitle("Regaletna Messenger");
-            stage.setHeight(635);
-            stage.setWidth(920);
-            Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
-            stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2); 
-            stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 4);
-            stage.setResizable(false);
-            stage.setOnCloseRequest(e -> closeWindow());
-            
-            stage.show();
-        }
+            if (name.equals("") || name.replace(" ", "").length() == 0 || IP.equals("") || IP.replace(" ", "").length() == 0 || Port.equals("") || Port.replace(" ", "").length() == 0) {
+                error.setText("please enter the name");
+                error.setStyle("-fx-background-color: red;");
+            } else {
+                FXMLLoader loader = new FXMLLoader();
+                loader.setLocation(getClass().getResource("FXMLDocument.fxml"));
 
-        }
-        catch (IOException e) {
+                FXMLDocumentController controller = new FXMLDocumentController();
+                controller.setUserName(name);
+                controller.setIPAddress(IP);
+                controller.setProtNum(Port);
+                loader.setController(controller);
+                root = loader.load();
+                Stage stage = new Stage();
+                stage.setScene(new Scene(root));
+                StartBtn.getScene().getWindow().hide();
+                stage.setTitle("Regaletna Messenger");
+                stage.setHeight(635);
+                stage.setWidth(920);
+                Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+                stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
+                stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 4);
+                stage.setResizable(false);
+                stage.setOnCloseRequest(e -> closeWindow());
+
+                stage.show();
+            }
+
+        } catch (IOException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -107,5 +97,5 @@ public class LoginController implements Initializable {
     private void closeWindow() {
         System.exit(0);
     }
-    
+
 }

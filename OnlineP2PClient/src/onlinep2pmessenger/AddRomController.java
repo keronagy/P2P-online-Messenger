@@ -26,28 +26,26 @@ public class AddRomController implements Initializable {
     private JFXTextField RoomName;
     @FXML
     private Label error;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-    }    
-    
-    public String onClose()
-    {
+    }
+
+    public String onClose() {
         return RoomName.getText();
     }
-    public void close(){
+
+    public void close() {
         String txt = RoomName.getText();
-        if(txt.equals("") || txt.replace(" ", "").length()==0)
-        {
+        if (txt.equals("") || txt.replace(" ", "").length() == 0) {
             error.setText("please enter the name");
             error.setStyle("-fx-background-color: red;");
-            
-        }
-        else
-        {
+
+        } else {
             RoomName.getScene().getWindow().hide();
 
         }
     }
-    
+
 }

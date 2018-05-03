@@ -237,7 +237,7 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
             close.put(Constants.REPLYTYPEATTR, Constants.CONNECTIONCLOSED);
             client.getCommunicationLink().send(close);
         }
-        
+
     }
 
     public static void main(String[] args) {

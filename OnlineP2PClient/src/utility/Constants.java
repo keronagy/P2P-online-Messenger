@@ -62,9 +62,9 @@ public class Constants {
     public static final String ISTYPING = " is typing...";
     public static final String NOTTYPING = "";
     public static final String MESSAGE = "msg";
-    
+
     public static final String REMOVECLIENTORDER = "handleRemoveClient";
-    
+
     public static final String CONNECTIONCLOSED = "handleConnectionClosed";
     public static final String ROOMDELETEORDER = "handleRoomDeleteRequest";
     public static final String ROOMDELETED = "handleRoomDeleted";

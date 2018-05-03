@@ -36,11 +36,9 @@ public class CommunicationLink extends Thread {
         } catch (IOException ex) {
             Logger.getLogger(CommunicationLink.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
 
-    
-    
     //CommunicationLink factory to run code after object construction
     public static CommunicationLink generateCommunicationLink(CallbackOnReceiveHandler callBackHandler, Socket s, String id) {
         CommunicationLink cl = new CommunicationLink(callBackHandler, s, id);
