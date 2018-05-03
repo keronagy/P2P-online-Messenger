@@ -54,6 +54,7 @@ public class Constants {
 
     public static final String MESSAGEFROM = "mfrom";
 
+    public static final String NEWPEERSTATUSUPDATE = "handleNewPeerStatus";
     public static final String MESSAGEFROMROOM = "handleMessageFromRoom";
     public static final String MESSAGEFROMCLIENT = "handleMessageFromPeer";
     public static final String TYPINGHANDLE = "handleTyping";

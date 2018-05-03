@@ -149,6 +149,31 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
         rooms.get(roomID).sendMessageToParticipants(senderID, msg);
     }
     
+    public void handleClientStatusChange(HashMap<String,String> message){
+        String clientIDWhoChangedStatus = message.get(Constants.CLIENTIDATTR);
+        Client clientWhoChangedStatus = clients.get(clientIDWhoChangedStatus);
+        String newStatus = message.get(Constants.CLIENTSTATUSATTR);
+        clientWhoChangedStatus.setStatus(newStatus);
+        sendNewClientStatusToAllOtherClients(clientIDWhoChangedStatus, newStatus);
+    }
+    
+    
+    public void sendNewClientStatusToAllOtherClients(String clientID, String newStatus){
+        //message construction
+        HashMap<String,String> message = new HashMap<>();
+        message.put(Constants.REQUESTTYPEATTR, Constants.NEWPEERSTATUSUPDATE);
+        message.put(Constants.CLIENTIDATTR, clientID);
+        message.put(Constants.CLIENTSTATUSATTR, newStatus);
+        
+        //sending to all clients except sender client
+        for(Client peer : clients.values()){
+            if(!peer.getId().equals(clientID)){
+                peer.getCommunicationLink().send(message);
+            }
+        }
+    }
+    
+    
     public void handleRoomCreate(HashMap<String,String> message)
     {
         String roomID,senderID,roomName;

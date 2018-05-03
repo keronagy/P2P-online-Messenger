@@ -66,6 +66,13 @@ public class Client {
     }
 
     /**
+     * @return the status
+     */
+    public void setStatus(String newStatus) {
+        this.status = newStatus;
+    }
+    
+    /**
      * @return the name
      */
     public String getName() {
