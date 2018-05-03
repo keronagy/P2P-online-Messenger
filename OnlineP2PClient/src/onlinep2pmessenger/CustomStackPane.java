@@ -43,7 +43,7 @@ public class CustomStackPane extends StackPane {
 
         lbl.setPadding(new Insets(5));
         lbl.setText(RoomName);
-        lbl.setTextFill(Color.BLACK);
+        lbl.setTextFill(Color.CYAN);
         this.getChildren().add(lbl);
     }
 
