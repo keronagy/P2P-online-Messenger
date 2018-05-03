@@ -477,6 +477,10 @@ public class FXMLDocumentController implements Initializable {
 
         }
         vboxes.get(ClientID).getChildren().add(createReceivedMsgStackPane(Msg, 1));
+        if (ClientID.equals(tabs.getSelectionModel().getSelectedItem().getId())) {//yyyy.MM.dd.HH.mm.ss
+                String datelbl = new SimpleDateFormat("HH:mm:ss").format(new java.util.Date());
+                hamed.confirmSeen(ClientID, datelbl);
+            }
     }
 
     public void receiveRoom(String Msg, String RoomID, String UserID, String UserName, String RoomName, String adminID) {
