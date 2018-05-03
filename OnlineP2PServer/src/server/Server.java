@@ -238,6 +238,10 @@ public class Server extends Thread implements CallbackOnReceiveHandler {
         Room r = rooms.get(roomID);
         if (senderID.equals(r.getAdminID()) || senderID.equals(adminID)) {
             r.removeClient(clients.get(clientID));
+            HashMap<String, String> confirmation = new HashMap();
+            confirmation.put(Constants.REPLYTYPEATTR, Constants.CONFIRMLEAVEROOMORDER);
+            confirmation.put(Constants.ROOMIDATTR, roomID);
+            clients.get(clientID).getCommunicationLink().send(confirmation);
         }
     }
     public void handleClientKick(HashMap<String, String> message) {

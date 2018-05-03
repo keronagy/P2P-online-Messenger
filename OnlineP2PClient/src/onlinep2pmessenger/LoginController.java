@@ -25,6 +25,8 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -60,6 +62,14 @@ public class LoginController implements Initializable {
         // TODO
         VALID_IPV4_PATTERN = Pattern.compile(IPADDRESS_PATTERN, Pattern.CASE_INSENSITIVE);
         VALID_PORT_NUMBER = Pattern.compile(PORT_NUMBER, Pattern.CASE_INSENSITIVE);
+        
+        IPTxt.setText("127.0.0.1");
+        PortTxt.setText("2500");
+        
+        IPTxt.setOnKeyPressed(e->onEnter(e));
+        PortTxt.setOnKeyPressed(e->onEnter(e));
+        NameTxt.setOnKeyPressed(e->onEnter(e));
+        
         
     }
     
@@ -124,6 +134,14 @@ public class LoginController implements Initializable {
 
     private void closeWindow() {
         System.exit(0);
+    }
+    
+    public void onEnter(KeyEvent event)
+    {
+        if(event.getCode().equals(KeyCode.ENTER) || event.getCharacter().getBytes()[0] == '\n' || event.getCharacter().getBytes()[0] == '\r') {
+        // your action
+        GoToHomePage();
+    }
     }
 
 }

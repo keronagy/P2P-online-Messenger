@@ -5,7 +5,7 @@
  */
 package onlinep2pmessenger;
 
-import com.jfoenix.controls.*;
+import com.jfoenix.controls.JFXTextField;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -19,35 +19,35 @@ import javafx.scene.input.KeyEvent;
  *
  * @author koko_
  */
-public class AddRomController implements Initializable {
+public class StatusChangeController implements Initializable {
 
     /**
      * Initializes the controller class.
      */
     @FXML
-    private JFXTextField RoomName;
+    private JFXTextField StatusTxt;
     @FXML
     private Label error;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-        RoomName.setOnKeyPressed(e->onEnter(e));
+        StatusTxt.setOnKeyPressed(e->onEnter(e));
         
     }
 
     public String onClose() {
-        return RoomName.getText();
+        return StatusTxt.getText();
     }
 
     public void close() {
-        String txt = RoomName.getText();
+        String txt = StatusTxt.getText();
         if (txt.equals("") || txt.replace(" ", "").length() == 0) {
             error.setText("please enter the name");
             error.setStyle("-fx-background-color: red;");
 
         } else {
-            RoomName.getScene().getWindow().hide();
+            StatusTxt.getScene().getWindow().hide();
 
         }
     }
@@ -61,3 +61,5 @@ public class AddRomController implements Initializable {
     }
 
 }
+    
+

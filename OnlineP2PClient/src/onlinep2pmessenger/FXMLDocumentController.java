@@ -39,6 +39,8 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -171,6 +173,14 @@ public class FXMLDocumentController implements Initializable {
             }
 
             ChatTxt.setFont(f);
+            ChatTxt.setOnKeyPressed(e->{
+            
+        if(e.getCode().equals(KeyCode.ENTER) || e.getCharacter().getBytes()[0] == '\n' || e.getCharacter().getBytes()[0] == '\r') {
+        // your action
+            sendBtn();
+    }
+    
+            });
 
         } catch (FileNotFoundException ex) {
             Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
@@ -285,19 +295,16 @@ public class FXMLDocumentController implements Initializable {
         CustomStackPane user = new CustomStackPane(ID, Name, Status,hamed);
         user.setOnMouseClicked(e -> {
                 if (e.getButton() == MouseButton.SECONDARY) {
+                    
             user.getKickPop().show(user, JFXPopup.PopupVPosition.TOP, JFXPopup.PopupHPosition.LEFT, e.getX(), e.getY());
         }
-            });
-        user.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-                    if (mouseEvent.getClickCount() == 2) {
+                else if (e.getButton().equals(MouseButton.PRIMARY)) {
+                    if (e.getClickCount() == 2) {
                         createPrivateChat(ID);
                     }
                 }
-            }
-        });
+            });
+        
         UserTabVbox.setSpacing(5);
         UserTabVbox.getChildren().add(user);
         UserTabVboxes.put(ID, user);
@@ -369,16 +376,18 @@ public class FXMLDocumentController implements Initializable {
 
     }
 
-    public void EnterRoomUserCircle(String UserName, String UserID, SimpleStringProperty Status, String RoomID) {
+    public void EnterRoomUserCircle(String UserName, String UserID, SimpleStringProperty Status, String RoomID, String adminID) {
 
         RoomCircleBtn UserBtn = new RoomCircleBtn(UserName, UserID, Status, RoomID);
-
+        VBox BtnsPop = new VBox();
         JFXPopup CirclePopUp = new JFXPopup();
+        if(adminID.equals(hamed.getId()) || hamed.isAdmin()){
+        JFXButton RemoveMember = new JFXButton("Kick Member");
+        RemoveMember.setOnMouseClicked(e->hamed.kickClientFromRoom(RoomID, UserID));
+        BtnsPop.getChildren().add(RemoveMember);
 
-        JFXButton RemoveMember = new JFXButton("Remove Member");
-        JFXButton MakeAdmin = new JFXButton("Make Admin");
+        }
 
-        VBox BtnsPop = new VBox(RemoveMember, MakeAdmin);
         CirclePopUp.setPopupContent(BtnsPop);
 
         membersInRomPane.get(RoomID).getChildren().add(UserBtn);
@@ -616,6 +625,41 @@ public class FXMLDocumentController implements Initializable {
             hamed.createRoom(RoomName);
         }
     }
+    
+    public void ChangeStatusDialog() {
+
+        Parent root;
+        try {
+
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("StatusChange.fxml"));
+            root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Changing status");
+            stage.setScene(new Scene(root));
+            Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+            stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
+            stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 4);
+            stage.setResizable(false);
+            stage.show();
+            StatusChangeController controller = loader.<StatusChangeController>getController();
+            stage.setOnHidden(e -> setStatus(controller));
+        } catch (IOException e) {
+            System.out.println("error in changing status");
+            System.out.println(e.getMessage());
+        }
+        
+    }
+
+    public void setStatus(StatusChangeController cont) {
+
+        String newStatus = cont.onClose();
+        
+        if (!newStatus.equals("")) {
+            System.out.println(newStatus);
+            //change statushere
+        }
+    }
 
    
     private void onTabClick(String id) {
@@ -814,8 +858,9 @@ public class FXMLDocumentController implements Initializable {
             String clientName = clients.get(clientID).getName();
             SimpleStringProperty clientStatus = clients.get(clientID).getStatus();
             String roomID = msg.get(Constants.ROOMIDATTR);
+            String adminID = ((CustomStackPane) GroupTabVboxes.get(roomID)).getAdminID();
             //GUI add client to room
-            Platform.runLater(() -> EnterRoomUserCircle(clientName, clientID, clientStatus, roomID));
+            Platform.runLater(() -> EnterRoomUserCircle(clientName, clientID, clientStatus, roomID, adminID));
         }
 
         public void handleClientRemovedFromRoom(HashMap<String, String> msg) {

@@ -72,10 +72,10 @@
          <children>
             <MenuBar layoutX="5.0" layoutY="4.0" prefHeight="28.0" prefWidth="920.0" style="-fx-background-color: #2e2f30;" stylesheets="@tabPaneCustomCss.css">
               <menus>
-                <Menu mnemonicParsing="false" onAction="#exit" text="File">
+                <Menu mnemonicParsing="false" text="File">
                   <items>
-                    <MenuItem mnemonicParsing="false" text="Change Status" />
-                        <MenuItem mnemonicParsing="false" text="Close" />
+                    <MenuItem mnemonicParsing="false" onAction="#ChangeStatusDialog" text="Change Status" />
+                        <MenuItem mnemonicParsing="false" onAction="#exit" text="Close" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">

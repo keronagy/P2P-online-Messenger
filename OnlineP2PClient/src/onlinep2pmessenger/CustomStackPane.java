@@ -32,7 +32,7 @@ public class CustomStackPane extends StackPane {
     private Label lbl = new Label();
     private Label lbl2 = new Label();
     private JFXPopup KickPop= new JFXPopup(); ;
-    private VBox BtnsPop;
+    private VBox BtnsPop = new VBox();
     public CustomStackPane(String RoomID, String RoomName, String adminID) {
         super();
         this.ID = RoomID;
@@ -48,14 +48,18 @@ public class CustomStackPane extends StackPane {
     }
 
     public CustomStackPane(String ClientID, String ClientName, SimpleStringProperty Status, PeerClient peer) {
+        super();
+
         if(peer.isAdmin()){
+            System.out.println("enterd popup init");
          
         JFXButton kickClient = new JFXButton("Kick Client");
-        BtnsPop = new VBox( kickClient);
+        
         
         addOption("Kick Client",e->peer.kickClient(ClientID));
-        KickPop.setPopupContent(BtnsPop);
+        
         }
+        KickPop.setPopupContent(BtnsPop);
     
         this.ID = ClientID;
         this.Name = ClientName;
