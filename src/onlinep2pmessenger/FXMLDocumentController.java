@@ -368,53 +368,55 @@ public class FXMLDocumentController implements Initializable {
     }
 
     public void AddTab(String ID, String UserName) {
+        if(vboxes.get(ID)==null)
+        {
+            Tab t = new Tab(UserName);
 
-        Tab t = new Tab(UserName);
+            tabs.getTabs().add(t);
+            t.setId(ID);
+            t.setOnCloseRequest((e -> onTabClose(t.getId())));
+            t.setOnSelectionChanged((e -> onTabClick(t.getId())));
+    //        tabs.getSelectionModel().select(t);
+            ScrollPane scrollPane = new ScrollPane();
+            t.setContent(scrollPane);
+            scrollPane.setFitToHeight(true);
+            scrollPane.setFitToWidth(true);
+            VBox root = new VBox();
+            root.setSpacing(10);
+            root.setPadding(new Insets(10));
+            scrollPane.setContent(root);
+            scrollPane.vvalueProperty().bind(root.heightProperty());
+            vboxes.put(t.getId(), root);
+            if (ID.charAt(0) == 'r') {
+                JFXPopup RoomPopUp = new JFXPopup();
+                JFXButton AddMember = new JFXButton("Add Member");
+                JFXButton RemoveMember = new JFXButton("Remove Member");
+                JFXButton MakeAdmin = new JFXButton("Make Admin");
+                JFXButton LeaveRoom = new JFXButton("Leave Room");
+                LeaveRoom.setOnMousePressed(e -> hamed.LeaveRoom(ID));
+                VBox BtnsPop = new VBox(AddMember, RemoveMember, MakeAdmin, LeaveRoom);
+                RoomPopUp.setPopupContent(BtnsPop);
+                JFXButton GroupOptions = new JFXButton("Group Options");
 
-        tabs.getTabs().add(t);
-        t.setId(ID);
-        t.setOnCloseRequest((e -> onTabClose(t.getId())));
-        t.setOnSelectionChanged((e -> onTabClick(t.getId())));
-//        tabs.getSelectionModel().select(t);
-        ScrollPane scrollPane = new ScrollPane();
-        t.setContent(scrollPane);
-        scrollPane.setFitToHeight(true);
-        scrollPane.setFitToWidth(true);
-        VBox root = new VBox();
-        root.setSpacing(10);
-        root.setPadding(new Insets(10));
-        scrollPane.setContent(root);
-        scrollPane.vvalueProperty().bind(root.heightProperty());
-        vboxes.put(t.getId(), root);
-        if (ID.charAt(0) == 'r') {
-            JFXPopup RoomPopUp = new JFXPopup();
-            JFXButton AddMember = new JFXButton("Add Member");
-            JFXButton RemoveMember = new JFXButton("Remove Member");
-            JFXButton MakeAdmin = new JFXButton("Make Admin");
-            JFXButton LeaveRoom = new JFXButton("Leave Room");
-            LeaveRoom.setOnMousePressed(e -> hamed.LeaveRoom(ID));
-            VBox BtnsPop = new VBox(AddMember, RemoveMember, MakeAdmin, LeaveRoom);
-            RoomPopUp.setPopupContent(BtnsPop);
-            JFXButton GroupOptions = new JFXButton("Group Options");
+                GroupOptions.setOnMouseClicked(e -> ShowPopupRoom(RoomPopUp, GroupOptions, e));
+                ScrollPane MembersScroll = new ScrollPane();
 
-            GroupOptions.setOnMouseClicked(e -> ShowPopupRoom(RoomPopUp, GroupOptions, e));
-            ScrollPane MembersScroll = new ScrollPane();
+                MembersScroll.setMaxHeight(80);
+                MembersScroll.setMinHeight(80);
+                MembersScroll.setFitToWidth(true);
+                HBox MembersCircles = new HBox();
+                MembersCircles.setMaxHeight(80);
+                MembersCircles.setMinHeight(80);
+                MembersCircles.setStyle("-fx-border-width:5; -fx-border-color: #555; -fx-border-radius: 50px; -fx-background-radius: 50px;");
+                MembersScroll.setContent(MembersCircles);
+                root.getChildren().add(GroupOptions);
+                root.getChildren().add(MembersScroll);
+                MembersCircles.setPadding(new Insets(13));
+    //            MembersCircles.getChildren().add(GroupOptions);
+                membersInRomPane.put(ID, MembersCircles);
+                //t
 
-            MembersScroll.setMaxHeight(80);
-            MembersScroll.setMinHeight(80);
-            MembersScroll.setFitToWidth(true);
-            HBox MembersCircles = new HBox();
-            MembersCircles.setMaxHeight(80);
-            MembersCircles.setMinHeight(80);
-            MembersCircles.setStyle("-fx-border-width:5; -fx-border-color: #555; -fx-border-radius: 50px; -fx-background-radius: 50px;");
-            MembersScroll.setContent(MembersCircles);
-            root.getChildren().add(GroupOptions);
-            root.getChildren().add(MembersScroll);
-            MembersCircles.setPadding(new Insets(13));
-//            MembersCircles.getChildren().add(GroupOptions);
-            membersInRomPane.put(ID, MembersCircles);
-            //t
-
+            }
         }
 
     }
@@ -581,45 +583,46 @@ public class FXMLDocumentController implements Initializable {
     }
 
     public void createUserPane(String UserID, SimpleStringProperty Status, String UserName) {
-        CustomStackPane user = new CustomStackPane(UserID, UserName, Status);
+        if(usersVboxes.get(UserID) == null){
+            CustomStackPane user = new CustomStackPane(UserID, UserName, Status);
 
-        user.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-                    if (mouseEvent.getClickCount() == 2) {
-                        AddTab(UserID, UserName);
+            user.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent mouseEvent) {
+                    if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+                        if (mouseEvent.getClickCount() == 2) {
+                            AddTab(UserID, UserName);
+                        }
                     }
                 }
-            }
-        });
-        usersVboxes.put(UserID, user);
-        UsersVbox.setSpacing(5);
-        UsersVbox.getChildren().add(user);
-
+            });
+            usersVboxes.put(UserID, user);
+            UsersVbox.setSpacing(5);
+            UsersVbox.getChildren().add(user);
+        }        
     }
 
     public void createGroupPane(String groupID, String GroupName) {
-
-        CustomStackPane group = new CustomStackPane(groupID, GroupName);
-        group.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-                    if (mouseEvent.getClickCount() == 2) {
-                        AddTab(groupID, GroupName);
+        if(groupVboxes.get(groupID) == null){
+            CustomStackPane group = new CustomStackPane(groupID, GroupName);
+            group.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent mouseEvent) {
+                    if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+                        if (mouseEvent.getClickCount() == 2) {
+                            AddTab(groupID, GroupName);
+                        }
                     }
                 }
+            });
+            groupVboxes.put(groupID, group);
+            groupVbox.setSpacing(5);
+            try {
+                groupVbox.getChildren().add(group);
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
             }
-        });
-        groupVboxes.put(groupID, group);
-        groupVbox.setSpacing(5);
-        try {
-            groupVbox.getChildren().add(group);
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
         }
-
     }
 
     public void TestBtn() throws IOException {
@@ -914,6 +917,12 @@ public class FXMLDocumentController implements Initializable {
                 TypingLbl.setText(clientName + status);
             }
         }
+    }
+    
+    public void exit()
+    {
+        System.exit(0);
+        
     }
 }
             

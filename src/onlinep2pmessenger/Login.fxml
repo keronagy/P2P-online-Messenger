@@ -24,7 +24,7 @@
             <Font size="18.0" />
          </font>
       </Label>
-      <JFXButton fx:id="StartBtn" buttonType="RAISED" layoutX="150.0" layoutY="316.0" onAction="#GoToHomePage" prefWidth="82.0" ripplerFill="#4e514f" text="Start" textFill="#d01717" />
+      
       <FontAwesomeIconView fill="#b2b2b2" glyphName="USER" layoutX="91.0" layoutY="140.0" size="25" wrappingWidth="19.0" />
       <JFXTextField fx:id="IPTxt" labelFloat="true" layoutX="79.0" layoutY="217.0" promptText="IP Address">
          <font>
@@ -41,5 +41,6 @@
             <Image url="@imgs/ip.png" />
          </image>
       </ImageView>
+      <JFXButton fx:id="StartBtn" buttonType="RAISED" layoutX="150.0" layoutY="316.0" onAction="#GoToHomePage" prefWidth="82.0" ripplerFill="#4e514f" text="Start" textFill="#d01717" />
    </children>
 </AnchorPane>

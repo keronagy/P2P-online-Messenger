@@ -138,3 +138,40 @@ and open the template in the editor.
     -fx-background-color: #555; 
     -fx-text-fill: orange;
 }
+
+.menu-item .label {
+/*    -fx-text-fill: white;*/
+}
+
+.context-menu {
+    -fx-skin: "com.sun.javafx.scene.control.skin.ContextMenuSkin";
+    -fx-background-color: #2e2f30;
+    -fx-background-insets: 0, 1, 2;
+    -fx-background-radius: 0 6 6 6, 0 5 5 5, 0 4 4 4;
+/*    -fx-padding: 0.666667em 0.083333em 0.666667em 0.083333em;  8 1 8 1 */
+    -fx-padding: 0.333333em 0.083333em 0.666667em 0.083333em; /* 4 1 8 1 */
+}
+.context-menu:focused .context-menu:hover
+{
+    -fx-background-color: #555;
+}
+.context-menu .label:focused, .context-menu .label:hover
+{
+    -fx-background-color: #555;
+}
+.menu-item:focused .label {
+    -fx-background-color: #555;
+}
+.menu .label { -fx-text-fill: white; }
+.menu-bar > .container > .menu-button:hover,
+.menu-bar > .container > .menu-button:focused,
+.menu-bar > .container > .menu-button:showing {
+    -fx-background-color: #555;
+    -fx-text-fill: orange;
+}
+.menu-item:focused .label, .menu-item:hovered .label {
+    -fx-background-color: #555;
+}
+.menu-item:focused {
+     -fx-background-color: #555;
+}
