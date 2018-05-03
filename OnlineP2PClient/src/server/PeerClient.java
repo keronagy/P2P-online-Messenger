@@ -89,6 +89,14 @@ public class PeerClient extends Client {
         this.server_cl.send(message);
     }
 
+    public void changeStatus(String newStatus){
+        HashMap<String, String> message = new HashMap();
+        message.put(Constants.REQUESTTYPEATTR, Constants.CHANGESTATUS);
+        message.put(Constants.CLIENTIDATTR, this.id);
+        message.put(Constants.CLIENTSTATUSATTR, newStatus);
+        this.server_cl.send(message);
+    }
+    
     public void joinRoom(String roomID) {
         HashMap<String, String> message = new HashMap();
         message.put(Constants.REQUESTTYPEATTR, Constants.ROOMJOINCONNECTION);

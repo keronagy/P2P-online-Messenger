@@ -658,6 +658,7 @@ public class FXMLDocumentController implements Initializable {
         if (!newStatus.equals("")) {
             System.out.println(newStatus);
             //change statushere
+            
         }
     }
 
@@ -869,6 +870,12 @@ public class FXMLDocumentController implements Initializable {
             //GUI remove client from room
         }
 
+        public void handleNewPeerStatus(HashMap<String,String> msg){
+            String senderID = msg.get(Constants.CLIENTIDATTR);
+            String newStatus = msg.get(Constants.CLIENTSTATUSATTR);
+            clients.get(senderID).setStatus(newStatus);
+        }
+        
         public void handleMessageFromRoom(HashMap<String, String> msg) {
             String roomID = msg.get(Constants.ROOMIDATTR);
             String senderID = msg.get(Constants.CLIENTIDATTR);
