@@ -44,11 +44,12 @@ public class LoginController implements Initializable {
     @FXML
     private JFXTextField NameTxt;
     @FXML
-    private Label error; 
+    private Label error;
     @FXML
     private JFXTextField IPTxt;
     @FXML
     private JFXTextField PortTxt;
+
     private Pattern VALID_IPV4_PATTERN = null;
     private Pattern VALID_PORT_NUMBER = null;
     private final String IPADDRESS_PATTERN = "(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])";
@@ -60,12 +61,11 @@ public class LoginController implements Initializable {
         VALID_IPV4_PATTERN = Pattern.compile(IPADDRESS_PATTERN, Pattern.CASE_INSENSITIVE);
         VALID_PORT_NUMBER = Pattern.compile(PORT_NUMBER, Pattern.CASE_INSENSITIVE);
         
-
-    }    
+    }
     
-    public void GoToHomePage()
-    {
-        
+
+    public void GoToHomePage() {
+
         Parent root;
         try {
             String name = NameTxt.getText();
@@ -115,8 +115,9 @@ public class LoginController implements Initializable {
                 stage.show();
             }
 
-        }
-        catch (IOException e) {
+            
+
+        } catch (IOException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -124,5 +125,5 @@ public class LoginController implements Initializable {
     private void closeWindow() {
         System.exit(0);
     }
-    
+
 }

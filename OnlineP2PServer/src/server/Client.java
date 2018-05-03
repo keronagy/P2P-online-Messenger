@@ -5,7 +5,6 @@
  */
 package server;
 
-
 import network.CommunicationLink;
 
 /**
@@ -13,13 +12,12 @@ import network.CommunicationLink;
  * @author fadia
  */
 public class Client {
-    protected String id;
-    protected String status;
-    protected String name;
-    protected String ip;
-    protected CommunicationLink server_cl;
-     
-    
+
+    private String id;
+    private String status;
+    private String name;
+    private String ip;
+    private CommunicationLink server_cl;
 
     public Client(String id, String ip, String status, String name, CommunicationLink cl) {
         this.id = id;
@@ -27,16 +25,15 @@ public class Client {
         this.status = status;
         this.name = name;
         this.server_cl = cl;
-        
+
     }
-    public Client(String id, String status, String name ) {
+
+    public Client(String id, String status, String name) {
         this.id = id;
         this.status = status;
         this.name = name;
-    }    
+    }
 
-   
-    
     /**
      * @return the id
      */
@@ -50,14 +47,14 @@ public class Client {
     public String getId() {
         return id;
     }
-    
+
     /**
      * @return the ip
      */
     public String getIp() {
         return ip;
     }
-    
+
     /**
      * @return the status
      */
@@ -71,5 +68,5 @@ public class Client {
     public String getName() {
         return name;
     }
-    
+
 }

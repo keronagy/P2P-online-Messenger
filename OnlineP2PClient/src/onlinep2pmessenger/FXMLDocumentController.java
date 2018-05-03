@@ -30,6 +30,8 @@ import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -49,6 +51,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javax.swing.JOptionPane;
 import server.PeerClient;
 import utility.CallbackOnReceiveHandler;
 import utility.Constants;
@@ -279,7 +282,7 @@ public class FXMLDocumentController implements Initializable {
     }
 
     public void AddNewUser(String ID, String Name, SimpleStringProperty Status) {
-        CustomStackPane user = new CustomStackPane(ID, Name, Status);
+        CustomStackPane user = new CustomStackPane(ID, Name, Status,hamed);
 
         user.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -296,8 +299,8 @@ public class FXMLDocumentController implements Initializable {
         UserTabVboxes.put(ID, user);
     }
 
-    public void AddNewGroup(String roomName, String roomID) {
-        CustomStackPane group = new CustomStackPane(roomID, roomName);
+    public void AddNewGroup(String roomName, String roomID, String adminID) {
+        CustomStackPane group = new CustomStackPane(roomID, roomName,adminID);
         group.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -314,7 +317,7 @@ public class FXMLDocumentController implements Initializable {
         GroupTabVboxes.put(roomID, group);
     }
 
-    public void AddTab(String ID, String UserName) {
+    public void AddTab(String ID, String UserName,String adminID) {
         if(vboxes.get(ID)==null)
         {
             Tab t = new Tab(UserName);
@@ -335,17 +338,11 @@ public class FXMLDocumentController implements Initializable {
             scrollPane.vvalueProperty().bind(root.heightProperty());
             vboxes.put(t.getId(), root);
             if (ID.charAt(0) == 'r') {
-                JFXPopup RoomPopUp = new JFXPopup();
-                JFXButton AddMember = new JFXButton("Add Member");
-                JFXButton RemoveMember = new JFXButton("Remove Member");
-                JFXButton MakeAdmin = new JFXButton("Make Admin");
-                JFXButton LeaveRoom = new JFXButton("Leave Room");
-                LeaveRoom.setOnMousePressed(e -> hamed.LeaveRoom(ID));
-                VBox BtnsPop = new VBox(AddMember, RemoveMember, MakeAdmin, LeaveRoom);
-                RoomPopUp.setPopupContent(BtnsPop);
-                JFXButton GroupOptions = new JFXButton("Group Options");
+                CustomGroupOptionBtn GroupOptions = new CustomGroupOptionBtn(hamed, ID, adminID);
+                
+                
 
-                GroupOptions.setOnMouseClicked(e -> ShowPopupRoom(RoomPopUp, GroupOptions, e));
+                GroupOptions.setOnMouseClicked(e -> ShowPopupRoom(GroupOptions.getRoomPopUp(), GroupOptions, e));
                 ScrollPane MembersScroll = new ScrollPane();
 
                 MembersScroll.setMaxHeight(80);
@@ -466,13 +463,13 @@ public class FXMLDocumentController implements Initializable {
                 }
             }
         } else {
-            AddTab(ClientID, ClientName);
+            AddTab(ClientID, ClientName, null);
 
         }
         vboxes.get(ClientID).getChildren().add(createReceivedMsgStackPane(Msg, 1));
     }
 
-    public void receiveRoom(String Msg, String RoomID, String UserID, String UserName, String RoomName) {
+    public void receiveRoom(String Msg, String RoomID, String UserID, String UserName, String RoomName, String adminID) {
 
         if (vboxes.get(RoomID) != null) {
 
@@ -491,8 +488,7 @@ public class FXMLDocumentController implements Initializable {
             }
 
         } else {
-            AddTab(RoomID, RoomName);
-            createGroupPane(RoomID, RoomName);
+            AddTab(RoomID, RoomName,adminID);
 
         }
         vboxes.get(RoomID).getChildren().add(createReceivedMsgStackPane(UserName + ": " + Msg, 2));
@@ -531,14 +527,14 @@ public class FXMLDocumentController implements Initializable {
 
     public void createUserPane(String UserID, SimpleStringProperty Status, String UserName) {
         if(usersVboxes.get(UserID) == null){
-            CustomStackPane user = new CustomStackPane(UserID, UserName, Status);
+            CustomStackPane user = new CustomStackPane(UserID, UserName, Status,hamed);
 
             user.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent mouseEvent) {
                     if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                         if (mouseEvent.getClickCount() == 2) {
-                            AddTab(UserID, UserName);
+                            AddTab(UserID, UserName, null);
                         }
                     }
                 }
@@ -549,15 +545,15 @@ public class FXMLDocumentController implements Initializable {
         }        
     }
 
-    public void createGroupPane(String groupID, String GroupName) {
+    public void createGroupPane(String groupID, String GroupName, String adminID) {
         if(groupVboxes.get(groupID) == null){
-            CustomStackPane group = new CustomStackPane(groupID, GroupName);
+            CustomStackPane group = new CustomStackPane(groupID, GroupName, adminID);
             group.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent mouseEvent) {
                     if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                         if (mouseEvent.getClickCount() == 2) {
-                            AddTab(groupID, GroupName);
+                            AddTab(groupID, GroupName, adminID);
                         }
                     }
                 }
@@ -615,11 +611,7 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
-    public void onReceive() {
-        AddNewGroup("kero", "keork");
-
-    }
-
+   
     private void onTabClick(String id) {
         if (tabs.getSelectionModel().getSelectedItem().getStyleClass().contains("receiveMsg")) {
             Tab ta = tabs.getSelectionModel().getSelectedItem();
@@ -678,13 +670,13 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
-    public void JoinRoom(String roomID, String roomName) {
-        AddTab(roomID, roomName);
-        createGroupPane(roomID, roomName);
+    public void JoinRoom(String roomID, String roomName, String adminID) {
+        AddTab(roomID, roomName, adminID);
+        createGroupPane(roomID, roomName, adminID);
     }
 
     public void JoinClient(String clientID) {
-        AddTab(clientID, clients.get(clientID).getName());
+        AddTab(clientID, clients.get(clientID).getName(),null);
         createUserPane(clientID, clients.get(clientID).getStatus(), clients.get(clientID).getName());
     }
 
@@ -706,6 +698,7 @@ public class FXMLDocumentController implements Initializable {
             this.peerID = peerID;
         }
 
+        @Override
         public void handleReceivedData(HashMap<String, String> msg) {
 
             try {
@@ -751,10 +744,16 @@ public class FXMLDocumentController implements Initializable {
             return peerID;
         }
 
+        public void handleConnectionClosed(HashMap<String, String> msg) {
+            // peer connection closed
+
+        }
+
     }
 
     private class ServerHandler implements CallbackOnReceiveHandler {
 
+        @Override
         public void handleReceivedData(HashMap<String, String> msg) {
             try {
                 java.lang.reflect.Method handle;
@@ -774,12 +773,13 @@ public class FXMLDocumentController implements Initializable {
         public void handleRoomJoined(HashMap<String, String> msg) {
             String roomID = msg.get(Constants.ROOMIDATTR);
             String roomName = msg.get(Constants.ROOMNAMEATTR);
+            String adminID = msg.get(Constants.ADMINIDATTR);
             //GUI open room
             //AddNewGroup(roomID, roomID);
             //AddTab(roomID, roomID);
             //createGroupPane(roomID, roomName);
             //double click on right room
-            Platform.runLater(() -> JoinRoom(roomID, roomName));
+            Platform.runLater(() -> JoinRoom(roomID, roomName, adminID));
         }
 
         public void handleRoomCreated(HashMap<String, String> msg) {
@@ -818,8 +818,9 @@ public class FXMLDocumentController implements Initializable {
             String senderID = msg.get(Constants.CLIENTIDATTR);
             String message = msg.get(Constants.MESSAGE);
             String roomName = ((CustomStackPane) GroupTabVboxes.get(roomID)).getName();
+            String adminID = ((CustomStackPane) GroupTabVboxes.get(roomID)).getAdminID();
             //GUI add message to chat
-            Platform.runLater(() -> receiveRoom(message, roomID, senderID, clients.get(senderID).getName(), roomName));
+            Platform.runLater(() -> receiveRoom(message, roomID, senderID, clients.get(senderID).getName(), roomName, adminID));
         }
 
         public void handleNewClient(HashMap<String, String> msg) {
@@ -835,22 +836,73 @@ public class FXMLDocumentController implements Initializable {
         public void handleNewRoom(HashMap<String, String> msg) {
             String roomName = msg.get(Constants.ROOMNAMEATTR);
             String roomID = msg.get(Constants.ROOMIDATTR);
+            String adminID = msg.get(Constants.ADMINIDATTR);
             //GUI add room
-            Platform.runLater(() -> AddNewGroup(roomName, roomID));
+            Platform.runLater(() -> AddNewGroup(roomName, roomID, adminID));
 
+        }
+
+        public void handleRemoveClient(HashMap<String, String> msg) {
+            String clientID = msg.get(Constants.CLIENTIDATTR);
+            //gui remove client from the server
+            Platform.runLater(()->{
+                RemoveVboxFromTabsAndLeftPanels(UsersVbox, usersVboxes, clientID);
+                RemoveVboxFromRightPanels(UserTabVbox, UserTabVboxes, clientID);
+                    
+                    });
+        }
+
+        public void handleRoomDeleted(HashMap<String, String> msg) {
+            String roomID = msg.get(Constants.ROOMIDATTR);
+            Platform.runLater(()->{
+                RemoveVboxFromTabsAndLeftPanels(groupVbox, groupVboxes, roomID);
+                RemoveVboxFromRightPanels(GroupTabVbox, GroupTabVboxes, roomID);
+                    
+                    });
+        }
+
+        public void handleConnectionClosed(HashMap<String, String> msg) {
+
+            //gui server closed
+            //JOptionPane.showMessageDialog(null, "Server ERROR!!","Error", JOptionPane.ERROR);
+           
+        try
+        {
+            
+        Platform.runLater(()->{
+            Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle("Server Error");
+        alert.setHeaderText("go to hell!! ");
+        alert.setContentText("I have a great message for you!, all the chats will be removed go kill your self xD");
+
+            alert.showAndWait();
+            exit();
+                    });
+        }
+        catch(Exception e)
+        {
+            System.out.println(e.getMessage());
+        }
+            
         }
     }
 
     public void typing() {
-        String ID = tabs.getSelectionModel().getSelectedItem().getId();
-        if (ID.charAt(0) == 'c') {
-            if (ChatTxt.getText().isEmpty()) {
-                type = false;
-                hamed.stoppedTyping(ID);
-            } else if (!type) {
-                type = true;
-                hamed.isTyping(ID);
+        try{
+            String ID = tabs.getSelectionModel().getSelectedItem().getId();
+            if (ID.charAt(0) == 'c') {
+                if (ChatTxt.getText().isEmpty()) {
+                    type = false;
+                    hamed.stoppedTyping(ID);
+                } else if (!type) {
+                    type = true;
+                    hamed.isTyping(ID);
+                }
             }
+        }
+        catch(Exception e)
+        {
+            
         }
     }
 

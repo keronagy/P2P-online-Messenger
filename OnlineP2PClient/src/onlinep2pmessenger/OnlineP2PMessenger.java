@@ -5,7 +5,6 @@
  */
 package onlinep2pmessenger;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import javafx.application.Application;
@@ -23,7 +22,7 @@ public class OnlineP2PMessenger extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        
+
 //        listener t = new listener("from GUI",utility.ClientConstants.P2PPORT);
 //        t.start();
 //        

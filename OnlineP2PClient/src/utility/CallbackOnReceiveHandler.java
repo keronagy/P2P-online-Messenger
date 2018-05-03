@@ -4,12 +4,14 @@
  * and open the template in the editor.
  */
 package utility;
+
 import java.util.HashMap;
+
 /**
  *
  * @author fadia
  */
-
 public interface CallbackOnReceiveHandler {
+
     public void handleReceivedData(HashMap<String, String> msg);
 }
