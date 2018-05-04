@@ -115,7 +115,7 @@ public class Server extends Thread {
                 }
 
                 //send the new client current server state
-                sendClients(client.getCommunicationLink());
+                sendClients(id,client.getCommunicationLink());
                 sendRooms(client.getCommunicationLink());
                 sendNewClientStatusToAllOtherClients(id, Constants.INITSTATUS);
             }
@@ -156,9 +156,10 @@ public class Server extends Thread {
         cl.send(message);
     }
 
-    public void sendClients(CommunicationLink cl) {
+    public void sendClients(String senderID, CommunicationLink cl) {
         //need to put before adding in the new client so s/he doesnt get sent to her/im self
         clients.values().forEach((c) -> {
+            if(!senderID.equals(c.getId()))
             sendClientAdd(c, cl);
         });
     }
