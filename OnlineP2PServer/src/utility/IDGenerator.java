@@ -22,6 +22,6 @@ public class IDGenerator {
         return Constants.isARoom + "-" + rooms++;
     }
     public static String generateServerID() {
-        return Constants.isARoom + "-" +  new Random().nextInt();
+        return Constants.isAServer + "-" +  new Random().nextInt(Integer.MAX_VALUE);
     }
 }
