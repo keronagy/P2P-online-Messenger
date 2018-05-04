@@ -305,7 +305,8 @@ public class FXMLDocumentController implements Initializable {
                 user.getKickPop().show(user, JFXPopup.PopupVPosition.TOP, JFXPopup.PopupHPosition.LEFT, e.getX(), e.getY());
             } else if (e.getButton().equals(MouseButton.PRIMARY)) {
                 if (e.getClickCount() == 2) {
-                    createPrivateChat(ID);
+                    if(usersVboxes.get(ID)==null)
+                        createPrivateChat(ID);
                 }
             }
         });
@@ -323,7 +324,8 @@ public class FXMLDocumentController implements Initializable {
 
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                     if (mouseEvent.getClickCount() == 2) {
-                        hamed.joinRoom(roomID);
+                        if(groupVboxes.get(roomID)==null)
+                            hamed.joinRoom(roomID);
                     }
                 }
             }
