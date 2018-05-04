@@ -8,13 +8,19 @@ package server;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import network.CommunicationLink;
+import org.fourthline.cling.UpnpService;
+import org.fourthline.cling.UpnpServiceImpl;
+import org.fourthline.cling.registry.RegistryListener;
 import utility.*;
+import org.fourthline.cling.support.model.PortMapping;
+import org.fourthline.cling.support.igd.PortMappingListener;
 
 /**
  *
@@ -33,6 +39,23 @@ public class Server extends Thread {
         initiateServer();
     }
 
+    private static void doPortForwarding() {
+
+        try {
+            PortMapping desiredMapping = new PortMapping(Constants.SERVERPORT, InetAddress.getLocalHost().getHostAddress(),
+                    PortMapping.Protocol.TCP, " TCP POT Forwarding");
+
+            UpnpService upnpService = new UpnpServiceImpl();
+            RegistryListener registryListener = new PortMappingListener(desiredMapping);
+            upnpService.getRegistry().addListener(registryListener);
+
+            upnpService.getControlPoint().search();
+        } catch (Exception ex) {
+            System.out.println("UPnP failed");
+        }
+
+    }
+
     private Server() {
         // to deny access to default public constructor
         first = true;
@@ -41,6 +64,7 @@ public class Server extends Thread {
 
     public static void initiateServer() {
         new Server().start();
+        //doPortForwarding();
     }
 
     @Override
@@ -101,14 +125,14 @@ public class Server extends Thread {
                     oos.writeUTF(id);
                     oos.flush();
                     client.setCommunicationLink(CommunicationLink.generateCommunicationLink(new ClientHandler(id), clientSocket));
-                sendClients(id, client.getCommunicationLink());
-                sendRooms(client.getCommunicationLink());
-                sendNewClientStatusToAllOtherClients(id, Constants.INITSTATUS);
+                    sendClients(id, client.getCommunicationLink());
+                    sendRooms(client.getCommunicationLink());
+                    sendNewClientStatusToAllOtherClients(id, Constants.INITSTATUS);
                     reJoinRooms(client);
 
                 } else {
                     id = IDGenerator.generateClientID();
-                    oos.writeUTF(id+" "+serverID);
+                    oos.writeUTF(id + " " + serverID);
                     oos.flush();
                     if (first) {
                         adminID = id;
@@ -117,9 +141,9 @@ public class Server extends Thread {
                     client = createClient(id, clientSocket, connectionRequest.get(Constants.CLIENTNAMEATTR));
                     sendNewClientToOtherClients(client, Constants.ADDNEWCLIENTORDER);
                     clients.put(id, client);
-                sendClients(id, client.getCommunicationLink());
-                sendRooms(client.getCommunicationLink());
-                sendNewClientStatusToAllOtherClients(id, Constants.INITSTATUS);
+                    sendClients(id, client.getCommunicationLink());
+                    sendRooms(client.getCommunicationLink());
+                    sendNewClientStatusToAllOtherClients(id, Constants.INITSTATUS);
                 }
 
                 //send the new client current server state
