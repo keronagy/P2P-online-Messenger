@@ -43,15 +43,16 @@ public class PeerClient extends Client {
             HashMap<String, String> connectionRequest = new HashMap();
             connectionRequest.put(Constants.REQUESTTYPEATTR, Constants.MAINCONNECTION);
             connectionRequest.put(Constants.CLIENTNAMEATTR, name);
-            id = readID();
-            connectionRequest.put(Constants.CLIENTIDATTR, id);
+            connectionRequest.put(Constants.CLIENTIDATTR, readID());
             oos.writeObject(connectionRequest);
             oos.flush();
             this.id = ois.readUTF();
             writeID(this.id);
-            if (this.id.substring(0, 3).equals("c-0")) {
+            this.id = this.id.split(" ")[0];
+            if (this.id.equals("c-0")) {
                 admin = true;
             }
+
             this.server_cl = CommunicationLink.generateCommunicationLink(handler, s);
             peerSocket = new ServerSocket(Constants.SERVERPORT + 1);
         } catch (Exception ex) {
