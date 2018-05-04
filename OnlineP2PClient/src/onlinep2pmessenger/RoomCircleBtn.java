@@ -32,10 +32,10 @@ public class RoomCircleBtn extends JFXButton {
         this.Status = Status;
         String[] letters = UserName.split(" ");
         if (letters.length < 2) {
-            System.out.println("1 char " + letters[0].charAt(0) + "");
+            //System.out.println("1 char " + letters[0].charAt(0) + "");
             this.setText(letters[0].charAt(0) + "");
         } else {
-            System.out.println("else 2 chars " + letters[0].charAt(0) + letters[1].charAt(0) + "");
+            //System.out.println("else 2 chars " + letters[0].charAt(0) + letters[1].charAt(0) + "");
             this.setText(letters[0].charAt(0) + "" + letters[1].charAt(0) + "");
         }
         this.getStyleClass().add("roundbutton");

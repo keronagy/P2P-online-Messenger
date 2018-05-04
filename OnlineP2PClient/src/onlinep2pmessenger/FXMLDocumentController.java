@@ -536,7 +536,7 @@ public class FXMLDocumentController implements Initializable {
         if (clients.get(UserID) == null) {
             vboxes.get(RoomID).getChildren().add(createSentMsgStackPane(Msg));
         } else {
-            vboxes.get(RoomID).getChildren().add(createReceivedMsgStackPane(clients.get(UserID) + ": " + Msg, 2));
+            vboxes.get(RoomID).getChildren().add(createReceivedMsgStackPane(clients.get(UserID).getName() + ": " + Msg, 2));
         }
     }
 
@@ -665,7 +665,6 @@ public class FXMLDocumentController implements Initializable {
         String RoomName = cont.onClose();
 
         if (!RoomName.equals("")) {
-            System.out.println(RoomName);
             hamed.createRoom(RoomName);
         }
     }
@@ -700,7 +699,6 @@ public class FXMLDocumentController implements Initializable {
         String newStatus = cont.onClose();
 
         if (!newStatus.equals("")) {
-            System.out.println(newStatus);
             //change statushere
             hamed.changeStatus(newStatus);
 
@@ -767,7 +765,6 @@ public class FXMLDocumentController implements Initializable {
     }
 
     public void JoinRoom(String roomID, String roomName, String adminID) {
-        System.out.println(adminID);
         AddTab(roomID, roomName, adminID);
         createGroupPane(roomID, roomName, adminID);
     }
@@ -993,7 +990,6 @@ public class FXMLDocumentController implements Initializable {
 
             String roomID = msg.get(Constants.ROOMIDATTR);
             String chat = msg.get(Constants.ROOMCHAT); //id,msg \n
-            System.out.println(roomID + " " + chat);
             //GUI add message to chat
             if (!chat.isEmpty()) {
                 String[] messages = chat.split("\n");
