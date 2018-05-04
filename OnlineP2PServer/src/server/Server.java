@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 import network.CommunicationLink;
 import org.fourthline.cling.UpnpService;
 import org.fourthline.cling.UpnpServiceImpl;
-import org.fourthline.cling.registry.RegistryListener;
+
 import utility.*;
 import org.fourthline.cling.support.model.PortMapping;
 import org.fourthline.cling.support.igd.PortMappingListener;
@@ -29,11 +29,13 @@ import org.fourthline.cling.support.igd.PortMappingListener;
 //extends thread maybe tweak its priority in the future
 public class Server extends Thread {
 
-    HashMap<String, Client> clients;
-    HashMap<String, Room> rooms;
-    String adminID;
-    String serverID;
-    boolean first;
+    private HashMap<String, Client> clients;
+    private HashMap<String, Room> rooms;
+    private String adminID;
+    private String serverID;
+    private boolean first;
+
+    private static int port;
 
     public static void main(String[] args) {
         initiateServer();
@@ -43,13 +45,14 @@ public class Server extends Thread {
 
         try {
             PortMapping desiredMapping = new PortMapping(Constants.SERVERPORT, InetAddress.getLocalHost().getHostAddress(),
-                    PortMapping.Protocol.TCP, " TCP POT Forwarding");
+                    PortMapping.Protocol.TCP);
 
-            UpnpService upnpService = new UpnpServiceImpl();
-            RegistryListener registryListener = new PortMappingListener(desiredMapping);
-            upnpService.getRegistry().addListener(registryListener);
+            UpnpService upnpService = new UpnpServiceImpl(new PortMappingListener(desiredMapping));
 
             upnpService.getControlPoint().search();
+            port = upnpService.getRouter().getActiveStreamServers(InetAddress.getLocalHost()).iterator().next().getPort();
+            System.out.println(port);
+
         } catch (Exception ex) {
             System.out.println("UPnP failed");
         }
@@ -64,7 +67,7 @@ public class Server extends Thread {
 
     public static void initiateServer() {
         new Server().start();
-        //doPortForwarding();
+        doPortForwarding();
     }
 
     @Override
@@ -72,7 +75,7 @@ public class Server extends Thread {
         try {
             clients = new HashMap();
             rooms = new HashMap();
-            ServerSocket ss = new ServerSocket(Constants.SERVERPORT);
+            ServerSocket ss = new ServerSocket(port);
             while (true) {
                 handleClientRequest(ss.accept());
             }
