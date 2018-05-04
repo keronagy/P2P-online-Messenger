@@ -49,6 +49,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
@@ -148,6 +150,12 @@ public class FXMLDocumentController implements Initializable {
     private String IPAddress;
     private String ProtNum;
     private boolean type = false;
+    private final String ClientSound = "Sounds/ClientNotification.mp3";     // For example
+    private final String RoomSound = "Sounds/RoomNotification.mp3";     // For example
+    Media ClientSoundMedia = new Media(new File(ClientSound).toURI().toString());
+    Media RoomSoundMedia = new Media(new File(RoomSound).toURI().toString());
+   
+
 
     public void setIPAddress(String IPAddress) {
         this.IPAddress = IPAddress;
@@ -467,7 +475,12 @@ public class FXMLDocumentController implements Initializable {
                     }
                     if (!ta.getStyleClass().contains("receiveMsg")) {
                         ta.setText(ta.getText() + "!!!");
-                        ta.getStyleClass().add("receiveMsg");
+                        ta.getStyleClass().add("receiveMsg");ta.getStyleClass().add("sound");
+                        Platform.runLater(()->RunSound(1));
+                    }
+                    if(ta.getStyleClass().contains("sound"))
+                    {
+                        Platform.runLater(()->RunSound(1));
                     }
                     break;
                 }
@@ -496,6 +509,12 @@ public class FXMLDocumentController implements Initializable {
                     if (!ta.getStyleClass().contains("receiveMsg")) {
                         ta.setText(ta.getText() + "!!!");
                         ta.getStyleClass().add("receiveMsg");
+                        ta.getStyleClass().add("sound");
+                        Platform.runLater(()->RunSound(2));
+                    }
+                    if(ta.getStyleClass().contains("sound"))
+                    {
+                        Platform.runLater(()->RunSound(2));
                     }
                     break;
                 }
@@ -506,6 +525,20 @@ public class FXMLDocumentController implements Initializable {
 
         }
         vboxes.get(RoomID).getChildren().add(createReceivedMsgStackPane(UserName + ": " + Msg, 2));
+    }
+    public void RunSound(int type)
+    {// 1 for client
+        if(type == 1)
+        {
+             final MediaPlayer mediaPlayerClient = new MediaPlayer(ClientSoundMedia);
+    
+            mediaPlayerClient.play();
+        }
+        else
+        {
+            final MediaPlayer mediaPlayerRoom = new MediaPlayer(RoomSoundMedia);
+            mediaPlayerRoom.play();
+        }
     }
 
     public void sendBtn() {
@@ -671,6 +704,7 @@ public class FXMLDocumentController implements Initializable {
             Tab ta = tabs.getSelectionModel().getSelectedItem();
             ta.getStyleClass().remove("receiveMsg");
             ta.setText(ta.getText().replace("!!!", ""));
+            ta.getStyleClass().remove("sound");
             if (id.charAt(0) == 'c') {//yyyy.MM.dd.HH.mm.ss
                 String datelbl = new SimpleDateFormat("HH:mm:ss").format(new java.util.Date());
                 hamed.confirmSeen(id, datelbl);
