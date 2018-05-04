@@ -120,33 +120,34 @@ public class Server extends Thread {
             if (connectionType.equals(Constants.MAINCONNECTION)) {
                 //create new client on server
 
-                String id = connectionRequest.get(Constants.CLIENTIDATTR);
+                String uniqueID = connectionRequest.get(Constants.UNIQUEIDATTR);
                 Client client;
-                if (verifyID(id)) {
-                    String clientID = id.split(" ")[0];
+                String clientID;
+                if (verifyID(uniqueID)) {
+                    clientID = uniqueID.split(" ")[0];
                     client = clients.get(clientID);
-                    oos.writeUTF(id);
+                    oos.writeUTF(uniqueID);
                     oos.flush();
-                    client.setCommunicationLink(CommunicationLink.generateCommunicationLink(new ClientHandler(id), clientSocket));
+                    client.setCommunicationLink(CommunicationLink.generateCommunicationLink(new ClientHandler(clientID), clientSocket));
                     sendClients(clientID, client.getCommunicationLink());
                     sendRooms(client.getCommunicationLink());
-                    sendNewClientStatusToAllOtherClients(id, Constants.INITSTATUS);
+                    sendNewClientStatusToAllOtherClients(clientID, Constants.INITSTATUS);
                     reJoinRooms(client);
                     
                 } else {
-                    id = IDGenerator.generateClientID();
-                    oos.writeUTF(id + " " + serverID);
+                    clientID = IDGenerator.generateClientID();
+                    oos.writeUTF(clientID + " " + serverID);
                     oos.flush();
                     if (first) {
-                        adminID = id;
+                        adminID = clientID;
                         first = false;
                     }
-                    client = createClient(id, clientSocket, connectionRequest.get(Constants.CLIENTNAMEATTR));
+                    client = createClient(clientID, clientSocket, connectionRequest.get(Constants.CLIENTNAMEATTR));
                     sendNewClientToOtherClients(client, Constants.ADDNEWCLIENTORDER);
-                    clients.put(id, client);
-                    sendClients(id, client.getCommunicationLink());
+                    clients.put(clientID, client);
+                    sendClients(clientID, client.getCommunicationLink());
                     sendRooms(client.getCommunicationLink());
-                    sendNewClientStatusToAllOtherClients(id, Constants.INITSTATUS);
+                    sendNewClientStatusToAllOtherClients(clientID, Constants.INITSTATUS);
                 }
 
                 //send the new client current server state

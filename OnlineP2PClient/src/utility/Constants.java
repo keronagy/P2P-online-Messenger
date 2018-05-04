@@ -75,5 +75,7 @@ public class Constants {
 
     public static final String ROOMHISTORY = "handleRoomHistory";
     public static final String ROOMCHAT = "chat";
+    
+    public static final String UNIQUEIDATTR = "token";
 
 }
