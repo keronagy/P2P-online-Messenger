@@ -48,7 +48,6 @@ public class PeerClient extends Client {
             oos.writeObject(connectionRequest);
             oos.flush();
             this.id = ois.readUTF();
-
             writeID(this.id);
             if (this.id.substring(0, 3).equals("c-0")) {
                 admin = true;

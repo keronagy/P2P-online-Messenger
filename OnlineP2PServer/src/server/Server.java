@@ -28,54 +28,53 @@ import org.fourthline.cling.support.igd.PortMappingListener;
  */
 //extends thread maybe tweak its priority in the future
 public class Server extends Thread {
-
+    
     private HashMap<String, Client> clients;
     private HashMap<String, Room> rooms;
     private String adminID;
     private String serverID;
     private boolean first;
-
+    
     private static int port;
-
+    
     public static void main(String[] args) {
         initiateServer();
     }
-
+    
     private static void doPortForwarding() {
-
+        
         try {
             PortMapping desiredMapping = new PortMapping(Constants.SERVERPORT, InetAddress.getLocalHost().getHostAddress(),
-                    PortMapping.Protocol.TCP);
-
+                    PortMapping.Protocol.TCP, "");
+            
             UpnpService upnpService = new UpnpServiceImpl(new PortMappingListener(desiredMapping));
-
+            
             upnpService.getControlPoint().search();
-            port = upnpService.getRouter().getActiveStreamServers(InetAddress.getLocalHost()).iterator().next().getPort();
-            System.out.println(port);
+            //port = upnpService.getRouter().getActiveStreamServers(InetAddress.getLocalHost()).iterator().next().getPort();
 
         } catch (Exception ex) {
             System.out.println("UPnP failed");
         }
-
+        
     }
-
+    
     private Server() {
         // to deny access to default public constructor
         first = true;
         serverID = IDGenerator.generateServerID();
     }
-
+    
     public static void initiateServer() {
         new Server().start();
         doPortForwarding();
     }
-
+    
     @Override
     public void run() {
         try {
             clients = new HashMap();
             rooms = new HashMap();
-            ServerSocket ss = new ServerSocket(port);
+            ServerSocket ss = new ServerSocket(Constants.SERVERPORT);
             while (true) {
                 handleClientRequest(ss.accept());
             }
@@ -83,7 +82,7 @@ public class Server extends Thread {
             System.out.println("server.Server.run()");
         }
     }
-
+    
     private void sendNewClientToOtherClients(Client newClient, String order) {
         if (order.equals(Constants.ADDNEWCLIENTORDER)) {
             for (Client c : clients.values()) {
@@ -95,21 +94,21 @@ public class Server extends Thread {
             }
         }
     }
-
+    
     private void sendNewRoomToOtherClients(Room newRoom) {
-
+        
         for (Client c : clients.values()) {
             sendRoom(newRoom, c.getCommunicationLink());
         }
     }
-
+    
     private Client createClient(String id, Socket s, String clientName) {
         String name = clientName;
         return new Client(id, s.getInetAddress().toString(), name, CommunicationLink.generateCommunicationLink(new ClientHandler(id), s));
     }
-
+    
     private void handleClientRequest(Socket clientSocket) {
-
+        
         try {
             ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream());
             ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream());
@@ -117,22 +116,23 @@ public class Server extends Thread {
 
             //2) check client Request type (control connection or room creation/joining connection)
             String connectionType = connectionRequest.get(Constants.REQUESTTYPEATTR);
-
+            
             if (connectionType.equals(Constants.MAINCONNECTION)) {
                 //create new client on server
 
                 String id = connectionRequest.get(Constants.CLIENTIDATTR);
                 Client client;
                 if (verifyID(id)) {
-                    client = clients.get(id);
+                    String clientID = id.split(" ")[0];
+                    client = clients.get(clientID);
                     oos.writeUTF(id);
                     oos.flush();
                     client.setCommunicationLink(CommunicationLink.generateCommunicationLink(new ClientHandler(id), clientSocket));
-                    sendClients(id, client.getCommunicationLink());
+                    sendClients(clientID, client.getCommunicationLink());
                     sendRooms(client.getCommunicationLink());
                     sendNewClientStatusToAllOtherClients(id, Constants.INITSTATUS);
                     reJoinRooms(client);
-
+                    
                 } else {
                     id = IDGenerator.generateClientID();
                     oos.writeUTF(id + " " + serverID);
@@ -151,13 +151,13 @@ public class Server extends Thread {
 
                 //send the new client current server state
             }
-
+            
         } catch (Exception ex) {
             System.out.println("server.Server.handleClientRequest()");
         }
-
+        
     }
-
+    
     private void reJoinRooms(Client client) {
         String clientID = client.getId();
         rooms.values().forEach((r) -> {
@@ -167,12 +167,12 @@ public class Server extends Thread {
             }
         });
     }
-
-    private boolean verifyID(String ID) {
-        return (clients.get(ID) != null);
-
+    
+    private boolean verifyID(String id) {
+        return (clients.get(id.split(" ")[0]) != null && id.split(" ")[1].equals(this.serverID));
+        
     }
-
+    
     public void sendClientAdd(Client c, CommunicationLink cl) {
         HashMap<String, String> message = new HashMap<>();
         message.put(Constants.REPLYTYPEATTR, Constants.ADDNEWCLIENTORDER);
@@ -181,14 +181,14 @@ public class Server extends Thread {
         message.put(Constants.CLIENTIPATTR, c.getIp());
         cl.send(message);
     }
-
+    
     public void sendClientRemove(Client c, CommunicationLink cl) {
         HashMap<String, String> message = new HashMap<>();
         message.put(Constants.REPLYTYPEATTR, Constants.REMOVECLIENTORDER);
         message.put(Constants.CLIENTIDATTR, c.getId());
         cl.send(message);
     }
-
+    
     public void sendClients(String senderID, CommunicationLink cl) {
         //need to put before adding in the new client so s/he doesnt get sent to her/im self
         clients.values().forEach((c) -> {
@@ -197,7 +197,7 @@ public class Server extends Thread {
             }
         });
     }
-
+    
     public void sendRoom(Room r, CommunicationLink cl) {
         HashMap<String, String> message = new HashMap<>();
         message.put(Constants.REPLYTYPEATTR, Constants.ADDNEWROOMORDER);
@@ -206,14 +206,14 @@ public class Server extends Thread {
         message.put(Constants.ADMINIDATTR, r.getAdminID());
         cl.send(message);
     }
-
+    
     public void sendRooms(CommunicationLink cl) {
         rooms.values().forEach((r) -> {
             sendRoom(r, cl);
         });
-
+        
     }
-
+    
     public void sendNewClientStatusToAllOtherClients(String clientID, String newStatus) {
         //message construction
         HashMap<String, String> message = new HashMap<>();
@@ -228,15 +228,15 @@ public class Server extends Thread {
             }
         }
     }
-
+    
     class ClientHandler implements CallbackOnReceiveHandler {
-
+        
         private final String clientID;
-
+        
         public ClientHandler(String clientID) {
             this.clientID = clientID;
         }
-
+        
         @Override
         public void handleReceivedData(HashMap<String, String> msg) {
             try {
@@ -247,7 +247,7 @@ public class Server extends Thread {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-
+        
         public void handleRoomMessage(HashMap<String, String> message) {
             String roomID, senderID, msg;
             roomID = message.get(Constants.ROOMIDATTR);
@@ -255,16 +255,16 @@ public class Server extends Thread {
             msg = message.get(Constants.MESSAGE);
             rooms.get(roomID).sendMessageToParticipants(senderID, msg);
         }
-
+        
         public void handleClientStatusChange(HashMap<String, String> message) {
             String clientIDWhoChangedStatus = this.clientID;
             String newStatus = message.get(Constants.CLIENTSTATUSATTR);
             sendNewClientStatusToAllOtherClients(clientIDWhoChangedStatus, newStatus);
         }
-
+        
         public void handleRoomCreate(HashMap<String, String> message) {
             String roomID, senderID, roomName;
-
+            
             roomID = IDGenerator.generateRoomID();
             senderID = this.clientID;
             roomName = message.get(Constants.ROOMNAMEATTR);
@@ -277,7 +277,7 @@ public class Server extends Thread {
             sendNewRoomToOtherClients(r);
             sender.getCommunicationLink().send(confirmation);
         }
-
+        
         public void handleRoomJoin(HashMap<String, String> message) {
             String roomID, senderID;
             senderID = this.clientID;
@@ -288,7 +288,7 @@ public class Server extends Thread {
             r.addClient(sender);
             r.sendChatToNewParticipant(sender);
         }
-
+        
         public void handleRoomLeave(HashMap<String, String> message) {
             String roomID, senderID;
             senderID = this.clientID;
@@ -300,7 +300,7 @@ public class Server extends Thread {
             confirmation.put(Constants.ROOMIDATTR, roomID);
             sender.getCommunicationLink().send(confirmation);
         }
-
+        
         public void handleClientClosed(HashMap<String, String> message) {
 //            Client client = clients.get(this.clientID);
 //            rooms.values().forEach((r) -> {
@@ -310,7 +310,7 @@ public class Server extends Thread {
 //            clients.remove(client.getId());
             sendNewClientStatusToAllOtherClients(this.clientID, "offline");
         }
-
+        
         public void handleRoomDeleteRequest(HashMap<String, String> message) {
             String roomID, senderID;
             senderID = this.clientID;
@@ -321,7 +321,7 @@ public class Server extends Thread {
                 rooms.remove(roomID);
             }
         }
-
+        
         public void handleClientKickFromRoom(HashMap<String, String> message) {
             String senderID, roomID, kickedClientID;
             senderID = this.clientID;
@@ -336,7 +336,7 @@ public class Server extends Thread {
                 clients.get(kickedClientID).getCommunicationLink().send(confirmation);
             }
         }
-
+        
         public void handleClientKick(HashMap<String, String> message) {
             String requester = this.clientID;
             Client client = clients.get(message.get(Constants.CLIENTIDATTR));
@@ -346,8 +346,8 @@ public class Server extends Thread {
                 close.put(Constants.REPLYTYPEATTR, Constants.CONNECTIONCLOSED);
                 client.getCommunicationLink().send(close);
             }
-
+            
         }
     }
-
+    
 }
