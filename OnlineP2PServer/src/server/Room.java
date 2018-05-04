@@ -31,6 +31,10 @@ public class Room {
         return adminID;
     }
 
+    public boolean clientExists(String clientID) {
+        return (participants.get(clientID) != null);
+    }
+
     /**
      * @return the name
      */

@@ -22,13 +22,11 @@ public class CommunicationLink extends Thread {
     private CallbackOnReceiveHandler callBackHandler;
     private ObjectInputStream ois;
     private ObjectOutputStream oos;
-    private String id;
 
     /**
      * @return the id
      */
-    private CommunicationLink(CallbackOnReceiveHandler callBackHandler, Socket s, String id) {
-        this.id = id;
+    private CommunicationLink(CallbackOnReceiveHandler callBackHandler, Socket s) {
         this.callBackHandler = callBackHandler;
         try {
             this.oos = new ObjectOutputStream(s.getOutputStream());
@@ -40,35 +38,34 @@ public class CommunicationLink extends Thread {
     }
 
     //CommunicationLink factory to run code after object construction
-    public static CommunicationLink generateCommunicationLink(CallbackOnReceiveHandler callBackHandler, Socket s, String id) {
-        CommunicationLink cl = new CommunicationLink(callBackHandler, s, id);
+    public static CommunicationLink generateCommunicationLink(CallbackOnReceiveHandler callBackHandler, Socket s) {
+        CommunicationLink cl = new CommunicationLink(callBackHandler, s);
         cl.start();
         return cl;
     }
 
     @Override
     public void run() {
-        
-            try {
-        while (true) {
-            HashMap<String, String> received;
+
+        try {
+            while (true) {
+                HashMap<String, String> received;
                 received = (HashMap<String, String>) ois.readObject();
                 callBackHandler.handleReceivedData(received);
-            } 
-        }catch (Exception ex) {
-                HashMap<String, String> message = new HashMap();
-                message.put(Constants.REQUESTTYPEATTR, Constants.CLIENTLEFT);
-                message.put(Constants.CLIENTIDATTR, this.id);
-                callBackHandler.handleReceivedData(message);
             }
+        } catch (Exception ex) {
+            HashMap<String, String> message = new HashMap();
+            message.put(Constants.REQUESTTYPEATTR, Constants.CLIENTLEFT);
+            callBackHandler.handleReceivedData(message);
+        }
     }
 
     public void send(HashMap<String, String> msg) {
         try {
             oos.writeObject(msg);
             oos.flush();
-        } catch (IOException ex) {
-            Logger.getLogger(CommunicationLink.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+
         }
     }
 }

@@ -43,6 +43,7 @@ public class Client {
     public CommunicationLink getCommunicationLink() {
         return this.server_cl;
     }
+    
 
     /**
      * @return the id
