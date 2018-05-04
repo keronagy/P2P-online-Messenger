@@ -115,7 +115,7 @@ public class Server extends Thread {
                 }
 
                 //send the new client current server state
-                sendClients(id,client.getCommunicationLink());
+                sendClients(id, client.getCommunicationLink());
                 sendRooms(client.getCommunicationLink());
                 sendNewClientStatusToAllOtherClients(id, Constants.INITSTATUS);
             }
@@ -130,7 +130,8 @@ public class Server extends Thread {
         String clientID = client.getId();
         rooms.values().forEach((r) -> {
             if (r.clientExists(clientID)) {
-                sendConfirmation(r, client);
+                r.sendConfirmationToClient(client);
+                r.sendChatToNewParticipant(client);
             }
         });
     }
@@ -159,8 +160,9 @@ public class Server extends Thread {
     public void sendClients(String senderID, CommunicationLink cl) {
         //need to put before adding in the new client so s/he doesnt get sent to her/im self
         clients.values().forEach((c) -> {
-            if(!senderID.equals(c.getId()))
-            sendClientAdd(c, cl);
+            if (!senderID.equals(c.getId())) {
+                sendClientAdd(c, cl);
+            }
         });
     }
 
@@ -193,16 +195,6 @@ public class Server extends Thread {
                 peer.getCommunicationLink().send(message);
             }
         }
-    }
-
-    private void sendConfirmation(Room r, Client sender) {
-        HashMap<String, String> confirmation = new HashMap();
-        confirmation.put(Constants.REPLYTYPEATTR, Constants.CONFIRMJOINROOMORDER);
-        confirmation.put(Constants.ROOMIDATTR, r.getId());
-        confirmation.put(Constants.ROOMNAMEATTR, r.getName());
-        confirmation.put(Constants.ADMINIDATTR, r.getAdminID());
-        sender.getCommunicationLink().send(confirmation);
-
     }
 
     class ClientHandler implements CallbackOnReceiveHandler {
@@ -260,8 +252,9 @@ public class Server extends Thread {
             roomID = message.get(Constants.ROOMIDATTR);
             Room r = rooms.get(roomID);
             Client sender = clients.get(senderID);
-            sendConfirmation(r, sender);
+            r.sendConfirmationToClient(sender);
             r.addClient(sender);
+            r.sendChatToNewParticipant(sender);
         }
 
         public void handleRoomLeave(HashMap<String, String> message) {

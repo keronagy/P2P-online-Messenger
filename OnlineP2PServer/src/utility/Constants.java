@@ -71,5 +71,8 @@ public class Constants {
     public static final String KICKCLIENTFROMROOMORDER = "handleClientKickFromRoom";
     public static final String CONNECTIONCLOSED = "handleConnectionClosed";
     public static final String CHANGESTATUS = "handleClientStatusChange";
+    
+    public static final String ROOMHISTORY = "handleRoomHistory";
+    public static final String ROOMCHAT = "chat";
 
 }

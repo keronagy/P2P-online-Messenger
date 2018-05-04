@@ -5,6 +5,7 @@
  */
 package server;
 
+
 import java.util.HashMap;
 import network.CommunicationLink;
 import utility.Constants;
@@ -19,6 +20,7 @@ public class Room {
     private String adminID;
     private String name;
     private HashMap<String, Client> participants;
+    private StringBuilder chat;
 
     /**
      * @return the id
@@ -47,13 +49,23 @@ public class Room {
         this.adminID = adminID;
         this.name = name;
         participants = new HashMap();
+        chat = new StringBuilder();
         //participants.put(this.adminID, admin);
     }
 
     public void addClient(Client client) {
         sendNewParticipantToOtherParticipants(client, Constants.ADDNEWCLIENTTOROOMORDER);
-        sendParticipants(client);
+        sendParticipants(client);     
         participants.put(client.getId(), client);
+    }
+
+    public void sendChatToNewParticipant(Client client) {
+        HashMap<String, String> message = new HashMap<>();
+        message.put(Constants.REPLYTYPEATTR, Constants.ROOMHISTORY);
+        message.put(Constants.ROOMIDATTR, this.getId());
+        message.put(Constants.ROOMCHAT, chat.toString());
+
+        client.getCommunicationLink().send(message);
     }
 
     public void removeClient(Client client) {
@@ -92,6 +104,7 @@ public class Room {
     }
 
     public void sendMessageToParticipants(String senderID, String msg) {
+        chat.append(senderID).append(",").append(msg).append('\n');
         HashMap<String, String> message = new HashMap();
         message.put(Constants.REPLYTYPEATTR, Constants.MESSAGEFROMROOM);
         //message.put(MessageConstants.MESSAGEFROM, MessageConstants.FROMROOM);
@@ -113,5 +126,15 @@ public class Room {
             c.getCommunicationLink().send(message);
 
         });
+    }
+
+    public void sendConfirmationToClient(Client client) {
+        HashMap<String, String> confirmation = new HashMap();
+        confirmation.put(Constants.REPLYTYPEATTR, Constants.CONFIRMJOINROOMORDER);
+        confirmation.put(Constants.ROOMIDATTR, this.id);
+        confirmation.put(Constants.ROOMNAMEATTR, this.name);
+        confirmation.put(Constants.ADMINIDATTR, this.adminID);
+        client.getCommunicationLink().send(confirmation);
+
     }
 }

@@ -73,4 +73,7 @@ public class Constants {
     public static final String CHANGESTATUS = "handleClientStatusChange";
     public static final String NEWPEERSTATUSUPDATE = "handleNewPeerStatus";
 
+    public static final String ROOMHISTORY = "handleRoomHistory";
+    public static final String ROOMCHAT = "chat";
+
 }

@@ -967,6 +967,11 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
+    public void handleRoomHistory(HashMap<String, String> msg) {
+        String roomID = msg.get(Constants.ROOMIDATTR);
+        String chat = msg.get(Constants.ROOMCHAT); //id,msg \n
+    }
+
     public void typing() {
         try {
             String ID = tabs.getSelectionModel().getSelectedItem().getId();
