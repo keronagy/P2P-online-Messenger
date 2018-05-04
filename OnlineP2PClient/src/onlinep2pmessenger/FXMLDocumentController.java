@@ -148,7 +148,7 @@ public class FXMLDocumentController implements Initializable {
     private HashMap<String, ClientTuple> clients = new HashMap();
     private String userName;
     private String IPAddress;
-    private String ProtNum;
+    private int PortNum;
     private boolean type = false;
     private final String ClientSound = "Sounds/ClientNotification.mp3";     // For example
     private final String RoomSound = "Sounds/RoomNotification.mp3";     // For example
@@ -160,7 +160,7 @@ public class FXMLDocumentController implements Initializable {
     }
 
     public void setProtNum(String ProtNum) {
-        this.ProtNum = ProtNum;
+        this.PortNum = Integer.parseInt(ProtNum);
     }
 
     @Override
@@ -168,7 +168,7 @@ public class FXMLDocumentController implements Initializable {
         try {
 
             hamed = new PeerClient(Constants.INITSTATUS, userName);
-            hamed.connect(Constants.SERVERIP, Constants.SERVERPORT, new ServerHandler());
+            hamed.connect(this.IPAddress, this.PortNum, new ServerHandler());
 
             handleNewConnections();
 
@@ -213,7 +213,7 @@ public class FXMLDocumentController implements Initializable {
     }
 
     public void createPrivateChat(String clientID) {
-        hamed.connectToPeer(clientID, clients.get(clientID).getIp(), Constants.SERVERPORT + 2, new PeerHandler(clientID)
+        hamed.connectToPeer(clientID, clients.get(clientID).getIp(), Constants.SERVERPORT + 1, new PeerHandler(clientID)
         );
         JoinClient(clientID);
     }
