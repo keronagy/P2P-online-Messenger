@@ -25,6 +25,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Font;
@@ -112,6 +113,7 @@ public class LoginController implements Initializable {
                 root = loader.load();
                 Stage stage = new Stage();
                 stage.setScene(new Scene(root));
+                stage.getIcons().add(new Image(FXMLDocumentController.class.getResourceAsStream("imgs/icon.png")));
                 StartBtn.getScene().getWindow().hide();
                 stage.setTitle("Regaletna Messenger");
                 stage.setHeight(635);

@@ -41,6 +41,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -668,6 +669,8 @@ public class FXMLDocumentController implements Initializable {
             Stage stage = new Stage();
             stage.setTitle("Adding Room");
             stage.setScene(new Scene(root));
+            stage.getIcons().add(new Image(FXMLDocumentController.class.getResourceAsStream("imgs/icon.png")));
+
             Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
             stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
             stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 4);
@@ -702,6 +705,7 @@ public class FXMLDocumentController implements Initializable {
             Stage stage = new Stage();
             stage.setTitle("Changing status");
             stage.setScene(new Scene(root));
+            stage.getIcons().add(new Image(FXMLDocumentController.class.getResourceAsStream("imgs/icon.png")));
             Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
             stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
             stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 4);
@@ -998,7 +1002,7 @@ public class FXMLDocumentController implements Initializable {
                     alert.setTitle("Server Error");
                     alert.setHeaderText("go to hell!! ");
                     alert.setContentText("I have a great message for you!, all the chats will be removed go kill your self xD");
-
+                    
                     alert.showAndWait();
                     exit();
                 });

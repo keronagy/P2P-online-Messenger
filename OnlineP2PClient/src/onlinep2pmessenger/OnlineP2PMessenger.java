@@ -11,6 +11,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -32,6 +33,7 @@ public class OnlineP2PMessenger extends Application {
 
         Scene scene = new Scene(root);
 //        scene.getStylesheets().add("/onlineP2PMessenger/tabPaneCustomCss.css");
+        stage.getIcons().add(new Image(FXMLDocumentController.class.getResourceAsStream("imgs/icon.png")));
 
         stage.setScene(scene);
         stage.show();
