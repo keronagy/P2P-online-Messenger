@@ -26,6 +26,7 @@ public class Server extends Thread {
     HashMap<String, Client> clients;
     HashMap<String, Room> rooms;
     String adminID;
+    String serverID;
     boolean first;
 
     public static void main(String[] args) {
@@ -35,6 +36,7 @@ public class Server extends Thread {
     private Server() {
         // to deny access to default public constructor
         first = true;
+        serverID = IDGenerator.generateServerID();
     }
 
     public static void initiateServer() {
@@ -106,7 +108,7 @@ public class Server extends Thread {
 
                 } else {
                     id = IDGenerator.generateClientID();
-                    oos.writeUTF(id);
+                    oos.writeUTF(id+" "+serverID);
                     oos.flush();
                     if (first) {
                         adminID = id;

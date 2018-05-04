@@ -50,7 +50,7 @@ public class PeerClient extends Client {
             this.id = ois.readUTF();
 
             writeID(this.id);
-            if (this.id.equals("c-0")) {
+            if (this.id.substring(0, 3).equals("c-0")) {
                 admin = true;
             }
             this.server_cl = CommunicationLink.generateCommunicationLink(handler, s);

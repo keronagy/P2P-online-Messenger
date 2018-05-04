@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 package utility;
-
+import java.util.Random;
 /**
  *
  * @author fadia
@@ -20,5 +20,8 @@ public class IDGenerator {
 
     public static String generateRoomID() {
         return Constants.isARoom + "-" + rooms++;
+    }
+    public static String generateServerID() {
+        return Constants.isARoom + "-" +  new Random().nextInt();
     }
 }
