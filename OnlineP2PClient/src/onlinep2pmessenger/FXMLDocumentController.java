@@ -22,6 +22,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -166,20 +168,27 @@ public class FXMLDocumentController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        try {
+//        try {
 
             hamed = new PeerClient(Constants.INITSTATUS, userName);
             hamed.connect(this.IPAddress, this.PortNum, new ServerHandler());
 
             handleNewConnections();
 
-            final Font f = Font.loadFont(new FileInputStream(new File("OpenSansEmoji.ttf")), 12);
-            if (f == null) {
-                throw new IllegalArgumentException("Can't load font for url ");
-            }
+//            final Font f = Font.loadFont(new FileInputStream(new File("OpenSansEmoji.ttf")), 12);
+//            if (f == null) {
+//                throw new IllegalArgumentException("Can't load font for url ");
+//            }
 
-            ChatTxt.setFont(f);
-            ChatTxt.setOnKeyPressed(e -> {
+            //ChatTxt.setFont(f);
+            
+            
+
+//        } catch (FileNotFoundException ex) {
+//            Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+        
+        ChatTxt.setOnKeyPressed(e -> {
 
                 if (e.getCode().equals(KeyCode.ENTER) || e.getCharacter().getBytes()[0] == '\n' || e.getCharacter().getBytes()[0] == '\r') {
                     // your action
@@ -187,10 +196,21 @@ public class FXMLDocumentController implements Initializable {
                 }
 
             });
-
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+        
+        tabs.getSelectionModel().selectedItemProperty().addListener(
+        new ChangeListener<Tab>() {
+        @Override
+        public void changed(ObservableValue<? extends Tab> ov, Tab t, Tab t1) {
+            if(t.getId().charAt(0) == 'c')
+            {
+                hamed.stoppedTyping(t.getId());
+                TypingLbl.setText("");
+                type= false;
+            }
+            
         }
+    }
+);
         ImageView[] imgsv = {i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15, i16};
 
         for (int i = 1; i <= 16; i++) {
