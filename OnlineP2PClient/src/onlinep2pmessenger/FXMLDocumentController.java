@@ -970,6 +970,14 @@ public class FXMLDocumentController implements Initializable {
     public void handleRoomHistory(HashMap<String, String> msg) {
         String roomID = msg.get(Constants.ROOMIDATTR);
         String chat = msg.get(Constants.ROOMCHAT); //id,msg \n
+        String roomName = ((CustomStackPane) GroupTabVboxes.get(roomID)).getName();
+        String adminID = ((CustomStackPane) GroupTabVboxes.get(roomID)).getAdminID();
+        //GUI add message to chat
+        String[] messages = chat.split("\n");
+        for (int i = 0; i < messages.length; i++) {
+            String[] message = messages[i].split(",");
+            Platform.runLater(() -> receiveRoom(message[1], roomID, message[0], clients.get(message[0]).getName(), roomName, adminID));
+        }
     }
 
     public void typing() {
