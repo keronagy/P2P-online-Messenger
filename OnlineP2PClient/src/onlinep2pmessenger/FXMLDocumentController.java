@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
@@ -409,6 +410,23 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
+    public VBox createSentMsgStackPane(String msg) {
+        StackPane p = new StackPane();
+        p.setMinHeight(Region.USE_PREF_SIZE);
+        p.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        p.setStyle("-fx-background-color: #00FFFF; -fx-background-radius: 30; -fx-border-radius: 30; -fx-border-width:5;");
+
+        Label lbl = new Label(msg);
+        lbl.setPadding(new Insets(10));
+        lbl.setText(msg);
+        lbl.setTextFill(Color.BLACK);
+        lbl.setWrapText(true);
+        //= tr
+
+        p.getChildren().add(lbl);
+        return new VBox(p, createDateLbl());
+    }
+
     public HBox createReceivedMsgStackPane(String Msg, int Type) {
         // type is 1 for client or 2 for room
         StackPane p1 = new StackPane();
@@ -488,7 +506,7 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
-    public void receiveRoom(String Msg, String RoomID, String UserID, String UserName, String RoomName, String adminID) {
+    public void receiveRoom(String Msg, String RoomID, String UserID, String RoomName, String adminID) {
 
         if (vboxes.get(RoomID) != null) {
 
@@ -515,7 +533,11 @@ public class FXMLDocumentController implements Initializable {
             AddTab(RoomID, RoomName, adminID);
 
         }
-        vboxes.get(RoomID).getChildren().add(createReceivedMsgStackPane(UserName + ": " + Msg, 2));
+        if (clients.get(UserID) == null) {
+            vboxes.get(RoomID).getChildren().add(createSentMsgStackPane(Msg));
+        } else {
+            vboxes.get(RoomID).getChildren().add(createReceivedMsgStackPane(clients.get(UserID) + ": " + Msg, 2));
+        }
     }
 
     public void RunSound(int type) {// 1 for client
@@ -532,9 +554,9 @@ public class FXMLDocumentController implements Initializable {
     public void sendBtn() {
         if (!ChatTxt.getText().equals("")) {
 
-            String msg = ChatTxt.getText();
             String ID = tabs.getSelectionModel().getSelectedItem().getId();
-            StackPane p = new StackPane();
+            String msg = ChatTxt.getText();
+            /*StackPane p = new StackPane();
             p.setMinHeight(Region.USE_PREF_SIZE);
             p.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
             p.setStyle("-fx-background-color: #00FFFF; -fx-background-radius: 30; -fx-border-radius: 30; -fx-border-width:5;");
@@ -547,7 +569,8 @@ public class FXMLDocumentController implements Initializable {
             //= tr
 
             p.getChildren().add(lbl);
-            VBox MsgPane = new VBox(p, createDateLbl());
+            VBox MsgPane = new VBox(p, createDateLbl());*/
+            VBox MsgPane = createSentMsgStackPane(msg);
             vboxes.get(ID).getChildren().add(MsgPane);
             ChatTxt.setText("");
             emojiPane.setVisible(false);
@@ -906,7 +929,7 @@ public class FXMLDocumentController implements Initializable {
             String roomName = ((CustomStackPane) GroupTabVboxes.get(roomID)).getName();
             String adminID = ((CustomStackPane) GroupTabVboxes.get(roomID)).getAdminID();
             //GUI add message to chat
-            Platform.runLater(() -> receiveRoom(message, roomID, senderID, clients.get(senderID).getName(), roomName, adminID));
+            Platform.runLater(() -> receiveRoom(message, roomID, senderID, roomName, adminID));
         }
 
         public void handleNewClient(HashMap<String, String> msg) {
@@ -965,18 +988,24 @@ public class FXMLDocumentController implements Initializable {
             }
 
         }
-    }
 
-    public void handleRoomHistory(HashMap<String, String> msg) {
-        String roomID = msg.get(Constants.ROOMIDATTR);
-        String chat = msg.get(Constants.ROOMCHAT); //id,msg \n
-        String roomName = ((CustomStackPane) GroupTabVboxes.get(roomID)).getName();
-        String adminID = ((CustomStackPane) GroupTabVboxes.get(roomID)).getAdminID();
-        //GUI add message to chat
-        String[] messages = chat.split("\n");
-        for (int i = 0; i < messages.length; i++) {
-            String[] message = messages[i].split(",");
-            Platform.runLater(() -> receiveRoom(message[1], roomID, message[0], clients.get(message[0]).getName(), roomName, adminID));
+        public void handleRoomHistory(HashMap<String, String> msg) {
+
+            String roomID = msg.get(Constants.ROOMIDATTR);
+            String chat = msg.get(Constants.ROOMCHAT); //id,msg \n
+            System.out.println(roomID + " " + chat);
+            //GUI add message to chat
+            if (!chat.isEmpty()) {
+                String[] messages = chat.split("\n");
+                for (int i = 0; i < messages.length; i++) {
+                    String[] message = messages[i].split(",");
+                    Platform.runLater(() -> {
+                        String roomName = ((CustomStackPane) GroupTabVboxes.get(roomID)).getName();
+                        String adminID = ((CustomStackPane) GroupTabVboxes.get(roomID)).getAdminID();
+                        receiveRoom(message[1], roomID, message[0], roomName, adminID);
+                    });
+                }
+            }
         }
     }
 

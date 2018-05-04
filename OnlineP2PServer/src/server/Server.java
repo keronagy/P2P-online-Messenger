@@ -99,6 +99,9 @@ public class Server extends Thread {
                     oos.writeUTF(id);
                     oos.flush();
                     client.setCommunicationLink(CommunicationLink.generateCommunicationLink(new ClientHandler(id), clientSocket));
+                sendClients(id, client.getCommunicationLink());
+                sendRooms(client.getCommunicationLink());
+                sendNewClientStatusToAllOtherClients(id, Constants.INITSTATUS);
                     reJoinRooms(client);
 
                 } else {
@@ -112,12 +115,12 @@ public class Server extends Thread {
                     client = createClient(id, clientSocket, connectionRequest.get(Constants.CLIENTNAMEATTR));
                     sendNewClientToOtherClients(client, Constants.ADDNEWCLIENTORDER);
                     clients.put(id, client);
-                }
-
-                //send the new client current server state
                 sendClients(id, client.getCommunicationLink());
                 sendRooms(client.getCommunicationLink());
                 sendNewClientStatusToAllOtherClients(id, Constants.INITSTATUS);
+                }
+
+                //send the new client current server state
             }
 
         } catch (Exception ex) {
