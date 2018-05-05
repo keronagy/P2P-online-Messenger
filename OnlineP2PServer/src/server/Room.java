@@ -33,6 +33,10 @@ public class Room {
         return adminID;
     }
 
+    public void setAdminID(String adminID) {
+        this.adminID = adminID;
+    }
+    
     public boolean clientExists(String clientID) {
         return (participants.get(clientID) != null);
     }

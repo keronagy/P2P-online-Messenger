@@ -143,17 +143,18 @@ public class Server extends Thread {
                     oos.flush();
                     if (first) {
                         adminID = clientID;
+                        rooms.get("r-0").setAdminID(adminID);
                         first = false;
                     }
                     client = createClient(clientID, clientSocket, connectionRequest.get(Constants.CLIENTNAMEATTR));
                     sendNewClientToOtherClients(client, Constants.ADDNEWCLIENTORDER);
                     clients.put(clientID, client);
                     sendClients(clientID, client.getCommunicationLink());
-                    sendRooms(client.getCommunicationLink());
-                    sendNewClientStatusToAllOtherClients(clientID, Constants.INITSTATUS);
                     HashMap<String,String> joinGeneral = new HashMap();
                     joinGeneral.put(Constants.ROOMIDATTR, "r-0");
                     ((ClientHandler)client.getCommunicationLink().getCallBackHandler()).handleRoomJoin(joinGeneral);
+                    sendRooms(client.getCommunicationLink());
+                    sendNewClientStatusToAllOtherClients(clientID, Constants.INITSTATUS);
                 }
 
                 //send the new client current server state
