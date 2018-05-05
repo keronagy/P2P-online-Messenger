@@ -74,6 +74,9 @@ public class Server extends Thread {
         try {
             clients = new HashMap();
             rooms = new HashMap();
+            String roomID = IDGenerator.generateRoomID();
+            Room r = new Room(roomID, "", Constants.INITROOM);
+            rooms.put(roomID, r);
             ServerSocket ss = new ServerSocket(Constants.SERVERPORT);
             while (true) {
                 handleClientRequest(ss.accept());
@@ -148,6 +151,9 @@ public class Server extends Thread {
                     sendClients(clientID, client.getCommunicationLink());
                     sendRooms(client.getCommunicationLink());
                     sendNewClientStatusToAllOtherClients(clientID, Constants.INITSTATUS);
+                    HashMap<String,String> joinGeneral = new HashMap();
+                    joinGeneral.put(Constants.ROOMIDATTR, "r-0");
+                    ((ClientHandler)client.getCommunicationLink().getCallBackHandler()).handleRoomJoin(joinGeneral);
                 }
 
                 //send the new client current server state
@@ -170,7 +176,8 @@ public class Server extends Thread {
     }
     
     private boolean verifyID(String id) {
-        return (clients.get(id.split(" ")[0]) != null && id.split(" ")[1].equals(this.serverID));
+        String[] IDs = id.split(" ");
+        return (clients.get(IDs[0]) != null && IDs[1].equals(this.serverID));
         
     }
     
