@@ -22,9 +22,14 @@ public class CustomGroupOptionBtn extends JFXButton{
                 
     this.setText("Room Options");
     BtnsPop = new VBox();
-    addOption("Leave Room",e->peer.LeaveRoom(roomID));
+    addOption("Leave Room",e->{
+        peer.LeaveRoom(roomID);
+        RoomPopUp.hide();
+    });
     if(peer.getId().equals(adminID) || peer.isAdmin())
-    addOption("Delete Room",e->peer.deleteRoom(roomID));
+    addOption("Delete Room",e->{peer.deleteRoom(roomID);
+        RoomPopUp.hide();
+    });
     RoomPopUp.setPopupContent(BtnsPop);
     JFXButton GroupOptions = new JFXButton("Group Options");
     }

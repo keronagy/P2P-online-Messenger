@@ -56,7 +56,10 @@ public class CustomStackPane extends StackPane {
         JFXButton kickClient = new JFXButton("Kick Client");
         
         
-        addOption("Kick Client",e->peer.kickClient(ClientID));
+        addOption("Kick Client",e->{
+            peer.kickClient(ClientID);
+                KickPop.hide();
+                });
         
         }
         KickPop.setPopupContent(BtnsPop);

@@ -223,10 +223,12 @@ public class FXMLDocumentController implements Initializable {
             kk.setSpacing(5);
             kk.setPadding(new Insets(5));
             EmojiesPopupVbox.getChildren().add(kk);
+            
 
         }
 
         EmojiesPopUp.setPopupContent(EmojiesPopupVbox);
+        
         emojies.setOnMouseClicked(e -> showEmojis(e));
         AddRoomBtn.setOnMouseClicked(e -> AddRoomDialog());
     }
