@@ -54,7 +54,7 @@ public class CustomStackPane extends StackPane {
 
             //JFXButton kickClient = new JFXButton("Kick Client");
             try {
-                addOption(peer, ClientID, "Kick Client", PeerClient.class.getMethod("kickClient", String.class));
+                addOption(new Object[]{peer, ClientID}, "Kick Client", PeerClient.class.getMethod("kickClient", String.class));
             } catch (Exception ex) {
                 //Logger.getLogger(CustomStackPane.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -82,11 +82,11 @@ public class CustomStackPane extends StackPane {
         this.getChildren().add(lblsvbox);
     }
 
-    public void addOption(PeerClient peer, String clientID, String name, Method f) {
+    public void addOption(Object[] args, String name, Method f) {
         JFXButton Option = new JFXButton(name);
         Option.setOnMouseClicked(e -> {
             try {
-                f.invoke(peer, clientID);
+                f.invoke((PeerClient)args[0], (String)args[1]);
                 KickPop.hide();
             } catch (Exception ex) {
                 //Logger.getLogger(CustomGroupOptionBtn.class.getName()).log(Level.SEVERE, null, ex);
