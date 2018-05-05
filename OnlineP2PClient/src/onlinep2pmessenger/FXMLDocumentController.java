@@ -403,9 +403,13 @@ public class FXMLDocumentController implements Initializable {
             JFXPopup CirclePopUp = new JFXPopup();
             if (adminID.equals(hamed.getId()) || hamed.isAdmin()) {
                 JFXButton RemoveMember = new JFXButton("Kick Member");
-                RemoveMember.setOnMouseClicked(e -> hamed.kickClientFromRoom(RoomID, UserID));
+                RemoveMember.setOnMouseClicked(e ->
+                {
+                    hamed.kickClientFromRoom(RoomID, UserID);
+                    CirclePopUp.hide();
+                        });
                 BtnsPop.getChildren().add(RemoveMember);
-
+                
             }
 
             CirclePopUp.setPopupContent(BtnsPop);
