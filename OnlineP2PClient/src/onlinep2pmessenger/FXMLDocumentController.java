@@ -957,10 +957,12 @@ public class FXMLDocumentController implements Initializable {
             String roomID = msg.get(Constants.ROOMIDATTR);
             String senderID = msg.get(Constants.CLIENTIDATTR);
             String message = msg.get(Constants.MESSAGE);
-            String roomName = ((CustomStackPane) GroupTabVboxes.get(roomID)).getName();
-            String adminID = ((CustomStackPane) GroupTabVboxes.get(roomID)).getAdminID();
             //GUI add message to chat
-            Platform.runLater(() -> receiveRoom(message, roomID, senderID, roomName, adminID));
+            Platform.runLater(() -> {
+                String roomName = ((CustomStackPane) GroupTabVboxes.get(roomID)).getName();
+                String adminID = ((CustomStackPane) GroupTabVboxes.get(roomID)).getAdminID();
+                receiveRoom(message, roomID, senderID, roomName, adminID);
+            });
         }
 
         public void handleNewClient(HashMap<String, String> msg) {
