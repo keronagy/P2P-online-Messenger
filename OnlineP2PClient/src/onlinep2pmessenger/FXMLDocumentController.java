@@ -118,7 +118,7 @@ public class FXMLDocumentController implements Initializable {
     private Button AddTab;
     @FXML
     private TabPane tabs;
-    ConcurrentHashMap<String, VBox> vboxes = new ConcurrentHashMap();
+    ConcurrentHashMap<String, VBox[]> vboxes = new ConcurrentHashMap();
     @FXML
     private VBox groupVbox;
     HashMap<String, StackPane> groupVboxes = new HashMap();
@@ -361,22 +361,30 @@ public class FXMLDocumentController implements Initializable {
         if (vboxes.get(ID) == null) {
             Tab t = new Tab(UserName);
 
+            VBox root1 = new VBox();
             tabs.getTabs().add(t);
             t.setId(ID);
             t.setOnCloseRequest((e -> onTabClose(t.getId())));
             t.setOnSelectionChanged((e -> onTabClick(t.getId())));
             //        tabs.getSelectionModel().select(t);
             ScrollPane scrollPane = new ScrollPane();
-            t.setContent(scrollPane);
+            t.setContent(root1);
             scrollPane.setFitToHeight(true);
             scrollPane.setFitToWidth(true);
             VBox root = new VBox();
+            
             root.setSpacing(10);
             root.setPadding(new Insets(10));
-            scrollPane.setContent(root);
-            scrollPane.vvalueProperty().bind(root.heightProperty());
-            vboxes.put(t.getId(), root);
+            
+            
+            
             if (ID.charAt(0) == 'r') {
+                VBox Msgs = new VBox();
+                Msgs.setSpacing(10);
+                Msgs.setPadding(new Insets(10));
+                
+                
+                vboxes.put(t.getId(), new VBox[] {root,Msgs});
                 CustomGroupOptionBtn GroupOptions = new CustomGroupOptionBtn(hamed, ID, adminID);
 
                 GroupOptions.setOnMouseClicked(e -> GroupOptions.getRoomPopUp().show(GroupOptions, JFXPopup.PopupVPosition.TOP, JFXPopup.PopupHPosition.LEFT, e.getX(), e.getY()));
@@ -387,9 +395,20 @@ public class FXMLDocumentController implements Initializable {
                 MembersScroll.setFitToWidth(true);
                 CustomCirclesHBox MembersCircles = new CustomCirclesHBox();
                 MembersScroll.setContent(MembersCircles);
-                root.getChildren().add(GroupOptions);
-                root.getChildren().add(MembersScroll);
+                root1.getChildren().add(GroupOptions);
+                root1.getChildren().add(MembersScroll);
+                scrollPane.setContent(Msgs);
+                scrollPane.vvalueProperty().bind(Msgs.heightProperty());
+                root1.getChildren().add(scrollPane);
                 membersInRomPane.put(ID, MembersCircles);
+            }
+            else 
+            {
+                root1.getChildren().add(scrollPane);
+                scrollPane.setContent(root);
+                scrollPane.vvalueProperty().bind(root.heightProperty());
+
+                vboxes.put(t.getId(), new VBox[] {null, root});
             }
         }
 
@@ -527,7 +546,7 @@ public class FXMLDocumentController implements Initializable {
             AddTab(ClientID, ClientName, null);
 
         }
-        vboxes.get(ClientID).getChildren().add(createReceivedMsgStackPane(Msg, 1));
+        vboxes.get(ClientID)[1].getChildren().add(createReceivedMsgStackPane(Msg, 1));
         if (ClientID.equals(tabs.getSelectionModel().getSelectedItem().getId())) {//yyyy.MM.dd.HH.mm.ss
             String datelbl = new SimpleDateFormat("HH:mm:ss").format(new java.util.Date());
             hamed.confirmSeen(ClientID, datelbl);
@@ -562,9 +581,9 @@ public class FXMLDocumentController implements Initializable {
 
         }
         if (clients.get(UserID) == null) {
-            vboxes.get(RoomID).getChildren().add(createSentMsgStackPane(Msg));
+            vboxes.get(RoomID)[1].getChildren().add(createSentMsgStackPane(Msg));
         } else {
-            vboxes.get(RoomID).getChildren().add(createReceivedMsgStackPane(clients.get(UserID).getName() + ": " + Msg, 2));
+            vboxes.get(RoomID)[1].getChildren().add(createReceivedMsgStackPane(clients.get(UserID).getName() + ": " + Msg, 2));
         }
     }
 
@@ -599,7 +618,7 @@ public class FXMLDocumentController implements Initializable {
             p.getChildren().add(lbl);
             VBox MsgPane = new VBox(p, createDateLbl());*/
             VBox MsgPane = createSentMsgStackPane(msg);
-            vboxes.get(ID).getChildren().add(MsgPane);
+            vboxes.get(ID)[1].getChildren().add(MsgPane);
             ChatTxt.setText("");
             emojiPane.setVisible(false);
             if (ID.charAt(0) == 'r') {
@@ -862,7 +881,7 @@ public class FXMLDocumentController implements Initializable {
             seen.setPadding(new Insets(5));
             seen.setTextFill(Color.WHITE);
             seen.setText("seen at " + timeSeenAt);
-            Platform.runLater(() -> vboxes.get(peerID).getChildren().add(seen));
+            Platform.runLater(() -> vboxes.get(peerID)[1].getChildren().add(seen));
         }
 
         private String getPeerID() {
