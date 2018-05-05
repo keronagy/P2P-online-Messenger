@@ -23,22 +23,12 @@ public class OnlineP2PMessenger extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-
-//        listener t = new listener("from GUI",utility.ClientConstants.P2PPORT);
-//        t.start();
-//        
         Parent root = FXMLLoader.load(getClass().getResource("Login.fxml"));
-
-        final Font f = Font.loadFont(new FileInputStream(new File("OpenSansEmoji.ttf")), 10);
-
         Scene scene = new Scene(root);
-//        scene.getStylesheets().add("/onlineP2PMessenger/tabPaneCustomCss.css");
         stage.getIcons().add(new Image(FXMLDocumentController.class.getResourceAsStream("imgs/icon.png")));
-
         stage.setScene(scene);
         stage.show();
     }
-
     /**
      * @param args the command line arguments
      */

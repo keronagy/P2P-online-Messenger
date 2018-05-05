@@ -110,7 +110,6 @@ public class FXMLDocumentController implements Initializable {
     private ImageView i15;
     @FXML
     private ImageView i16;
-//    ImageView[] imojies = new ImageView[] {i1,i2,i3,i4,i5,i6,i7,i8,i9,i10,i11,i12,i13,i14,i15,i16};
     @FXML
     private Pane emojiPane;
     private boolean emojispanevis = false;
@@ -169,25 +168,16 @@ public class FXMLDocumentController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-//        try {
 
         hamed = new PeerClient(Constants.INITSTATUS, userName);
         hamed.connect(this.IPAddress, this.PortNum, new ServerHandler());
 
         handleNewConnections();
 
-//            final Font f = Font.loadFont(new FileInputStream(new File("OpenSansEmoji.ttf")), 12);
-//            if (f == null) {
-//                throw new IllegalArgumentException("Can't load font for url ");
-//            }
-        //ChatTxt.setFont(f);
-//        } catch (FileNotFoundException ex) {
-//            Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+
         ChatTxt.setOnKeyPressed(e -> {
 
             if (e.getCode().equals(KeyCode.ENTER) || e.getCharacter().getBytes()[0] == '\n' || e.getCharacter().getBytes()[0] == '\r') {
-                // your action
                 sendBtn();
             }
 
@@ -365,7 +355,6 @@ public class FXMLDocumentController implements Initializable {
             t.setId(ID);
             t.setOnCloseRequest((e -> onTabClose(t.getId())));
             t.setOnSelectionChanged((e -> onTabClick(t.getId())));
-            //        tabs.getSelectionModel().select(t);
             ScrollPane scrollPane = new ScrollPane();
             t.setContent(root1);
             scrollPane.setFitToHeight(true);
@@ -467,7 +456,6 @@ public class FXMLDocumentController implements Initializable {
         lbl.setText(msg);
         lbl.setTextFill(Color.BLACK);
         lbl.setWrapText(true);
-        //= tr
 
         p.getChildren().add(lbl);
         return new VBox(p, createDateLbl());
@@ -602,20 +590,6 @@ public class FXMLDocumentController implements Initializable {
 
             String ID = tabs.getSelectionModel().getSelectedItem().getId();
             String msg = ChatTxt.getText();
-            /*StackPane p = new StackPane();
-            p.setMinHeight(Region.USE_PREF_SIZE);
-            p.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-            p.setStyle("-fx-background-color: #00FFFF; -fx-background-radius: 30; -fx-border-radius: 30; -fx-border-width:5;");
-
-            Label lbl = new Label(msg);
-            lbl.setPadding(new Insets(10));
-            lbl.setText(msg);
-            lbl.setTextFill(Color.BLACK);
-            lbl.setWrapText(true);
-            //= tr
-
-            p.getChildren().add(lbl);
-            VBox MsgPane = new VBox(p, createDateLbl());*/
             VBox MsgPane = createSentMsgStackPane(msg);
             vboxes.get(ID)[1].getChildren().add(MsgPane);
             ChatTxt.setText("");
@@ -767,25 +741,6 @@ public class FXMLDocumentController implements Initializable {
         }
 
     }
-
-    /*public void RemoveUserFromTabsAndLeftPanels(String ID) {
-        
-                if(usersVboxes.get(ID)!=null){
-                UsersVbox.getChildren().remove(usersVboxes.get(ID));
-
-                for (int j = 0; j < tabs.getTabs().size(); j++) {
-                    if (tabs.getTabs().get(j).getId().equals(ID)) {
-                        tabs.getTabs().remove(j);
-                        break;
-                    }
-                }
-
-                vboxes.remove(ID);
-                usersVboxes.remove(ID);
-                }
-        
-    }
-     */
     public void RemoveVboxFromTabsAndLeftPanels(VBox VB, HashMap VBs, String ID) {
         if (VBs.get(ID) != null) {
             VB.getChildren().remove(VBs.get(ID));
@@ -908,8 +863,6 @@ public class FXMLDocumentController implements Initializable {
                 handle.invoke(this, msg);
             } catch (Exception ex) {
                 System.out.println(msg.get(Constants.REPLYTYPEATTR));
-//                System.out.println(ex.getLocalizedMessage());
-
                 for (StackTraceElement ste : ex.getStackTrace()) {
                     System.out.println(ste);
                 }
