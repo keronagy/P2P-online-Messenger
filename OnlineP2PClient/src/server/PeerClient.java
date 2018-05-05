@@ -113,7 +113,7 @@ public class PeerClient extends Client {
         this.server_cl.send(message);
     }
 
-    public void LeaveRoom(String roomID) {
+    public void leaveRoom(String roomID) {
         HashMap<String, String> message = new HashMap();
         message.put(Constants.REQUESTTYPEATTR, Constants.ROOMLEAVECONNECTION);
         //message.put(Constants.CLIENTIDATTR, this.id);
