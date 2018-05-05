@@ -1001,8 +1001,8 @@ public class FXMLDocumentController implements Initializable {
                 Platform.runLater(() -> {
                     Alert alert = new Alert(AlertType.ERROR);
                     alert.setTitle("Server Error");
-                    alert.setHeaderText("go to hell!! ");
-                    alert.setContentText("I have a great message for you!, all the chats will be removed go kill your self xD");
+                    alert.setHeaderText("Server Error ");
+                    alert.setContentText("Sorry the Application will be closed now, please try again later");
 
                     alert.showAndWait();
                     exit();
