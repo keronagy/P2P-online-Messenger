@@ -171,47 +171,44 @@ public class FXMLDocumentController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
 //        try {
 
-            hamed = new PeerClient(Constants.INITSTATUS, userName);
-            hamed.connect(this.IPAddress, this.PortNum, new ServerHandler());
+        hamed = new PeerClient(Constants.INITSTATUS, userName);
+        hamed.connect(this.IPAddress, this.PortNum, new ServerHandler());
 
-            handleNewConnections();
+        handleNewConnections();
 
 //            final Font f = Font.loadFont(new FileInputStream(new File("OpenSansEmoji.ttf")), 12);
 //            if (f == null) {
 //                throw new IllegalArgumentException("Can't load font for url ");
 //            }
-
-            //ChatTxt.setFont(f);
-            
-            
-
+        //ChatTxt.setFont(f);
 //        } catch (FileNotFoundException ex) {
 //            Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
 //        }
-        
         ChatTxt.setOnKeyPressed(e -> {
 
-                if (e.getCode().equals(KeyCode.ENTER) || e.getCharacter().getBytes()[0] == '\n' || e.getCharacter().getBytes()[0] == '\r') {
-                    // your action
-                    sendBtn();
+            if (e.getCode().equals(KeyCode.ENTER) || e.getCharacter().getBytes()[0] == '\n' || e.getCharacter().getBytes()[0] == '\r') {
+                // your action
+                sendBtn();
+            }
+
+        });
+
+        tabs.getSelectionModel().selectedItemProperty().addListener(
+                new ChangeListener<Tab>() {
+            @Override
+            public void changed(ObservableValue<? extends Tab> ov, Tab t, Tab t1) {
+                try {
+                    if (t.getId().charAt(0) == 'c') {
+                        hamed.stoppedTyping(t.getId());
+                        TypingLbl.setText("");
+                        type = false;
+                    }
+                } catch (Exception ex) {
                 }
 
-            });
-        
-        tabs.getSelectionModel().selectedItemProperty().addListener(
-        new ChangeListener<Tab>() {
-        @Override
-        public void changed(ObservableValue<? extends Tab> ov, Tab t, Tab t1) {
-            if(t.getId().charAt(0) == 'c')
-            {
-                hamed.stoppedTyping(t.getId());
-                TypingLbl.setText("");
-                type= false;
             }
-            
         }
-    }
-);
+        );
         ImageView[] imgsv = {i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15, i16};
 
         for (int i = 1; i <= 16; i++) {
@@ -326,8 +323,9 @@ public class FXMLDocumentController implements Initializable {
                 user.getKickPop().show(user, JFXPopup.PopupVPosition.TOP, JFXPopup.PopupHPosition.LEFT, e.getX(), e.getY());
             } else if (e.getButton().equals(MouseButton.PRIMARY)) {
                 if (e.getClickCount() == 2) {
-                    if(usersVboxes.get(ID)==null)
+                    if (usersVboxes.get(ID) == null) {
                         createPrivateChat(ID);
+                    }
                 }
             }
         });
@@ -345,8 +343,9 @@ public class FXMLDocumentController implements Initializable {
 
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                     if (mouseEvent.getClickCount() == 2) {
-                        if(groupVboxes.get(roomID)==null)
+                        if (groupVboxes.get(roomID) == null) {
                             hamed.joinRoom(roomID);
+                        }
                     }
                 }
             }
@@ -1002,7 +1001,7 @@ public class FXMLDocumentController implements Initializable {
                     alert.setTitle("Server Error");
                     alert.setHeaderText("go to hell!! ");
                     alert.setContentText("I have a great message for you!, all the chats will be removed go kill your self xD");
-                    
+
                     alert.showAndWait();
                     exit();
                 });
