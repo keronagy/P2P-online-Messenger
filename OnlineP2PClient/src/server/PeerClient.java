@@ -55,6 +55,7 @@ public class PeerClient extends Client {
 
             this.server_cl = CommunicationLink.generateCommunicationLink(handler, s);
             peerSocket = new ServerSocket(Constants.SERVERPORT + 1);
+            this.joinRoom("r-0");
         } catch (Exception ex) {
             System.out.println("Connection failed");
         }

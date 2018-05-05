@@ -223,12 +223,11 @@ public class FXMLDocumentController implements Initializable {
             kk.setSpacing(5);
             kk.setPadding(new Insets(5));
             EmojiesPopupVbox.getChildren().add(kk);
-            
 
         }
 
         EmojiesPopUp.setPopupContent(EmojiesPopupVbox);
-        
+
         emojies.setOnMouseClicked(e -> showEmojis(e));
         AddRoomBtn.setOnMouseClicked(e -> AddRoomDialog());
     }
@@ -422,13 +421,13 @@ public class FXMLDocumentController implements Initializable {
             JFXPopup CirclePopUp = new JFXPopup();
             if (adminID.equals(hamed.getId()) || hamed.isAdmin()) {
                 JFXButton RemoveMember = new JFXButton("Kick Member");
-                RemoveMember.setOnMouseClicked(e ->
-                {
+                RemoveMember.setOnMouseClicked(e
+                        -> {
                     hamed.kickClientFromRoom(RoomID, UserID);
                     CirclePopUp.hide();
-                        });
+                });
                 BtnsPop.getChildren().add(RemoveMember);
-                
+
             }
 
             CirclePopUp.setPopupContent(BtnsPop);
@@ -951,9 +950,13 @@ public class FXMLDocumentController implements Initializable {
             String clientName = clients.get(clientID).getName();
             SimpleStringProperty clientStatus = clients.get(clientID).getStatus();
             String roomID = msg.get(Constants.ROOMIDATTR);
-            String adminID = ((CustomStackPane) GroupTabVboxes.get(roomID)).getAdminID();
+
             //GUI add client to room
-            Platform.runLater(() -> EnterRoomUserCircle(clientName, clientID, clientStatus, roomID, adminID));
+            Platform.runLater(() -> {
+                String adminID = ((CustomStackPane) GroupTabVboxes.get(roomID)).getAdminID();
+                EnterRoomUserCircle(clientName, clientID, clientStatus, roomID, adminID);
+
+            });
         }
 
         public void handleClientRemovedFromRoom(HashMap<String, String> msg) {
@@ -973,10 +976,12 @@ public class FXMLDocumentController implements Initializable {
             String roomID = msg.get(Constants.ROOMIDATTR);
             String senderID = msg.get(Constants.CLIENTIDATTR);
             String message = msg.get(Constants.MESSAGE);
-            String roomName = ((CustomStackPane) GroupTabVboxes.get(roomID)).getName();
-            String adminID = ((CustomStackPane) GroupTabVboxes.get(roomID)).getAdminID();
             //GUI add message to chat
-            Platform.runLater(() -> receiveRoom(message, roomID, senderID, roomName, adminID));
+            Platform.runLater(() -> {
+                String roomName = ((CustomStackPane) GroupTabVboxes.get(roomID)).getName();
+                String adminID = ((CustomStackPane) GroupTabVboxes.get(roomID)).getAdminID();
+                receiveRoom(message, roomID, senderID, roomName, adminID);
+            });
         }
 
         public void handleNewClient(HashMap<String, String> msg) {

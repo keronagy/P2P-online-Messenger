@@ -68,9 +68,5 @@ public class CommunicationLink extends Thread {
 
         }
     }
-
-    public CallbackOnReceiveHandler getCallBackHandler() {
-        return callBackHandler;
-    }
     
 }
