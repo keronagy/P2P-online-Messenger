@@ -152,9 +152,6 @@ public class Server extends Thread {
                     sendClients(clientID, client.getCommunicationLink());
                     sendRooms(client.getCommunicationLink());
                     sendNewClientStatusToAllOtherClients(clientID, Constants.INITSTATUS);
-                    HashMap<String, String> joinGeneral = new HashMap();
-                    joinGeneral.put(Constants.ROOMIDATTR, "r-0");
-                    ((ClientHandler) client.getCommunicationLink().getCallBackHandler()).handleRoomJoin(joinGeneral);
                 }
 
                 //send the new client current server state
