@@ -7,13 +7,10 @@ package onlinep2pmessenger;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPopup;
+import java.lang.reflect.Method;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -31,8 +28,10 @@ public class CustomStackPane extends StackPane {
     private SimpleStringProperty UserStatus;
     private Label lbl = new Label();
     private Label lbl2 = new Label();
-    private JFXPopup KickPop= new JFXPopup(); ;
+    private JFXPopup KickPop = new JFXPopup();
+    ;
     private VBox BtnsPop = new VBox();
+
     public CustomStackPane(String RoomID, String RoomName, String adminID) {
         super();
         this.ID = RoomID;
@@ -50,20 +49,19 @@ public class CustomStackPane extends StackPane {
     public CustomStackPane(String ClientID, String ClientName, SimpleStringProperty Status, PeerClient peer) {
         super();
 
-        if(peer.isAdmin()){
+        if (peer.isAdmin()) {
             System.out.println("enterd popup init");
-         
-        JFXButton kickClient = new JFXButton("Kick Client");
-        
-        
-        addOption("Kick Client",e->{
-            peer.kickClient(ClientID);
-                KickPop.hide();
-                });
-        
+
+            //JFXButton kickClient = new JFXButton("Kick Client");
+            try {
+                addOption(peer, ClientID, "Kick Client", PeerClient.class.getMethod("kickClient", String.class));
+            } catch (Exception ex) {
+                //Logger.getLogger(CustomStackPane.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
         }
         KickPop.setPopupContent(BtnsPop);
-    
+
         this.ID = ClientID;
         this.Name = ClientName;
         this.UserStatus = Status;
@@ -83,13 +81,20 @@ public class CustomStackPane extends StackPane {
         lblsvbox.getChildren().add(lbl2);
         this.getChildren().add(lblsvbox);
     }
-    public void addOption(String name, EventHandler e){
+
+    public void addOption(PeerClient peer, String clientID, String name, Method f) {
         JFXButton Option = new JFXButton(name);
-        Option.setOnMouseClicked(e);
+        Option.setOnMouseClicked(e -> {
+            try {
+                f.invoke(peer, clientID);
+                KickPop.hide();
+            } catch (Exception ex) {
+                //Logger.getLogger(CustomGroupOptionBtn.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
         BtnsPop.getChildren().add(Option);
-        
+
     }
-   
 
     public void setID(String RoomID) {
         this.ID = RoomID;
@@ -122,8 +127,5 @@ public class CustomStackPane extends StackPane {
     public JFXPopup getKickPop() {
         return KickPop;
     }
-    
-    
-    
 
 }
