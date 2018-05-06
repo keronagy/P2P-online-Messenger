@@ -23,6 +23,7 @@ public class Constants {
     public static final String CLIENTLEFT = "handleClientClosed";
 
     public static final String INITSTATUS = "online";
+    public static final String UNAVALABLESTATUS = "offline";
     public static final String INITROOM = "General Room";
     public static final String MAINCONNECTION = "serverConn";
     public static final String ROOMJOINCONNECTION = "handleRoomJoin";

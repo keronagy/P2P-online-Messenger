@@ -107,7 +107,7 @@ public class Server extends Thread {
 
     private Client createClient(String id, Socket s, String clientName) {
         String name = clientName;
-        return new Client(id, s.getInetAddress().toString(), name, CommunicationLink.generateCommunicationLink(new ClientHandler(id), s));
+        return new Client(id, s.getInetAddress().toString(), name, Constants.INITSTATUS, CommunicationLink.generateCommunicationLink(new ClientHandler(id), s));
     }
 
     private void handleClientRequest(Socket clientSocket) {
@@ -134,7 +134,7 @@ public class Server extends Thread {
                     client.setCommunicationLink(CommunicationLink.generateCommunicationLink(new ClientHandler(clientID), clientSocket));
                     sendClients(clientID, client.getCommunicationLink());
                     sendRooms(client.getCommunicationLink());
-                    sendNewClientStatusToAllOtherClients(clientID, Constants.INITSTATUS);
+                    //sendNewClientStatusToAllOtherClients(clientID, Constants.INITSTATUS);
                     reJoinRooms(client);
 
                 } else {
@@ -151,7 +151,7 @@ public class Server extends Thread {
                     clients.put(clientID, client);
                     sendClients(clientID, client.getCommunicationLink());
                     sendRooms(client.getCommunicationLink());
-                    sendNewClientStatusToAllOtherClients(clientID, Constants.INITSTATUS);
+                    //sendNewClientStatusToAllOtherClients(clientID, Constants.INITSTATUS);
                 }
 
                 //send the new client current server state
@@ -185,6 +185,7 @@ public class Server extends Thread {
         message.put(Constants.CLIENTIDATTR, c.getId());
         message.put(Constants.CLIENTNAMEATTR, c.getName());
         message.put(Constants.CLIENTIPATTR, c.getIp());
+        message.put(Constants.CLIENTSTATUSATTR, c.getStatus());
         cl.send(message);
     }
 
@@ -263,9 +264,10 @@ public class Server extends Thread {
         }
 
         public void handleClientStatusChange(HashMap<String, String> message) {
-            String clientIDWhoChangedStatus = this.clientID;
+            //String clientIDWhoChangedStatus = this.clientID;
             String newStatus = message.get(Constants.CLIENTSTATUSATTR);
-            sendNewClientStatusToAllOtherClients(clientIDWhoChangedStatus, newStatus);
+            clients.get(this.clientID).setStatus(newStatus);
+            sendNewClientStatusToAllOtherClients(this.clientID, newStatus);
         }
 
         public void handleRoomCreate(HashMap<String, String> message) {
@@ -314,7 +316,8 @@ public class Server extends Thread {
 //            });
             //sendNewClientToOtherClients(client, Constants.REMOVECLIENTORDER);
 //            clients.remove(client.getId());
-            sendNewClientStatusToAllOtherClients(this.clientID, "offline");
+            clients.get(clientID).setStatus(Constants.UNAVALABLESTATUS);
+            sendNewClientStatusToAllOtherClients(this.clientID, Constants.UNAVALABLESTATUS);
         }
 
         public void handleRoomDeleteRequest(HashMap<String, String> message) {

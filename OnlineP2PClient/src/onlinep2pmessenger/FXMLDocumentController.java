@@ -939,9 +939,10 @@ public class FXMLDocumentController implements Initializable {
 
         public void handleNewClient(HashMap<String, String> msg) {
             String clientName = msg.get(Constants.CLIENTNAMEATTR);
+            String clientStatus = msg.get(Constants.CLIENTSTATUSATTR);
             String clientID = msg.get(Constants.CLIENTIDATTR);
             String clientIp = msg.get(Constants.CLIENTIPATTR);
-            clients.put(clientID, new ClientTuple(clientIp.substring(1), clientName, Constants.INITSTATUS));
+            clients.put(clientID, new ClientTuple(clientIp.substring(1), clientName, clientStatus));
             //GUI add new client
             Platform.runLater(() -> AddNewUser(clientID, clientName, clients.get(clientID).getStatus()));
         }

@@ -15,13 +15,15 @@ public class Client {
 
     private String id;
     private String name;
+    private String status;
     private String ip;
     private CommunicationLink server_cl;
 
-    public Client(String id, String ip, String name, CommunicationLink cl) {
+    public Client(String id, String ip, String name, String status, CommunicationLink cl) {
         this.id = id;
         this.ip = ip;
         this.name = name;
+        this.status = status;
         this.server_cl = cl;
 
     }
@@ -31,9 +33,7 @@ public class Client {
         this.name = name;
     }
 
-    /**
-     * @return the id
-     */
+    
     public CommunicationLink getCommunicationLink() {
         return this.server_cl;
     }
@@ -58,14 +58,10 @@ public class Client {
         return ip;
     }
 
-    /**
-     * @return the status
-     */
+    
 
 
-    /**
-     * @return the status
-     */
+    
     
     /**
      * @return the name
@@ -73,5 +69,16 @@ public class Client {
     public String getName() {
         return name;
     }
+    /**
+     * @return the status
+     */
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+    
 
 }
