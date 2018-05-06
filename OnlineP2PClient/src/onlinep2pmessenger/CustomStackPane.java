@@ -50,7 +50,7 @@ public class CustomStackPane extends StackPane {
         super();
 
         if (peer.isAdmin()) {
-            System.out.println("enterd popup init");
+            //System.out.println("enterd popup init");
 
             //JFXButton kickClient = new JFXButton("Kick Client");
             try {

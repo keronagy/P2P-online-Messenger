@@ -39,11 +39,11 @@ public class PeerClient extends Client {
             Socket s = new Socket(ip, port);
             ObjectOutputStream oos = new ObjectOutputStream(s.getOutputStream());
             ObjectInputStream ois = new ObjectInputStream(s.getInputStream());
-
+            String readID = readID();
             HashMap<String, String> connectionRequest = new HashMap();
             connectionRequest.put(Constants.REQUESTTYPEATTR, Constants.MAINCONNECTION);
             connectionRequest.put(Constants.CLIENTNAMEATTR, name);
-            connectionRequest.put(Constants.UNIQUEIDATTR, readID());
+            connectionRequest.put(Constants.UNIQUEIDATTR, readID);
             oos.writeObject(connectionRequest);
             oos.flush();
             String UniqueID = ois.readUTF();
@@ -54,9 +54,11 @@ public class PeerClient extends Client {
             }
 
             this.server_cl = CommunicationLink.generateCommunicationLink(handler, s);
+            if(!readID.equals(UniqueID))//not a rejoin
+                this.joinRoom("r-0");
             peerSocket = new ServerSocket(Constants.SERVERPORT + 1);
-            this.joinRoom("r-0");
         } catch (Exception ex) {
+            System.out.println(ex.getMessage());
             System.out.println("Connection failed");
         }
     }

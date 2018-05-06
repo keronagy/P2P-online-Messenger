@@ -46,17 +46,18 @@ public class CommunicationLink extends Thread {
     @Override
     public void run() {
         try {
-        while (true) {
-            HashMap<String, String> received;
-            
+            while (true) {
+                HashMap<String, String> received;
                 received = (HashMap<String, String>) ois.readObject();
                 callBackHandler.handleReceivedData(received);
-            } 
-        }catch (Exception ex) {
-                HashMap<String, String> message = new HashMap();
-                message.put(Constants.REPLYTYPEATTR, Constants.CONNECTIONCLOSED);
-                callBackHandler.handleReceivedData(message);
             }
+        } catch (Exception ex) {
+            //System.out.println(ex);
+            //ex.printStackTrace();
+            HashMap<String, String> message = new HashMap();
+            message.put(Constants.REPLYTYPEATTR, Constants.CONNECTIONCLOSED);
+            callBackHandler.handleReceivedData(message);
+        }
     }
 
     public void send(HashMap<String, String> msg) {

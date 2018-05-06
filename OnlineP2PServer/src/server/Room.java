@@ -58,9 +58,12 @@ public class Room {
     }
 
     public void addClient(Client client) {
+        sendParticipants(client);  
+        sendChatToNewParticipant(client);
+        if(participants.get(client.getId())==null){
         sendNewParticipantToOtherParticipants(client, Constants.ADDNEWCLIENTTOROOMORDER);
-        sendParticipants(client);     
         participants.put(client.getId(), client);
+        }
     }
 
     public void sendChatToNewParticipant(Client client) {
@@ -87,7 +90,8 @@ public class Room {
     public void sendParticipants(Client newClient) {
         //need to put before adding in the new client so s/he doesnt get sent to her/im self
         participants.values().forEach((c) -> {
-            sendClient(c, newClient.getCommunicationLink(), Constants.ADDNEWCLIENTTOROOMORDER);
+            if(!c.getId().equals(newClient.getId()))
+                sendClient(c, newClient.getCommunicationLink(), Constants.ADDNEWCLIENTTOROOMORDER);
         });
     }
 
@@ -122,7 +126,7 @@ public class Room {
         });
     }
 
-    public void deleteRoom() {
+   /* public void deleteRoom() {
         HashMap<String, String> message = new HashMap();
         message.put(Constants.REPLYTYPEATTR, Constants.ROOMDELETED);
         message.put(Constants.ROOMIDATTR, this.getId());
@@ -130,7 +134,7 @@ public class Room {
             c.getCommunicationLink().send(message);
 
         });
-    }
+    }*/
 
     public void sendConfirmationToClient(Client client) {
         HashMap<String, String> confirmation = new HashMap();
