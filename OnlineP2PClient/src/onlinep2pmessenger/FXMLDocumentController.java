@@ -518,10 +518,15 @@ public class FXMLDocumentController implements Initializable {
                         break;
                     }
                     if (!ta.getStyleClass().contains("receiveMsg")) {
-                        ta.setText(ta.getText() + "!!!");
+                        ta.setText(ta.getText() + " (1)");
                         ta.getStyleClass().add("receiveMsg");
                         ta.getStyleClass().add("sound");
                         Platform.runLater(() -> RunSound(1));
+                    }
+                    else if (ta.getStyleClass().contains("receiveMsg")){
+                        String text = ta.getText();
+                        int index = text.lastIndexOf('(');
+                        ta.setText(text.substring(0, index+1)+(Integer.parseInt(text.substring(index+1,text.length()-1))+1)+")");
                     }
                     if (ta.getStyleClass().contains("sound")) {
                         Platform.runLater(() -> RunSound(1));
@@ -551,10 +556,15 @@ public class FXMLDocumentController implements Initializable {
                         break;
                     }
                     if (!ta.getStyleClass().contains("receiveMsg")) {
-                        ta.setText(ta.getText() + "!!!");
+                        ta.setText(ta.getText() + " (1)");
                         ta.getStyleClass().add("receiveMsg");
                         ta.getStyleClass().add("sound");
                         Platform.runLater(() -> RunSound(2));
+                    }
+                    else if (ta.getStyleClass().contains("receiveMsg")){
+                        String text = ta.getText();
+                        int index = text.lastIndexOf('(');
+                        ta.setText(text.substring(0, index+1)+(Integer.parseInt(text.substring(index+1,text.length()-1))+1)+")");
                     }
                     if (ta.getStyleClass().contains("sound")) {
                         Platform.runLater(() -> RunSound(2));
@@ -732,7 +742,8 @@ public class FXMLDocumentController implements Initializable {
         if (tabs.getSelectionModel().getSelectedItem().getStyleClass().contains("receiveMsg")) {
             Tab ta = tabs.getSelectionModel().getSelectedItem();
             ta.getStyleClass().remove("receiveMsg");
-            ta.setText(ta.getText().replace("!!!", ""));
+            String text = ta.getText();
+            ta.setText(text.substring(0, text.indexOf('(')));
             ta.getStyleClass().remove("sound");
             if (id.charAt(0) == 'c') {//yyyy.MM.dd.HH.mm.ss
                 String datelbl = new SimpleDateFormat("HH:mm:ss").format(new java.util.Date());
