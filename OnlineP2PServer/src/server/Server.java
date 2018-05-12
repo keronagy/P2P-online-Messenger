@@ -365,14 +365,14 @@ public class Server extends Thread {
         }
 
         public void handleClientKick(HashMap<String, String> message) {
-            String requester = this.clientID;
-            Client client = clients.get(message.get(Constants.CLIENTIDATTR));
-            if (requester.equals(adminID)) {
+            String kickedClientID = message.get(Constants.CLIENTIDATTR);
+            Client client = clients.get(kickedClientID);
+            if (this.clientID.equals(adminID)) {
                 HashMap<String, String> close = new HashMap();
                 close.put(Constants.REPLYTYPEATTR, Constants.CONNECTIONCLOSED);
                 client.getCommunicationLink().send(close);
                 //clients.get(clientID).setStatus(Constants.KICKEDSTATUS);
-                sendNewClientStatusToAllOtherClients(this.clientID, Constants.KICKEDSTATUS);
+                sendNewClientStatusToAllOtherClients(kickedClientID, Constants.KICKEDSTATUS);
                 
             }
 
