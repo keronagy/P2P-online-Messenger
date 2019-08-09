@@ -15,7 +15,9 @@ This handler is responsible for nearly the same activities like the client handl
 Peer client is an extension for client class, similarly, it’s handler adds some additional functionalities like handling messages from peers, seen feature (like fb indicates the other peer has read sent message) and typing (like fb when a user is typing it appears for the other users)
 ## Application Layer
 ### 1- Client Server: The client connect to the previously initiated server. The server respond by an ID, list of all other connected users and rooms. There is a copy from the list that contains the users saved on every client device and the server is responsible for updating it.
+
 ![alt text](https://i.gyazo.com/4ff59d20001a08a58e5ff8e2dd8cde7c.png)
+
 there are two important concepts in the client server model that do not appear in p2p chat.
 Room:
 Rooms are created by server and users can start chat in it. By default messages are sent to a specific room if the users didn’t choose another one.
@@ -25,12 +27,18 @@ Room Admin is the client who creates the room and has the following permissions:
 
 ### 2- P2P
 Every client has a seperate from GUI thread that runs when the program start. This thread contains a server socket listening to port number 2501. This socket waits for p2p connections, A client can establish a p2p connection by getting the ip of another user from the server provided list then connect to the peer on his server socket provided the port is open. Beside the server main list each client has a seperate list that contains his p2p connections. No client can have the p2p list of another client.
+
 ![alt text](https://i.gyazo.com/0b9d94df3a6952fb8f72b84e46588f41.png)
+
 Figure 1 - Login Window
+
 ![alt text](https://i.gyazo.com/56f703892e780125945b78ba2c12a9d9.png)
 
 Figure 2 - Chat Window
+
 ![alt text](https://i.gyazo.com/918e4f1950b1ef97b9655d30b79fd939.png)
 
 Figure 3- Peer2peer chat
+
 ![alt text](https://i.gyazo.com/8cf88cabe6ae3bc22c146bc19b0a17c2.png)
+
