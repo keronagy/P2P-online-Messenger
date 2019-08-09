@@ -1,8 +1,11 @@
 # P2P-online-Messenger
 ## Instructions:
-1- Start the server application
+1- Start the server application.
+
 2- Start the client application (same or different machine).
+
 3- You'll be greeted with login window (Figure 1), write the name that you want to be shown to other users.
+
 4- Enter server ip in the area specified (if server on local machine leave default ip)
 
 ## Network Layer
